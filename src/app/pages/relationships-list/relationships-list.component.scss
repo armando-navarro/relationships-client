@@ -1,0 +1,33 @@
+@import '../../../styles/variables.scss';
+
+:host {
+	display: block;
+	max-width: var(--max-page-width);
+	padding: var(--page-small-header-bar-height) 8px;
+	margin: 0 auto;
+	@media screen and (min-width: $small-breakpoint) {
+		padding: calc(var(--page-large-header-bar-height) + 12px) 12px 0;
+	}
+}
+
+app-page-header-bar {
+	mat-form-field ::ng-deep .mat-mdc-form-field-infix {
+		display: flex;
+		min-height: auto;
+	}
+	@media screen and (max-width: $small-breakpoint) {
+		mat-form-field {
+			height: 100%;
+			::ng-deep .mat-mdc-text-field-wrapper {
+				height: 100%;
+			}
+			::ng-deep	.mat-mdc-form-field-infix {
+				padding: 10px 0;
+			}
+		}
+	}
+}
+
+p {
+	max-width: var(--max-paragraph-width);
+}

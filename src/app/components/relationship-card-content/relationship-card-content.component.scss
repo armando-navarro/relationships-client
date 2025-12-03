@@ -1,0 +1,13 @@
+.notes {
+	grid-column-start: 1;
+	grid-column-end: -1;
+	line-height: 1.5;
+}
+.interaction-goal-label,
+.interaction-goal-value {
+	align-self: self-end;
+}
+.interaction-goal-value,
+.last-contact-value {
+	justify-self: self-end;
+}

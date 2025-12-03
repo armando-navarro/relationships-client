@@ -1,0 +1,61 @@
+<app-page-header-bar title="Relationships">
+	<mat-form-field subscriptSizing="dynamic" appearance="outline">
+		<input [(ngModel)]="searchValue" (focus)="searchValue.set('')" placeholder="Search" aria-label="Search relationships" [matAutocomplete]="autocomplete" matInput type="search" />
+	</mat-form-field>
+
+	<mat-autocomplete [class]="['custom-mat-panel', 'custom-scrollbar']" #autocomplete="matAutocomplete" [hideSingleSelectionIndicator]="true">
+		@for (name of filteredNames(); track name) {
+			<mat-option [value]="name">{{name}}</mat-option>
+		}
+	</mat-autocomplete>
+
+	<a routerLink="/interactions" mat-button>Interactions</a>
+
+	<button [matMenuTriggerFor]="menu" mat-icon-button aria-label="More actions menu">
+		<mat-icon>more_vert</mat-icon>
+	</button>
+
+	<mat-menu #menu="matMenu" class="custom-mat-panel">
+		<a routerLink="./add" mat-menu-item>
+			<mat-icon>add</mat-icon>
+			<span>Add Relationship</span>
+		</a>
+		@if (!allGroupsExpanded()) {
+			<button (click)="onCollapseOrExpandAllClick(true)" mat-menu-item>
+				<mat-icon>unfold_more</mat-icon>
+				<span>Expand All Groups</span>
+			</button>
+		}
+		@if (!allGroupsCollapsed()) {
+			<button (click)="onCollapseOrExpandAllClick(false)" mat-menu-item>
+				<mat-icon>unfold_less</mat-icon>
+				<span>Collapse All Groups</span>
+			</button>
+		}
+	</mat-menu>
+</app-page-header-bar>
+
+
+@if (hasRelationships()) {
+	<p>
+		Relationships are divided into groups based on the interaction goals you've set,
+		and how long it's been since you last interacted with them.
+	</p>
+} @else if (groupedRelationships().length) {
+	<p>
+		Add relationships through the menu botton in the top right.
+		Once added, they will appear here.
+	</p>
+}
+
+@for (group of filteredGroupedRelationships(); track group.status) {
+	@if (group.relationships.length) {
+		<app-card-group (click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
+			@for (relationship of group.relationships; track relationship._id) {
+				<app-card [relationship]="relationship" (delete-relationship)="onDeleteRelationshipClick($event)">
+					<app-relationship-card-content [relationship]="relationship" />
+				</app-card>
+			}
+		</app-card-group>
+	}
+}
