@@ -1,0 +1,26 @@
+<div class="header">
+	<mat-icon aria-hidden="true">perm_identity</mat-icon>
+	<a class="name" [routerLink]="editRoute()">{{relationshipName()}}</a>
+
+	<a class="edit" [routerLink]="editRoute()" (click)="onEditClick()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()">
+		<mat-icon>edit</mat-icon>
+	</a>
+	<button class="delete" (click)="onDeleteClick()" (click)="onEditClick()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()">
+		<mat-icon>delete</mat-icon>
+	</button>
+</div>
+
+<div class="body">
+	<ng-content />
+</div>
+
+@if (!hideFooter() && relationship()) {
+	<div class="footer">
+		@if (relationship()!.attentionNeededText) {
+			<span>Attention needed:</span>
+			<span [style.color]="relationship()!.attentionStatusColor" style="font-style: italic">{{relationship()!.attentionNeededText}}</span>
+		} @else {
+			<span>&nbsp;</span>
+		}
+	</div>
+}

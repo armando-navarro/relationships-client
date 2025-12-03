@@ -1,0 +1,11 @@
+<h2 [id]="'card-group-title-' + instanceNumber()" [style.color]="headerColor()">
+	<button (click)="onGroupHeaderClick()">
+		<span>{{header()}}</span>
+		<span>({{cardCount()}})</span>
+		<mat-icon [class.open]="open()">chevron_right</mat-icon>
+	</button>
+</h2>
+
+<div class="card-scroll custom-scrollbar" [class.hidden]="!open()">
+	<ng-content />
+</div>
