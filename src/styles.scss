@@ -1,1 +1,91 @@
-/* You can add global styles to this file, and also import other style files */
+@import './styles/variables.scss';
+
+// normalization
+*,
+*:before,
+*:after {
+	 box-sizing: border-box;
+}
+
+// CSS custom properties
+:root {
+	--max-page-width: 1200px;
+
+	// make sure these match the values in variables.scss
+	--small-breakpoint: 650px;
+	--medium-breakpoint: 850px;
+
+	--primary-accent-color: #3B82F6;
+	--primary-title-color: #3B82F6;
+	--secondary-title-color: #c7c8d0;
+	--primary-button-color: #45a5ff;
+
+	--page-title-font-size-small: 1.05rem;
+	--page-title-font-size-large: 2rem;
+	--page-small-header-bar-height: 56px;
+	--page-large-header-bar-height: 64px;
+
+	--header-background-color: #101833;
+	--header-hover-color: #152558;
+	--card-background: #0B1020;
+	--large-card-border-color: #1d57b3;
+
+	--max-paragraph-width: 600px;
+
+	--scrollbar-thumb-color: #114497;
+	--scrollbar-track-color: transparent;
+
+	--primary-border-radius: 12px;
+	--large-border-radius: 24px;
+}
+
+// link and button styles
+a {
+	color: var(--primary-accent-color);
+	text-decoration: none;
+}
+a[mat-icon-button],
+button[mat-icon-button] {
+	color: var(--mdc-outlined-button-label-text-color);
+}
+mat-datepicker-toggle button[mat-icon-button] {
+	color: var(--mdc-icon-button-icon-color);
+}
+
+// misc global styles
+body.mat-app-background {
+	background: #050816;
+}
+
+h1.page-title {
+	margin: 16px auto 12px;
+	@media screen and (min-width: $small-breakpoint) {
+		margin-bottom: 16px;
+	}
+}
+
+p {
+	line-height: 1.7;
+}
+
+.span-cols {
+	grid-column-start: 1;
+	grid-column-end: -1;
+}
+
+.custom-mat-panel {
+	background: var(--card-background) !important;
+	border: 1px solid var(--header-background-color);
+}
+
+.custom-scrollbar {
+	&::-webkit-scrollbar {
+		background: var(--scrollbar-track-color);
+		height: 8px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--scrollbar-thumb-color);
+		border-radius: 12px;
+	}
+	scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}

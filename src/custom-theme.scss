@@ -12,9 +12,13 @@
 // Define the theme object.
 $relationships-client-theme: mat.define-theme((
 	color: (
-		theme-type: light,
+		theme-type: dark,
 		primary: mat.$azure-palette,
 		tertiary: mat.$blue-palette,
+		use-system-variables: true,
+	),
+	typography: (
+		use-system-variables: true,
 	),
 	density: (
 		scale: 0,
@@ -26,6 +30,12 @@ $relationships-client-theme: mat.define-theme((
 // that you are using.
 :root {
 	@include mat.all-component-themes($relationships-client-theme);
+	// @include mat.system-level-colors($relationships-client-theme);
+	// @include mat.system-level-typography($relationships-client-theme);
+
+	--mat-option-focus-state-layer-color: var(--header-background-color);
+	--mdc-outlined-text-field-container-shape: var(--primary-border-radius);
+	--mdc-dialog-subhead-size: 1.5rem;
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
