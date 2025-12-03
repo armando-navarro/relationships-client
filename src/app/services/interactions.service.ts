@@ -27,6 +27,25 @@ export class InteractionsService {
 		this.selectedInteraction.set(interaction)
 	}
 
+	addInteractionToUnsavedRelationship(newInteraction: Interaction): void {
+		const unsavedInteractions = this.interactionsForUnsavedRelationship()
+		this.insertInteractionInOrder(unsavedInteractions, newInteraction)
+	}
+
+	/** Inserts an interaction into the proper spot in an array of interactions sorted descending by date. */
+	private insertInteractionInOrder(sortedInteractions: Interaction[], newInteraction: Interaction): void {
+		let low = 0
+		let high = sortedInteractions.length
+
+		while (low < high) {
+			const mid = Math.floor((low + high) / 2)
+			if (sortedInteractions[mid].date! > newInteraction.date!) low = mid + 1
+			else high = mid
+		}
+
+		sortedInteractions.splice(low, 0, newInteraction)
+	}
+
 	/** @returns false if user clicked Cancel, true if interaction was deleted */
 	deleteInteraction(deleteTarget: Interaction): Observable<boolean> {
 		const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data: { deleteTarget: `this interaction with ${deleteTarget.nameOfPerson}` } })

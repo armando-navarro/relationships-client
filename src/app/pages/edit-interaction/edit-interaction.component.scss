@@ -1,0 +1,90 @@
+@import '../../../styles/variables.scss';
+
+:host {
+	display: block;
+}
+
+h1 {
+	font-size: var(--page-title-font-size-small);
+	margin: 0;
+	@media screen and (min-width: $small-breakpoint) {
+		font-size: var(--page-title-font-size-large);
+	}
+}
+
+mat-form-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+	font-size: 0.8rem;
+}
+
+section.relationship,
+section.interaction-details {
+	padding: 0 12px 12px;
+	mat-form-field {
+		display: flex;
+		width: min-content;
+		@media screen and (min-width: $small-breakpoint) {
+			display: inline-flex;
+			width: unset;
+		}
+	}
+}
+
+section.interaction-details {
+	@media screen and (min-width: $small-breakpoint) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 24px;
+		h2 {
+			grid-column-start: 1;
+			grid-column-end: -1;
+		}
+	}
+}
+
+section.topics {
+	padding: 0 12px 12px;
+
+	h2 {
+		display: flex;
+		align-items: center;
+		button {
+			margin-left: auto;
+		}
+	}
+
+	button.add-topic-mobile {
+		mat-icon {
+			transform: scale(1.6);
+		}
+		@media screen and (min-width: $small-breakpoint) {
+			display: none;
+		}
+	}
+	button.add-topic-desktop {
+		font-size: initial;
+		@media screen and (max-width: $small-breakpoint) {
+			display: none;
+		}
+	}
+
+	.topic-card {
+		background: var(--card-background);
+		position: relative;
+		padding: 20px 12px;
+		border: 1px solid var(--large-card-border-color);
+		border-radius: var(--large-border-radius);
+		margin-bottom: 24px;
+		button {
+			position: absolute;
+			right: 12px;
+			margin-left: auto;
+		}
+		mat-form-field:not(:last-child) {
+			margin-bottom: 24px;
+		}
+		mat-form-field:nth-of-type(2) {
+			width: 100%;
+			min-height: 4em;
+		}
+	}
+}

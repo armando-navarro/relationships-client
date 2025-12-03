@@ -1,0 +1,89 @@
+<app-page-header-bar justify-content="space-between">
+	<a (click)="onCancelClick()" [routerLink]="" mat-button>Cancel</a>
+	<h1>{{pageHeading()}}</h1>
+	<a (click)="onSaveClick()" [routerLink]="" mat-button>Save</a>
+</app-page-header-bar>
+
+@if (showRelationshipPicker()) {
+	<section class="relationship" aria-labelledby="relationship-details-title">
+		<h2 id="relationship-details-title">Relationship</h2>
+
+		<mat-form-field hintLabel="Who did you interact with?" appearance="outline" floatLabel="auto">
+			<mat-label>Name of person</mat-label>
+			<select [(ngModel)]="relationshipIdValue" name="relationship" required matNativeControl>
+				@for (relationship of relationships(); track relationship._id) {
+					<option [value]="relationship._id">{{relationship.firstName}} {{relationship.lastName}}</option>
+				}
+			</select>
+			@if (!relationshipIdValue) {
+				<mat-error>Relationship is required</mat-error>
+			}
+		</mat-form-field>
+	</section>
+}
+
+<section class="interaction-details" aria-labelledby="interaction-details-title">
+	<h2 id="interaction-details-title">Interaction Details</h2>
+
+	<mat-form-field appearance="outline" floatLabel="auto">
+		<mat-label>Type of interaction</mat-label>
+		<select [(ngModel)]="typeValue" name="type" required matNativeControl>
+			<option [value]="typeOptions.PhoneCall">Phone Call</option>
+			<option [value]="typeOptions.Texting">Text</option>
+			<option [value]="typeOptions.Email">Email</option>
+			<option [value]="typeOptions.InPerson">In Person</option>
+			<option [value]="typeOptions.VideoCall">Video Call</option>
+			<option [value]="typeOptions.OnlineGaming">Online Gaming</option>
+			<option [value]="typeOptions.SnailMail">Physical Mail</option>
+			<option [value]="typeOptions.SocialMedia">Social Media</option>
+			<option [value]="typeOptions.VoiceMail">Voice Mail</option>
+			<option [value]="typeOptions.Other">Other</option>
+		</select>
+		@if (!typeValue) {
+			<mat-error>Type of interaction is required</mat-error>
+		}
+	</mat-form-field>
+
+	<mat-form-field appearance="outline" floatLabel="auto">
+		<mat-label>Date</mat-label>
+		<input matInput [matDatepicker]="datePicker" [(ngModel)]="dateValue" name="date" required>
+		<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+		<mat-datepicker #datePicker></mat-datepicker>
+		@if (!dateValue) {
+			<mat-error>Date is required</mat-error>
+		}
+	</mat-form-field>
+</section>
+
+<section class="topics" aria-labelledby="topics-title">
+	<h2 id="topics-title">
+		Topics Discussed
+		<button (click)="onAddTopicClick()" class="add-topic-mobile" mat-icon-button aria-label="Add Topic">
+			<mat-icon>add</mat-icon>
+		</button>
+		<button (click)="onAddTopicClick()" class="add-topic-desktop" mat-stroked-button aria-label="Add Topic">
+			Add Topic
+		</button>
+	</h2>
+
+	@for (topic of topicsValue; track topic.topic || $index; let index = $index) {
+		<div class="topic-card">
+			<mat-form-field hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
+				<mat-label>Topic</mat-label>
+				<input matInput [(ngModel)]="topic.topic" name="topic-{{topic.topic}}" required>
+				@if (!topic.topic.trim()) {
+					<mat-error>Topic is required</mat-error>
+				}
+			</mat-form-field>
+
+			<button (click)="onRemoveTopicClick(index)" mat-icon-button aria-label="Remove Topic">
+				<mat-icon>remove</mat-icon>
+			</button>
+
+			<mat-form-field hintLabel="What do you want to remember about this topic?" appearance="outline" floatLabel="auto">
+				<mat-label>Notes</mat-label>
+				<textarea matInput [(ngModel)]="topic.notes" name="notes-{{topic.notes}}" rows="5"></textarea>
+			</mat-form-field>
+		</div>
+	}
+</section>
