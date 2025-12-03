@@ -1,0 +1,59 @@
+<app-page-header-bar title="Interactions">
+	<a routerLink="/relationships" mat-button>Relationships</a>
+
+	<button [matMenuTriggerFor]="menu" mat-icon-button aria-label="More actions menu">
+		<mat-icon>more_vert</mat-icon>
+	</button>
+
+	<mat-menu #menu="matMenu" class="custom-mat-panel">
+		<a routerLink="/interactions/add" mat-menu-item>
+			<mat-icon>add</mat-icon>
+			<span>Add Interaction</span>
+		</a>
+		@if (groupBy() !== 'day') {
+			<button (click)="groupBy.set('day')" mat-menu-item>
+				<mat-icon>today</mat-icon>
+				<span>Group by Day</span>
+			</button>
+		}
+		@if (groupBy() !== 'week') {
+			<button (click)="groupBy.set('week')" mat-menu-item>
+				<mat-icon>date_range</mat-icon>
+				<span>Group by Week</span>
+			</button>
+		}
+		@if (groupBy() !== 'month') {
+			<button (click)="groupBy.set('month')" mat-menu-item>
+				<mat-icon>calendar_month</mat-icon>
+				<span>Group by Month</span>
+			</button>
+		}
+		@if (!allGroupsExpanded()) {
+			<button (click)="onCollapseOrExpandAllClick(true)" mat-menu-item>
+				<mat-icon>unfold_more</mat-icon>
+				<span>Expand All Groups</span>
+			</button>
+		}
+		@if (!allGroupsCollapsed()) {
+			<button (click)="onCollapseOrExpandAllClick(false)" mat-menu-item>
+				<mat-icon>unfold_less</mat-icon>
+				<span>Collapse All Groups</span>
+			</button>
+		}
+	</mat-menu>
+</app-page-header-bar>
+
+<p>
+	Add interactions through the menu botton in the top right.<br />
+	{{TOPIC_HINT_VERBIAGE}}
+</p>
+
+@for (group of groupedInteractions(); track group.timeUnitsAgo) {
+	<app-card-group (click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
+		@for (interaction of group.interactions; track interaction._id) {
+			<app-card [interaction]="interaction" (delete-interaction)="onDeleteInteractionClick($event)">
+				<app-interaction-card-content [interaction]="interaction" />
+			</app-card>
+		}
+	</app-card-group>
+}

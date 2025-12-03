@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Topic: {{data.topic}}</h2>
+
+<mat-dialog-content>
+	<p [innerHTML]="data.notes"></p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button mat-button [mat-dialog-close]="false">Okay</button>
+</mat-dialog-actions>
