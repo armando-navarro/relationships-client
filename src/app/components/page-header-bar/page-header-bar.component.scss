@@ -1,0 +1,50 @@
+@import '../../../styles/variables.scss';
+
+:host {
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	height: var(--page-small-header-bar-height);
+	background: var(--header-background-color);
+	color: var(--secondary-title-color);
+	padding: 0;
+	margin-bottom: 48px;
+	transition: top 0.5s;
+	&.hidden {
+		top: calc(var(--page-small-header-bar-height) * -1);
+		@media screen and (min-width: $small-breakpoint) {
+			top: calc(var(--page-large-header-bar-height) * -1);
+		}
+	}
+	@media screen and (min-width: $small-breakpoint) {
+		height: var(--page-large-header-bar-height);
+	}
+}
+
+.contents {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	max-width: var(--max-page-width);
+	padding: 8px;
+	white-space: nowrap;
+	margin: 0 auto;
+	@media screen and (min-width: $small-breakpoint) {
+		gap: 24px;
+	}
+}
+
+h1 {
+	flex: 1;
+	color: var(--secondary-title-color);
+	font-size: var(--page-title-font-size-small);
+	text-align: start;
+	margin: 0;
+	@media screen and (min-width: $small-breakpoint) {
+		font-size: var(--page-title-font-size-large);
+	}
+}

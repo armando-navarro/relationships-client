@@ -1,0 +1,6 @@
+<div class="contents" [style.justify-content]="justifyContent()">
+	@if (title()) {
+		<h1>{{title()}}</h1>
+	}
+	<ng-content />
+</div>
