@@ -94,4 +94,16 @@ export class InteractionsService {
 		return groupedInteractions
 	}
 
+	sortInteractionsDesc(a: Interaction, b: Interaction): number {
+		if (a.date!.valueOf() > b.date!.valueOf()) return -1
+		if (a.date!.valueOf() < b.date!.valueOf()) return 1
+		else return 0
+	}
+
+	sortInteractionsAsc(a: Interaction, b: Interaction): number {
+		if (a.date!.valueOf() > b.date!.valueOf()) return 1
+		if (a.date!.valueOf() < b.date!.valueOf()) return -1
+		else return 0
+	}
+
 }

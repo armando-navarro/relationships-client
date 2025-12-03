@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, signal } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { mergeMap, Observable, of } from 'rxjs'
 
@@ -8,6 +8,8 @@ import { ConfirmationDialogComponent } from '../components/confirmation-dialog/c
 
 @Injectable({ providedIn: 'root' })
 export class RelationshipsService {
+	readonly unsavedRelationship = signal<Relationship|undefined>(undefined)
+
 	private readonly api = inject(ApiService)
 	private readonly dialog = inject(MatDialog)
 
