@@ -11,14 +11,7 @@ export interface Interaction {
 	nameOfPerson?: string
 	dateString?: string
 	date?: Date
-	firstInteraction?: boolean
-	occasion?: string
-	eventAttended?: string
 	topicsDiscussed?: Topic[]
-	memorableEvents?: {
-		event: string
-		notes?: string[]
-	}
 }
 
 export enum InteractionType {
@@ -36,7 +29,6 @@ export enum InteractionType {
 
 export enum InteractionRate {
 	EveryDay = 'every day',
-	TwiceAWeek = 'twice a week',
 	EveryWeek = 'every week',
 	EveryTwoWeeks = 'every 2 weeks',
 	EveryMonth = 'every month',

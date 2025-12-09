@@ -15,6 +15,7 @@ export interface Relationship {
 	daysUntilGoal?: string // derived
 	lastInteractionDate?: string // derived
 	lastInteractionRelativeTime?: string // derived
+	daysUntilAttentionNeeded?: number
 	attentionNeededText?: string
 	attentionNeededStatus?: AttentionNeededStatus
 	attentionStatusColor?: string
