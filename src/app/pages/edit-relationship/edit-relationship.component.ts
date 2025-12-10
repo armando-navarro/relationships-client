@@ -1,5 +1,5 @@
 import { Component, inject, input, OnInit, signal } from '@angular/core'
-import { KeyValuePipe, Location } from '@angular/common'
+import { Location } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { MatButtonModule } from '@angular/material/button'
@@ -23,7 +23,7 @@ import { REQUIRED_ERROR, SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../cons
 	selector: 'app-edit-relationship',
 	standalone: true,
 	imports: [
-		CardComponent, FormsModule, InteractionCardContentComponent, KeyValuePipe, MatButtonModule,
+		CardComponent, FormsModule, InteractionCardContentComponent, MatButtonModule,
 		MatIconModule, MatFormFieldModule, MatInputModule, PageHeaderBarComponent, RouterLink
 	],
 	templateUrl: './edit-relationship.component.html',

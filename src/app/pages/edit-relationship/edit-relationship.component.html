@@ -23,9 +23,13 @@
 	<mat-form-field class="interaction-goal" hintLabel="How often would you like to stay in contact?" appearance="outline" floatLabel="auto">
 		<mat-label>Interaction Goal</mat-label>
 		<select [(ngModel)]="interactionRateGoalValue" name="interactionRateGoal" matNativeControl>
-			@for (rate of InteractionRates | keyvalue; track rate.value) {
-				<option [value]="rate.value">{{rate.value}}</option>
-			}
+			<option [value]="InteractionRates.EveryDay">{{InteractionRates.EveryDay}}</option>
+			<option [value]="InteractionRates.EveryWeek">{{InteractionRates.EveryWeek}}</option>
+			<option [value]="InteractionRates.EveryTwoWeeks">{{InteractionRates.EveryTwoWeeks}}</option>
+			<option [value]="InteractionRates.EveryMonth">{{InteractionRates.EveryMonth}}</option>
+			<option [value]="InteractionRates.EveryTwoMonths">{{InteractionRates.EveryTwoMonths}}</option>
+			<option [value]="InteractionRates.EverySixMonths">{{InteractionRates.EverySixMonths}}</option>
+			<option [value]="InteractionRates.EveryYear">{{InteractionRates.EveryYear}}</option>
 		</select>
 	</mat-form-field>
 
