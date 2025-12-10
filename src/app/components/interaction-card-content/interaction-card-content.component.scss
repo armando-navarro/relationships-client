@@ -4,12 +4,21 @@ mat-chip-set,
 	grid-column-end: -1;
 }
 
+.topics-title,
+mat-chip-set {
+	grid-row-start: 2;
+}
+
 .topics-title {
-	flex: none;
 	position: relative;
-	left: -5px;
-	width: calc(100% + 25px);
+	left: -12px;
+	width: calc(100% + 24px);
+	height: min-content;
 	background: var(--header-hover-color);
 	text-align: center;
 	margin-bottom: 16px;
+}
+
+mat-chip-set {
+	margin-top: 32px;
 }

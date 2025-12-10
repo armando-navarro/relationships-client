@@ -2,10 +2,10 @@
 	<span>{{ interaction().type }}</span>
 	<span>{{ interaction().date | date }}</span>
 
+	@if (interaction().topicsDiscussed?.length) {
+		<span class="topics-title">Topics Discussed</span>
+	}
 	<mat-chip-set aria-label="Topic selection">
-		@if (interaction().topicsDiscussed?.length) {
-			<span class="topics-title">Topics Discussed</span>
-		}
 		@for (topic of interaction().topicsDiscussed; track topic.topic) {
 			<mat-chip (click)="onTopicClick(topic)">{{topic.topic}}</mat-chip>
 		}
