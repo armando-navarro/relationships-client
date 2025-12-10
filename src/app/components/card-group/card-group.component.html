@@ -6,6 +6,6 @@
 	</button>
 </h2>
 
-<div class="card-scroll custom-scrollbar" [class.hidden]="!open()">
+<div class="card-scroll custom-scrollbar" [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
 	<ng-content />
 </div>

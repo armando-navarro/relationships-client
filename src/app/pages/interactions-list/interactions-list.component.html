@@ -49,7 +49,7 @@
 </p>
 
 @for (group of groupedInteractions(); track group.timeUnitsAgo) {
-	<app-card-group (click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
+	<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
 		@for (interaction of group.interactions; track interaction._id) {
 			<app-card [interaction]="interaction" (delete-interaction)="onDeleteInteractionClick($event)">
 				<app-interaction-card-content [interaction]="interaction" />

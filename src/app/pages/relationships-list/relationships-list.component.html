@@ -50,7 +50,7 @@
 
 @for (group of filteredGroupedRelationships(); track group.status) {
 	@if (group.relationships.length) {
-		<app-card-group (click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
+		<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
 			@for (relationship of group.relationships; track relationship._id) {
 				<app-card [relationship]="relationship" (delete-relationship)="onDeleteRelationshipClick($event)">
 					<app-relationship-card-content [relationship]="relationship" />

@@ -1,5 +1,7 @@
-import { Component, ElementRef, inject, input, model, OnInit, signal } from '@angular/core'
+import { Component, computed, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { MatIconModule } from '@angular/material/icon'
+
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
 
 @Component({
@@ -17,12 +19,21 @@ export class CardGroupComponent implements OnInit {
 	readonly header = input.required<string>()
 	readonly headerColor = input('white', { alias: 'header-color' })
 	readonly cardCount = input<number>(0, { alias: 'card-count' })
-	readonly open = model(true)
+	readonly open = signal(true)
+	readonly headerClick = output<void>({ alias: 'header-click' })
 
 	readonly instanceNumber = signal<number|undefined>(undefined)
 
 	readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
 	readonly responsiveUiService = inject(ResponsiveUiService)
+
+	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
+	readonly maxGroupHeight = computed(() => {
+		// small viewport: take max card height into account so group expands tall enough
+		// large viewport: fixed height since cards scroll horizontally
+		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : 300
+		else return 0
+	})
 
 	// for assigning a unique ID to elements in each instance of this component
 	static instanceCount = 0
@@ -37,6 +48,7 @@ export class CardGroupComponent implements OnInit {
 
 	onGroupHeaderClick(): void {
 		this.open.set(!this.open())
+		this.headerClick.emit()
 		setTimeout(() => {
 			if (this.responsiveUiService.isSmallViewport() && this.open()) {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth' })

@@ -1,5 +1,7 @@
-import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { AfterViewInit, Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
+import { toObservable } from '@angular/core/rxjs-interop'
+import { filter } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
 import { MatIconModule } from '@angular/material/icon'
@@ -13,6 +15,7 @@ import { Interaction, TimeUnit } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
 import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
+import { ResponsiveUiService } from '../../services/responsive-ui.service'
 import { SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 
 @Component({
@@ -25,15 +28,22 @@ import { SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-const
 	templateUrl: './interactions-list.component.html',
 	styleUrl: './interactions-list.component.scss'
 })
-export class InteractionsListComponent implements OnInit {
+export class InteractionsListComponent implements OnInit, AfterViewInit {
 	private readonly cardGroups = viewChildren(CardGroupComponent)
 
-	readonly interactions = signal<Interaction[]>([]) // writable signal
+	readonly interactions = signal<Interaction[]>([])
+	private readonly interactionsSet$ = toObservable(this.cardGroups).pipe(filter(value => value.length > 0))
+
 	readonly groupBy = signal<TimeUnit>('week')
 	readonly groupedInteractions = computed(() => this.interactionsService.groupBy(this.interactions(), this.groupBy()))
+	readonly groupByChange$ = toObservable(this.groupBy).subscribe(() => {
+		if (this.responsiveUiService.isSmallViewport()) this.onCollapseOrExpandAllClick(false)
+		else this.onCollapseOrExpandAllClick(true)
+	})
 
 	private readonly api = inject(ApiService)
 	private readonly interactionsService = inject(InteractionsService)
+	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly snackBar = inject(MatSnackBar)
 
 	readonly allGroupsCollapsed = signal(false)
@@ -43,12 +53,14 @@ export class InteractionsListComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.api.getInteractions().subscribe({
-			next: interactions => {
-				this.interactions.set(interactions)
-				// wait a tick for the groups to collapse themselves on small viewports
-				setTimeout(() => this.setGroupsCollapsedState())
-			},
+			next: interactions => this.interactions.set(interactions),
 			error: error => this.snackBar.open('Failed to load interactions.', undefined, this.SNACKBAR_CONFIG)
+		})
+	}
+
+	ngAfterViewInit(): void {
+		this.interactionsSet$.subscribe(() => {
+			this.setGroupsCollapsedState()
 		})
 	}
 
