@@ -84,13 +84,14 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	}
 
 	onDeleteInteractionClick(deleteTarget: Interaction): void {
-		this.interactionsService.deleteInteraction(deleteTarget).subscribe({
-			next: targetDeleted => {
-				if (!targetDeleted) return
+		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
+			if (targetDeleted) {
 				const deleteIndex = this.interactions().findIndex(({ _id }) => _id === deleteTarget._id)
-				this.interactions().splice(deleteIndex, 1)
-			},
-			error: error => this.snackBar.open('Failed to delete interaction. Try again.', undefined, this.SNACKBAR_CONFIG)
+				this.interactions.set([
+					...this.interactions().slice(0, deleteIndex),
+					...this.interactions().slice(deleteIndex + 1)
+				])
+			}
 		})
 	}
 

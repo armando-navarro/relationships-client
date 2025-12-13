@@ -121,16 +121,18 @@ export class RelationshipsListComponent implements OnInit {
 	}
 
 	onDeleteRelationshipClick(deleteTarget: Relationship): void {
-		this.relationshipsService.deleteRelationship(deleteTarget).subscribe({
-			next: targetDeleted => {
-				if (!targetDeleted) return
-
+		this.relationshipsService.deleteRelationship(deleteTarget).subscribe(targetDeleted => {
+			if (targetDeleted) {
 				this.groupedRelationships().forEach(group => {
 					const deleteIndex = group.relationships.findIndex(({ _id }) => _id === deleteTarget._id)
-					if (deleteIndex > -1) group.relationships.splice(deleteIndex, 1)
+					if (deleteIndex > -1) {
+						group.relationships = [
+							...group.relationships.slice(0, deleteIndex),
+							...group.relationships.slice(deleteIndex + 1)
+						]
+					}
 				})
-			},
-			error: error => this.snackBar.open('Failed to delete relationship. Try again.', undefined, this.SNACKBAR_CONFIG)
+			}
 		})
 	}
 

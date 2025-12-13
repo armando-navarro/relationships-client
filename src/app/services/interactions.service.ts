@@ -1,10 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core'
-import { MatDialog } from '@angular/material/dialog'
-import { mergeMap, Observable, of } from 'rxjs'
+import { Observable, of, tap } from 'rxjs'
 import { DateTime } from 'luxon'
 
 import { ApiService } from './api.service'
-import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component'
+import { DeletionService } from './deletion.service'
 import { Interaction, InteractionGroup, TimeUnit } from "../interfaces/interaction.interface"
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +12,7 @@ export class InteractionsService {
 	readonly interactionsForUnsavedRelationship = signal<Interaction[]>([])
 
 	private readonly api = inject(ApiService)
-	private readonly dialog = inject(MatDialog)
+	private readonly deletionService = inject(DeletionService)
 
 	getSelectedInteraction(relationshipId?: string, interactionId?: string): Observable<Interaction|undefined> {
 		if (!relationshipId) return of(this.selectedInteraction())
@@ -48,14 +47,12 @@ export class InteractionsService {
 
 	/** @returns false if user clicked Cancel, true if interaction was deleted */
 	deleteInteraction(deleteTarget: Interaction): Observable<boolean> {
-		const dialogRef = this.dialog.open(ConfirmationDialogComponent, { data: { deleteTarget: `this interaction with ${deleteTarget.nameOfPerson}` } })
-		return dialogRef.afterClosed().pipe(
-			mergeMap(deleteConfirmed => {
-				if (!deleteConfirmed) return of(false)
-				if (deleteTarget._id) return this.api.deleteInteraction(deleteTarget._id!, deleteTarget.idOfRelationship!)
-				return this.deleteUnsavedInteraction(deleteTarget)
-			})
-		)
+		return this.deletionService.deleteWithConfirmation(
+			this.api.deleteInteraction(deleteTarget._id!, deleteTarget.idOfRelationship!),
+			`an interaction with ${deleteTarget.nameOfPerson}`
+		).pipe(tap(targetDeleted => {
+			if (targetDeleted) this.deleteUnsavedInteraction(deleteTarget)
+		}))
 	}
 
 	private deleteUnsavedInteraction(deleteTarget: Interaction): Observable<boolean> {
@@ -63,7 +60,10 @@ export class InteractionsService {
 			type === deleteTarget.type && date!.valueOf() === deleteTarget.date!.valueOf()
 		)
 		if (targetIndex > -1) {
-			this.interactionsForUnsavedRelationship().splice(targetIndex, 1)
+			this.interactionsForUnsavedRelationship.set([
+				...this.interactionsForUnsavedRelationship().slice(0, targetIndex),
+				...this.interactionsForUnsavedRelationship().slice(targetIndex + 1)
+			])
 			return of(true)
 		} else {
 			return of(false)

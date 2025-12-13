@@ -141,14 +141,18 @@ export class EditRelationshipComponent implements OnInit {
 	}
 
 	onDeleteInteractionClick(deleteTarget: Interaction): void {
-		this.interactionsService.deleteInteraction(deleteTarget).subscribe({
-			next: targetDeleted => {
-				if (!targetDeleted) return
-
-				let deleteIndex = this.relationship()?.interactions?.findIndex(({ _id }) => _id === deleteTarget._id)
-				if (deleteIndex !== undefined && deleteIndex > -1) this.relationship()?.interactions?.splice(deleteIndex, 1)
-			},
-			error: error => this.snackBar.open('Failed to delete interaction. Try again.', undefined, this.SNACKBAR_CONFIG)
+		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
+			if (targetDeleted && this.relationship()?.interactions) {
+				const deleteIndex = this.relationship()!.interactions!.findIndex(({ _id }) => _id === deleteTarget._id)
+				this.relationship.update(relationship => ({
+					...relationship!,
+					interactions: [
+						...relationship!.interactions!.slice(0, deleteIndex),
+						...relationship!.interactions!.slice(deleteIndex + 1),
+					]
+				}))
+				this.interactionsValue = this.relationship()!.interactions!
+			}
 		})
 	}
 
