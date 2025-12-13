@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { filter } from 'rxjs'
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
@@ -32,11 +32,16 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	private readonly cardGroups = viewChildren(CardGroupComponent)
 
 	readonly interactions = signal<Interaction[]>([])
-	private readonly interactionsSet$ = toObservable(this.cardGroups).pipe(filter(value => value.length > 0))
+	private readonly interactionsSet$ = toObservable(this.cardGroups).pipe(
+		takeUntilDestroyed(),
+		filter(value => value.length > 0)
+	)
 
 	readonly groupBy = signal<TimeUnit>('week')
 	readonly groupedInteractions = computed(() => this.interactionsService.groupBy(this.interactions(), this.groupBy()))
-	readonly groupByChange$ = toObservable(this.groupBy).subscribe(() => {
+	readonly groupByChange$ = toObservable(this.groupBy).pipe(
+		takeUntilDestroyed(),
+	).subscribe(() => {
 		if (this.responsiveUiService.isSmallViewport()) this.onCollapseOrExpandAllClick(false)
 		else this.onCollapseOrExpandAllClick(true)
 	})
