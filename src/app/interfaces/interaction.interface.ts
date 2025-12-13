@@ -39,7 +39,7 @@ export enum InteractionRate {
 
 export interface Topic {
 	topic: string
-	notes?: string
+	notes: string
 }
 
 export type TimeUnit = 'day'|'week'|'month'

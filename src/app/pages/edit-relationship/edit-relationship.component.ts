@@ -64,6 +64,8 @@ export class EditRelationshipComponent implements OnInit {
 				this.initFormValues(this.relationshipsService.unsavedRelationship())
 			} else {
 				this.relationship.set({
+					firstName: '',
+					notes: '',
 					interactions: this.interactionsService.interactionsForUnsavedRelationship().sort(
 						this.interactionsService.sortInteractionsDesc
 					)

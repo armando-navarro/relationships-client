@@ -6,7 +6,7 @@ export interface RelationshipId {
 
 export interface Relationship {
 	_id?: string
-	firstName?: string
+	firstName: string
 	lastName?: string
 	fullName?: string // derived
 
@@ -20,16 +20,10 @@ export interface Relationship {
 	attentionNeededStatus?: AttentionNeededStatus
 	attentionStatusColor?: string
 
-	notes?: string
+	notes: string
 }
 
-export interface RelationshipsGroupedByStatus {
-	[AttentionNeededStatus.Overdue]: RelationshipGroup,
-	[AttentionNeededStatus.Today]: RelationshipGroup,
-	[AttentionNeededStatus.Soon]: RelationshipGroup,
-	[AttentionNeededStatus.Good]: RelationshipGroup,
-	[AttentionNeededStatus.NotAvailable]: RelationshipGroup,
-}
+export type RelationshipsGroupedByStatus = Record<AttentionNeededStatus, RelationshipGroup>
 
 export interface RelationshipGroup {
 	status: AttentionNeededStatus,

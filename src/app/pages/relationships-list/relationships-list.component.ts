@@ -39,13 +39,10 @@ export class RelationshipsListComponent implements OnInit {
 
 	// relationship data processing
 	readonly groupedRelationships = signal<RelationshipGroup[]>([])
-	readonly relationshipNames = computed(() => {
-		const relationships = this.groupedRelationships().reduce(
-			(accumulator, current) => accumulator.concat(current.relationships),
-			[] as Relationship[]
-		)
-		return this.relationshipsService.sortByFirstName(relationships).map(({ fullName }) => fullName!) || []
-	})
+	readonly ungroupedRelationships = computed(() => this.groupedRelationships().flatMap(({ relationships }) => relationships))
+	readonly relationshipNames = computed(() =>
+		this.relationshipsService.sortByFirstName(this.ungroupedRelationships()).map(({ fullName }) => fullName!) || []
+	)
 	readonly hasRelationships = computed(() => this.groupedRelationships().some(group => group.relationships.length))
 
 	// search filter processing

@@ -112,10 +112,7 @@ export class EditInteractionComponent implements OnInit {
 	private loadRelationships(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
-				const relationships = Object.values(groupedRelationships).reduce(
-					(accumulator, current) => accumulator.concat(current.relationships),
-					[] as Relationship[]
-				)
+				const relationships = Object.values(groupedRelationships).flatMap(({ relationships }) => relationships)
 				const sortedRels = this.relationshipsService.sortByFirstName(relationships)
 				this.relationships.set(sortedRels)
 			},
