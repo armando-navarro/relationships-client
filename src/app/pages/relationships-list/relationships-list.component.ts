@@ -1,6 +1,8 @@
 import { Component, computed, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
+import { debounceTime, distinctUntilChanged } from 'rxjs'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatButtonModule } from '@angular/material/button'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -47,6 +49,15 @@ export class RelationshipsListComponent implements OnInit {
 
 	// search filter processing
 	readonly searchValue = signal('')
+	readonly searchValueSub = toObservable(this.searchValue).pipe(
+		takeUntilDestroyed(),
+		debounceTime(300),
+		distinctUntilChanged(),
+	).subscribe(searchValue => {
+		const { filteredNames, filteredGroups } = this.applySearchFilter(searchValue)
+		this.filteredNames.set(filteredNames)
+		this.filteredGroupedRelationships.set(filteredGroups)
+	})
 	readonly filteredNames = signal<string[]>(this.relationshipNames())
 	readonly filteredGroupedRelationships = signal<RelationshipGroup[]>(this.groupedRelationships() || [])
 	readonly filterEffect = effect(() => this.applySearchFilter(this.searchValue()), { allowSignalWrites: true })
@@ -77,19 +88,14 @@ export class RelationshipsListComponent implements OnInit {
 		])
 	}
 
-	private applySearchFilter(searchValue: string): void {
+	private applySearchFilter(searchValue: string): { filteredNames: string[], filteredGroups: RelationshipGroup[] } {
 		const lowerSearchValue = searchValue.toLowerCase().trim()
 
 		// no filter
-		if (!lowerSearchValue) {
-			this.filteredNames.set(this.relationshipNames())
-			this.filteredGroupedRelationships.set(this.groupedRelationships())
-			return
-		}
+		if (!lowerSearchValue) return { filteredNames: this.relationshipNames(), filteredGroups: this.groupedRelationships() }
 
 		// filter autocomplete suggested names
 		const filteredNames = this.relationshipNames().filter(name => name.toLowerCase().includes(lowerSearchValue))
-		this.filteredNames.set(filteredNames)
 
 		// filter grouped relationships
 		const filteredGroups = this.groupedRelationships().map<RelationshipGroup>(({ status, statusColor, relationships }) => ({
@@ -97,7 +103,7 @@ export class RelationshipsListComponent implements OnInit {
 			statusColor,
 			relationships: relationships.filter(({ fullName }) => fullName?.toLowerCase().includes(lowerSearchValue))
 		}))
-		this.filteredGroupedRelationships.set(filteredGroups)
+		return { filteredNames, filteredGroups }
 	}
 
 	onCollapseOrExpandAllClick(open: boolean): void {
