@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http'
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, SecurityContext } from '@angular/core'
+import { DomSanitizer } from '@angular/platform-browser'
 import { map, Observable, tap } from 'rxjs'
 import { DateTime } from 'luxon'
 
@@ -11,6 +12,7 @@ import { Interaction } from "../interfaces/interaction.interface"
 export class ApiService {
 	private baseUrl = environment.apiUrl
 	private readonly http = inject(HttpClient)
+	private readonly sanitizer = inject(DomSanitizer)
 
 	//#region Relationship endpoints
 
@@ -100,8 +102,9 @@ export class ApiService {
 		})
 	}
 
-	private convertNewlinesToLineBreaks(notes: string|undefined): string|undefined {
-		return notes?.replaceAll('&#10;', '<br />')?.replaceAll('\n', '<br />')
+	private convertNewlinesToLineBreaks(notes: string): string {
+		const sanitzedNotes = this.sanitizer.sanitize(SecurityContext.HTML, notes) ?? ''
+		return sanitzedNotes.replaceAll('&#10;', '<br />').replaceAll('\n', '<br />')
 	}
 	//#endregion
 
