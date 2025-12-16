@@ -4,21 +4,22 @@
 	display: block;
 }
 
-h1 {
-	font-size: var(--page-title-font-size-small);
-	margin: 0;
-	@media screen and (min-width: $small-breakpoint) {
-		font-size: var(--page-title-font-size-large);
-	}
+app-page-header-bar {
+	font-size: var(--mdc-dialog-subhead-size);
 }
 
 mat-form-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
 	font-size: 0.8rem;
 }
 
+section.relationship {
+	h2 {
+		margin-top: 0;
+	}
+}
+
 section.relationship,
 section.interaction-details {
-	padding: 0 12px 12px;
 	mat-form-field {
 		display: flex;
 		width: min-content;
@@ -42,8 +43,6 @@ section.interaction-details {
 }
 
 section.topics {
-	padding: 0 12px 12px;
-
 	h2 {
 		display: flex;
 		align-items: center;

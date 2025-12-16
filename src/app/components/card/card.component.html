@@ -2,10 +2,10 @@
 	<mat-icon aria-hidden="true">perm_identity</mat-icon>
 	<a class="name" [routerLink]="editRoute()">{{relationshipName()}}</a>
 
-	<a class="edit" [routerLink]="editRoute()" (click)="onEditClick()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()">
+	<a [routerLink]="editRoute()" (click)="onEditClick()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()">
 		<mat-icon>edit</mat-icon>
 	</a>
-	<button class="delete" (click)="onDeleteClick()" (click)="onEditClick()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()">
+	<button class="delete" (click)="onDeleteClick()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()">
 		<mat-icon>delete</mat-icon>
 	</button>
 </div>

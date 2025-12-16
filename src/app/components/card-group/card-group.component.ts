@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
+import { Component, computed, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { MatIconModule } from '@angular/material/icon'
 

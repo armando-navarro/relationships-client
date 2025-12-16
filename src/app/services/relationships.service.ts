@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
 
 import { ApiService } from './api.service'
@@ -7,8 +7,6 @@ import { Relationship } from '../interfaces/relationship.interface'
 
 @Injectable({ providedIn: 'root' })
 export class RelationshipsService {
-	readonly unsavedRelationship = signal<Relationship|undefined>(undefined)
-
 	private readonly api = inject(ApiService)
 	private readonly deletionService = inject(DeletionService)
 

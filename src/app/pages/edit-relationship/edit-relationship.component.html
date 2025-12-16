@@ -1,58 +1,60 @@
 <app-page-header-bar justify-content="space-between">
 	<a (click)="onCancelClick()" mat-button>Cancel</a>
-	<h1>{{firstNameValue}}</h1>
+	<h1>{{form.controls.firstName.value}}</h1>
 	<a (click)="onSaveClick()" mat-button>Save</a>
 </app-page-header-bar>
 
 <section class="relationship-details" aria-labelledby="relationship-details-title">
 	<h2 id="relationship-details-title">Relationship Details</h2>
 
-	<mat-form-field appearance="outline" floatLabel="auto">
-		<mat-label>First Name</mat-label>
-		<input matInput [(ngModel)]="firstNameValue" name="firstName" required>
-		@if (!firstNameValue.trim()) {
-			<mat-error>First name is required</mat-error>
-		}
-	</mat-form-field>
+	<form id="relationship-details" (ngSubmit)="onSaveClick()" [formGroup]="form">
+		<mat-form-field appearance="outline" floatLabel="auto">
+			<mat-label>First Name</mat-label>
+			<input matInput formControlName="firstName" required>
+			@if (form.controls.firstName.hasError('required')) {
+				<mat-error>First name is required</mat-error>
+			}
+		</mat-form-field>
 
-	<mat-form-field appearance="outline" floatLabel="auto">
-		<mat-label>Last Name</mat-label>
-		<input matInput [(ngModel)]="lastNameValue" name="lastName">
-	</mat-form-field>
+		<mat-form-field appearance="outline" floatLabel="auto">
+			<mat-label>Last Name</mat-label>
+			<input matInput formControlName="lastName">
+		</mat-form-field>
 
-	<mat-form-field class="interaction-goal" hintLabel="How often would you like to stay in contact?" appearance="outline" floatLabel="auto">
-		<mat-label>Interaction Goal</mat-label>
-		<select [(ngModel)]="interactionRateGoalValue" name="interactionRateGoal" matNativeControl>
-			<option [value]="InteractionRates.EveryDay">{{InteractionRates.EveryDay}}</option>
-			<option [value]="InteractionRates.EveryWeek">{{InteractionRates.EveryWeek}}</option>
-			<option [value]="InteractionRates.EveryTwoWeeks">{{InteractionRates.EveryTwoWeeks}}</option>
-			<option [value]="InteractionRates.EveryMonth">{{InteractionRates.EveryMonth}}</option>
-			<option [value]="InteractionRates.EveryTwoMonths">{{InteractionRates.EveryTwoMonths}}</option>
-			<option [value]="InteractionRates.EverySixMonths">{{InteractionRates.EverySixMonths}}</option>
-			<option [value]="InteractionRates.EveryYear">{{InteractionRates.EveryYear}}</option>
-		</select>
-	</mat-form-field>
+		<mat-form-field class="interaction-goal" hintLabel="How often would you like to stay in contact?" appearance="outline" floatLabel="auto">
+			<mat-label>Interaction Goal</mat-label>
+			<select formControlName="interactionRateGoal" matNativeControl>
+				<option [value]="InteractionRates.EveryDay">{{InteractionRates.EveryDay}}</option>
+				<option [value]="InteractionRates.EveryWeek">{{InteractionRates.EveryWeek}}</option>
+				<option [value]="InteractionRates.EveryTwoWeeks">{{InteractionRates.EveryTwoWeeks}}</option>
+				<option [value]="InteractionRates.EveryMonth">{{InteractionRates.EveryMonth}}</option>
+				<option [value]="InteractionRates.EveryTwoMonths">{{InteractionRates.EveryTwoMonths}}</option>
+				<option [value]="InteractionRates.EverySixMonths">{{InteractionRates.EverySixMonths}}</option>
+				<option [value]="InteractionRates.EveryYear">{{InteractionRates.EveryYear}}</option>
+			</select>
+		</mat-form-field>
 
-	<mat-form-field class="notes" appearance="outline" floatLabel="auto">
-		<mat-label>Notes</mat-label>
-		<textarea matInput [(ngModel)]="notesValue" name="notes-{{notesValue}}" rows="3"></textarea>
-	</mat-form-field>
+		<mat-form-field class="notes" appearance="outline" floatLabel="auto">
+			<mat-label>Notes</mat-label>
+			<textarea matInput formControlName="notes" rows="3"></textarea>
+		</mat-form-field>
+	</form>
 </section>
 
 <section class="interactions" aria-labelledby="interactions-title">
 	<h2 id="interactions-title">
 		Interactions
-		<a (click)="onAddInteractionClick()" class="add-interaction-mobile" [routerLink]="" mat-icon-button aria-label="Add interaction">
+		<button (click)="onAddInteractionClick()" class="add-interaction-mobile" mat-icon-button aria-label="Add interaction">
 			<mat-icon>add</mat-icon>
-		</a>
-		<a (click)="onAddInteractionClick()" class="add-interaction-desktop" [routerLink]="" mat-stroked-button>
+		</button>
+		<button (click)="onAddInteractionClick()" class="add-interaction-desktop" mat-stroked-button>
 			Add Interaction
-		</a>
+		</button>
 	</h2>
 
 		<p>
-			@if (relationship()?.interactions?.length) {
-				Here you can view all of your most recent interactions{{(relationship()?.firstName) ? ' with ' + relationship()?.firstName : ''}}.<br />
+			@if (form.controls.interactions.value.length) {
+				Here you can view all of your most recent interactions{{(form.controls.firstName.value) ? ' with ' + form.controls.firstName.value : ''}}.<br />
 				{{TOPIC_HINT_VERBIAGE}}
 			} @else {
 				Once you add interactions, they will appear here.
@@ -60,8 +62,12 @@
 		</p>
 
 	<div class="interactions-container">
-		@for (interaction of interactionsValue; track interaction._id || interaction.date) {
-			<app-card [interaction]="interaction" (delete-interaction)="onDeleteInteractionClick($event)">
+		@for (interaction of interactions; track interaction._id || interaction.date) {
+			<app-card
+				[interaction]="interaction"
+				(edit-interaction)="onEditInteractionClick($event)"
+				(delete-interaction)="onDeleteInteractionClick($event)"
+			>
 				<app-interaction-card-content [interaction]="interaction" />
 			</app-card>
 		}

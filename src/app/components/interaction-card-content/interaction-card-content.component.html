@@ -2,7 +2,7 @@
 	<span>{{ interaction().type }}</span>
 	<span>{{ interaction().date | date }}</span>
 
-	@if (interaction().topicsDiscussed?.length) {
+	@if (interaction().topicsDiscussed.length) {
 		<span class="topics-title">Topics Discussed</span>
 	}
 	<mat-chip-set aria-label="Topic selection">

@@ -1,36 +1,69 @@
-import { Interaction, InteractionRate } from "./interaction.interface"
+import { Interaction, InteractionResponse } from "./interaction.interface"
+import { RelationshipMapperService } from "../services/mappers/relationship.mapper.service"
 
-export interface RelationshipId {
-	relationshipId: string
-}
-
+//#region models for INTERNAL use
 export interface Relationship {
-	_id?: string
+	_id: string|null
 	firstName: string
-	lastName?: string
-	fullName?: string // derived
-
-	interactions?: Interaction[]
-	interactionRateGoal?: InteractionRate
-	daysUntilGoal?: string // derived
-	lastInteractionDate?: string // derived
-	lastInteractionRelativeTime?: string // derived
-	daysUntilAttentionNeeded?: number
-	attentionNeededText?: string
-	attentionNeededStatus?: AttentionNeededStatus
-	attentionStatusColor?: string
-
+	lastName: string|null
+	fullName: string
+	interactions: Interaction[]
+	interactionRateGoal: InteractionRate|null
 	notes: string
+
+	lastInteractionDate: Date|null
+	lastInteractionRelativeTime: string|null
+	daysUntilAttentionNeeded: number|null
+	attentionNeededText: string
+	attentionNeededStatus: AttentionNeededStatus
+	attentionStatusColor: string
 }
-
-export type RelationshipsGroupedByStatus = Record<AttentionNeededStatus, RelationshipGroup>
-
 export interface RelationshipGroup {
 	status: AttentionNeededStatus,
 	statusColor: string,
 	relationships: Relationship[],
 }
+export type RelationshipsGroupedByStatus = Record<AttentionNeededStatus, RelationshipGroup>
+export type RelationshipFormGroup = ReturnType<typeof RelationshipMapperService.prototype.mapModelToForm>
+export type RelationshipFormGroupValue = RelationshipFormGroup['value']
+//#endregion models for INTERNAL use
 
+//#region API PAYLOAD interfaces
+export interface RelationshipPayload {
+	_id: string|null
+	firstName: string
+	lastName: string|null
+	interactions: Interaction[]
+	interactionRateGoal: InteractionRate|null
+	notes: string
+}
+//#endregion API PAYLOAD interfaces
+
+//#region API RESPONSE interfaces
+export interface RelationshipResponse {
+	_id: string|null
+	firstName: string
+	lastName: string|null
+	fullName: string
+	interactions: InteractionResponse[]
+	interactionRateGoal: InteractionRate|null
+	notes: string
+
+	lastInteractionDate: string|null
+	daysUntilAttentionNeeded: number|null
+	attentionNeededText: string
+	attentionNeededStatus: AttentionNeededStatus
+	attentionStatusColor: string
+}
+export interface RelationshipGroupResponse {
+	status: AttentionNeededStatus,
+	statusColor: string,
+	relationships: RelationshipResponse[],
+}
+export type RelationshipsGroupedByStatusResponse = Record<AttentionNeededStatus, RelationshipGroupResponse>
+//#endregion API RESPONSE interfaces
+
+//#region enums
 export enum AttentionNeededStatus {
 	Today = 'Due Today',
 	Overdue = 'Overdue',
@@ -39,6 +72,13 @@ export enum AttentionNeededStatus {
 	NotAvailable = 'Due Date N/A',
 }
 
-export interface InsertedId {
-	insertedId: string
+export enum InteractionRate {
+	EveryDay = 'every day',
+	EveryWeek = 'every week',
+	EveryTwoWeeks = 'every 2 weeks',
+	EveryMonth = 'every month',
+	EveryTwoMonths = 'every 2 months',
+	EverySixMonths = 'every 6 months',
+	EveryYear = 'every year'
 }
+//#endregion enums

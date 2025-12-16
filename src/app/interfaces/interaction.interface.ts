@@ -1,19 +1,50 @@
-import { RelationshipId } from "./relationship.interface"
+import { InteractionMapperService } from "../services/mappers/interaction.mapper.service"
 
-export interface InteractionId extends RelationshipId {
-	interactionId: string
-}
-
+//#region models for INTERNAL use
 export interface Interaction {
-	_id?: string
-	type?: InteractionType
+	_id: string|null
+	type: InteractionType|null
 	idOfRelationship?: string
 	nameOfPerson?: string
-	dateString?: string
-	date?: Date
-	topicsDiscussed?: Topic[]
+	date: Date|null
+	topicsDiscussed: Topic[]
 }
+export interface Topic {
+	topic: string
+	notes: string
+}
+export interface InteractionGroup {
+	groupedBy: TimeUnit,
+	timeUnitsAgo: number,
+	timeAgoText: string,
+	interactions: Interaction[],
+}
+export type TimeUnit = 'day'|'week'|'month'
+export type InteractionFormGroup = ReturnType<typeof InteractionMapperService.prototype.mapModelToForm>
+export type InteractionFormGroupValue = InteractionFormGroup['value']
+//#endregion
 
+//#region API PAYLOAD interfaces
+export interface InteractionPayload {
+	_id: string|null
+	type: InteractionType
+	date: Date
+	topicsDiscussed: Topic[]
+}
+//#endregion
+
+//#region API RESPONSE interfaces
+export interface InteractionResponse {
+	_id: string
+	type: InteractionType
+	idOfRelationship: string
+	nameOfPerson: string
+	date: string
+	topicsDiscussed: Topic[]
+}
+//#endregion
+
+//#region enums
 export enum InteractionType {
 	Email = 'E-mail',
 	InPerson = 'In person',
@@ -26,27 +57,4 @@ export enum InteractionType {
 	VoiceMail = 'Voice mail',
 	Other = 'Other'
 }
-
-export enum InteractionRate {
-	EveryDay = 'every day',
-	EveryWeek = 'every week',
-	EveryTwoWeeks = 'every 2 weeks',
-	EveryMonth = 'every month',
-	EveryTwoMonths = 'every 2 months',
-	EverySixMonths = 'every 6 months',
-	EveryYear = 'every year',
-}
-
-export interface Topic {
-	topic: string
-	notes: string
-}
-
-export type TimeUnit = 'day'|'week'|'month'
-
-export interface InteractionGroup {
-	groupedBy: TimeUnit,
-	timeUnitsAgo: number,
-	timeAgoText: string,
-	interactions: Interaction[],
-}
+//#endregion

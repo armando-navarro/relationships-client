@@ -18,6 +18,8 @@ export class CardComponent implements OnInit {
 	readonly relationship = input<Relationship>()
 	readonly interaction = input<Interaction>()
 	readonly hideFooter = input(false, { alias: 'hide-footer', transform: booleanAttribute })
+	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
+	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
 	readonly deleteInteraction = output<Interaction>({ alias: 'delete-interaction'})
 
@@ -28,10 +30,6 @@ export class CardComponent implements OnInit {
 
 	readonly editRoute = computed(() => {
 		if (this.relationship()) return ['/relationships', this.relationshipId(), 'edit']
-		if (this.interaction()) {
-			if (this.route.snapshot.data['isAddingRelationship']) return ['/relationships', 'add', 'interactions', 'edit']
-			else return ['/relationships', this.interaction()!.idOfRelationship, 'interactions', this.interaction()!._id, 'edit']
-		}
 		return undefined
 	})
 	readonly relationshipId = computed(() => this.relationship()?._id || this.interaction()?.idOfRelationship)
@@ -43,8 +41,10 @@ export class CardComponent implements OnInit {
 	}
 
 	onEditClick(): void {
-		if (this.interaction() && this.isAddingRelationship) {
-			this.interactionsService.setSelectedInteraction(this.interaction())
+		if (this.interaction()) {
+			this.editInteraction.emit(this.interaction()!)
+		} else if (this.relationship()) {
+			this.editRelationship.emit(this.relationship()!)
 		}
 	}
 

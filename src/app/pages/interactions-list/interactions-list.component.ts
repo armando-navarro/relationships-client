@@ -11,8 +11,11 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
-import { Interaction, TimeUnit } from "../../interfaces/interaction.interface"
+import { MatDialog } from '@angular/material/dialog'
+import { Interaction, InteractionFormGroup, TimeUnit } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
+import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
+import { EditInteractionComponent, InteractionDialogData } from '../edit-interaction/edit-interaction.component'
 import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
@@ -29,6 +32,13 @@ import { SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-const
 	styleUrl: './interactions-list.component.scss'
 })
 export class InteractionsListComponent implements OnInit, AfterViewInit {
+	private readonly api = inject(ApiService)
+	private readonly dialog = inject(MatDialog)
+	private readonly interactionMapper = inject(InteractionMapperService)
+	private readonly interactionsService = inject(InteractionsService)
+	private readonly responsiveUiService = inject(ResponsiveUiService)
+	private readonly snackBar = inject(MatSnackBar)
+
 	private readonly cardGroups = viewChildren(CardGroupComponent)
 
 	readonly interactions = signal<Interaction[]>([])
@@ -45,11 +55,6 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		if (this.responsiveUiService.isSmallViewport()) this.onCollapseOrExpandAllClick(false)
 		else this.onCollapseOrExpandAllClick(true)
 	})
-
-	private readonly api = inject(ApiService)
-	private readonly interactionsService = inject(InteractionsService)
-	private readonly responsiveUiService = inject(ResponsiveUiService)
-	private readonly snackBar = inject(MatSnackBar)
 
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
@@ -83,8 +88,38 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
+	onAddInteractionclick(): void {
+		const data: InteractionDialogData = {
+			relationshipId: null,
+			interactionId: null,
+			interaction: null,
+			isAddingInteraction: true,
+			showRelationshipPicker: true,
+		}
+		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((form: InteractionFormGroup) => {
+			const newInteraction = this.interactionMapper.mapFormToModel(form)
+			const updatedInteractions = this.interactionsService.insertInteractionInOrder(this.interactions(), newInteraction)
+			this.interactions.set(updatedInteractions)
+		})
+	}
+
+	onEditInteractionClick(editTarget: Interaction): void {
+		const data: InteractionDialogData = {
+			relationshipId: editTarget.idOfRelationship!,
+			interactionId: editTarget._id,
+			interaction: editTarget,
+			isEditingInteraction: true,
+		}
+		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((form: InteractionFormGroup) => {
+			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)
+			this.interactions.update(interactions =>
+				interactions.map(interaction => interaction._id === newInteraction._id ? newInteraction : interaction)
+			)
+		})
+	}
+
 	onDeleteInteractionClick(deleteTarget: Interaction): void {
-		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
+		this.interactionsService.deleteInteraction(deleteTarget, deleteTarget.idOfRelationship!, deleteTarget.nameOfPerson!).subscribe(targetDeleted => {
 			if (targetDeleted) {
 				const deleteIndex = this.interactions().findIndex(({ _id }) => _id === deleteTarget._id)
 				this.interactions.set([

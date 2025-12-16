@@ -6,10 +6,10 @@
 	</button>
 
 	<mat-menu #menu="matMenu" class="custom-mat-panel">
-		<a routerLink="/interactions/add" mat-menu-item>
+		<button (click)="onAddInteractionclick()" mat-menu-item>
 			<mat-icon>add</mat-icon>
 			<span>Add Interaction</span>
-		</a>
+		</button>
 		@if (groupBy() !== 'day') {
 			<button (click)="groupBy.set('day')" mat-menu-item>
 				<mat-icon>today</mat-icon>
@@ -51,7 +51,7 @@
 @for (group of groupedInteractions(); track group.timeUnitsAgo) {
 	<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
 		@for (interaction of group.interactions; track interaction._id) {
-			<app-card [interaction]="interaction" (delete-interaction)="onDeleteInteractionClick($event)">
+			<app-card [interaction]="interaction" (edit-interaction)="onEditInteractionClick($event)" (delete-interaction)="onDeleteInteractionClick($event)">
 				<app-interaction-card-content [interaction]="interaction" />
 			</app-card>
 		}
