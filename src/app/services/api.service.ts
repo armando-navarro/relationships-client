@@ -4,14 +4,17 @@ import { map, Observable } from 'rxjs'
 
 import { environment } from '../../environments/environment'
 import { InsertedId } from "../interfaces/misc.interface"
-import { Interaction, InteractionPayload, InteractionResponse } from "../interfaces/interaction.interface"
+import { AddInteractionResponse, Interaction, InteractionPayload, InteractionResponse, InteractionWriteResponse } from "../interfaces/interaction.interface"
 import { InteractionMapperService } from './mappers/interaction.mapper.service'
 import {
+	RelationshipDerivedProperties,
 	Relationship,
 	RelationshipPayload,
 	RelationshipResponse,
 	RelationshipsGroupedByStatus,
-	RelationshipsGroupedByStatusResponse
+	RelationshipsGroupedByStatusResponse,
+	UpdatedRelationshipProperties,
+	RelationshipUpdateResponse
 } from '../interfaces/relationship.interface'
 import { RelationshipMapperService } from './mappers/relationship.mapper.service'
 
@@ -40,14 +43,15 @@ export class ApiService {
 		return this.http.post<InsertedId>(`${this.baseUrl}/relationships`, relationship)
 	}
 
-	updateRelationship(relationship: RelationshipPayload): Observable<void> {
+
+	updateRelationship(relationship: RelationshipPayload): Observable<RelationshipUpdateResponse> {
 		relationship.interactions?.forEach(interaction => delete interaction.idOfRelationship)
-		return this.http.put<void>(`${this.baseUrl}/relationships/${relationship._id}`, relationship)
+		return this.http.put<RelationshipUpdateResponse>(`${this.baseUrl}/relationships/${relationship._id}`, relationship)
 	}
 
-	deleteRelationship(relationshipId: string): Observable<true> {
+	deleteRelationship(relationshipId: string): Observable<RelationshipDerivedProperties> {
 		return this.http.delete<true>(`${this.baseUrl}/relationships/${relationshipId}`).pipe(
-			map(() => true)
+			map(() => ({ lastInteractionDate: null }))
 		)
 	}
 	//#endregion
@@ -66,17 +70,24 @@ export class ApiService {
 		)
 	}
 
-	addInteraction(interaction: InteractionPayload, relationshipId: string): Observable<InsertedId> {
-		return this.http.post<InsertedId>(`${this.baseUrl}/relationships/${relationshipId}/interactions`, interaction)
+	addInteraction(interaction: InteractionPayload, relationshipId: string): Observable<InsertedId&UpdatedRelationshipProperties> {
+		return this.http.post<AddInteractionResponse>(`${this.baseUrl}/relationships/${relationshipId}/interactions`, interaction).pipe(
+			map(({ insertedId, updatedRelationshipProperties }) => ({
+				insertedId,
+				updatedRelationshipProperties: this.relationshipMapper.mapPartialResponseToModel(updatedRelationshipProperties)
+			})),
+		)
 	}
 
-	updateInteraction(interaction: InteractionPayload, relationshipId: string): Observable<void> {
-		return this.http.put<void>(`${this.baseUrl}/relationships/${relationshipId}/interactions/${interaction._id}`, interaction)
+	updateInteraction(interaction: InteractionPayload, relationshipId: string): Observable<RelationshipDerivedProperties> {
+		return this.http.put<InteractionWriteResponse>(`${this.baseUrl}/relationships/${relationshipId}/interactions/${interaction._id}`, interaction).pipe(
+			map(({ updatedRelationshipProperties }) => this.relationshipMapper.mapPartialResponseToModel(updatedRelationshipProperties)),
+		)
 	}
 
-	deleteInteraction(interactionId: string, relationshipId: string): Observable<true> {
-		return this.http.delete<null>(`${this.baseUrl}/relationships/${relationshipId}/interactions/${interactionId}`).pipe(
-			map(() => true)
+	deleteInteraction(interactionId: string, relationshipId: string): Observable<RelationshipDerivedProperties> {
+		return this.http.delete<InteractionWriteResponse>(`${this.baseUrl}/relationships/${relationshipId}/interactions/${interactionId}`).pipe(
+			map(response => this.relationshipMapper.mapPartialResponseToModel(response.updatedRelationshipProperties))
 		)
 	}
 

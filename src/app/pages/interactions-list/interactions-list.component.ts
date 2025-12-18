@@ -2,8 +2,10 @@ import { AfterViewInit, Component, computed, inject, OnInit, signal, viewChildre
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { filter } from 'rxjs'
+
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
+import { MatDialog } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -11,11 +13,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
-import { MatDialog } from '@angular/material/dialog'
-import { Interaction, InteractionFormGroup, TimeUnit } from "../../interfaces/interaction.interface"
+import { Interaction, TimeUnit } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
-import { EditInteractionComponent, InteractionDialogData } from '../edit-interaction/edit-interaction.component'
+import { EditInteractionComponent, InteractionDialogData, InteractionDialogSaveResult } from '../edit-interaction/edit-interaction.component'
 import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
@@ -91,12 +92,14 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	onAddInteractionclick(): void {
 		const data: InteractionDialogData = {
 			relationshipId: null,
-			interactionId: null,
+			relationshipName: null,
 			interaction: null,
 			isAddingInteraction: true,
 			showRelationshipPicker: true,
 		}
-		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((form: InteractionFormGroup) => {
+		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
+			if (!dataOrCancel) return
+			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form)
 			const updatedInteractions = this.interactionsService.insertInteractionInOrder(this.interactions(), newInteraction)
 			this.interactions.set(updatedInteractions)
@@ -106,11 +109,13 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	onEditInteractionClick(editTarget: Interaction): void {
 		const data: InteractionDialogData = {
 			relationshipId: editTarget.idOfRelationship!,
-			interactionId: editTarget._id,
+			relationshipName: editTarget.nameOfPerson!,
 			interaction: editTarget,
 			isEditingInteraction: true,
 		}
-		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((form: InteractionFormGroup) => {
+		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
+			if (!dataOrCancel) return
+			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)
 			this.interactions.update(interactions =>
 				interactions.map(interaction => interaction._id === newInteraction._id ? newInteraction : interaction)

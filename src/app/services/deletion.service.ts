@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { ConfirmationDialogComponent } from '../components/confirmation-dialog/confirmation-dialog.component'
+import { RelationshipDerivedProperties } from '../interfaces/relationship.interface'
 import { SNACKBAR_CONFIG } from '../constants/misc-constants'
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +13,7 @@ export class DeletionService {
 	private readonly snackBar = inject(MatSnackBar)
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
-	deleteWithConfirmation(deleteObservable: Observable<boolean>, deleteTarget: string): Observable<boolean> {
+	deleteWithConfirmation(deleteObservable: Observable<RelationshipDerivedProperties>, deleteTarget: string): Observable<RelationshipDerivedProperties|boolean> {
 		return this.dialog.open(ConfirmationDialogComponent, { data: { deleteTarget }}).afterClosed().pipe(
 			mergeMap(deleteConfirmed => {
 				if (!deleteConfirmed) return of(false)

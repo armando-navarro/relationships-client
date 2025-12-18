@@ -16,10 +16,10 @@
 	</button>
 
 	<mat-menu #menu="matMenu" class="custom-mat-panel">
-		<a routerLink="./add" mat-menu-item>
+		<button (click)="onAddRelationshipClick()" mat-menu-item>
 			<mat-icon>add</mat-icon>
 			<span>Add Relationship</span>
-		</a>
+		</button>
 		@if (!allGroupsExpanded()) {
 			<button (click)="onCollapseOrExpandAllClick(true)" mat-menu-item>
 				<mat-icon>unfold_more</mat-icon>
@@ -52,7 +52,7 @@
 	@if (group.relationships.length) {
 		<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
 			@for (relationship of group.relationships; track relationship._id) {
-				<app-card [relationship]="relationship" (delete-relationship)="onDeleteRelationshipClick($event)">
+				<app-card [relationship]="relationship" (edit-relationship)="onEditRelationshipClick($event)" (delete-relationship)="onDeleteRelationshipClick($event)">
 					<app-relationship-card-content [relationship]="relationship" />
 				</app-card>
 			}

@@ -2,19 +2,24 @@
 
 :host {
 	display: block;
+	@media screen and (max-width: $small-breakpoint) {
+		--mat-dialog-with-actions-content-padding: 20px 12px 0;
+	}
 }
 
-h1 {
-	margin: 0;
+h2 {
+	font-size: 1.15rem;
 }
 
 section.relationship-details form {
-	padding: 0 12px 12px;
 	border-bottom: 2px solid var(--large-card-border-color);
+	h2 {
+		margin: 0 0 20px;
+	}
 	mat-form-field {
 		display: flex;
 		&.interaction-goal {
-			margin-bottom: 16px;
+			margin-bottom: 36px;
 			@media screen and (max-width: 384px) {
 				margin-bottom: 24px;
 			}
@@ -49,34 +54,25 @@ section.relationship-details form {
 }
 
 section.interactions {
-	padding: 0 12px 12px;
-
 	.interactions-container {
-		display: grid;
-		grid-template-columns: 1fr;
-		align-items: start;
-		gap: 24px;
-		@media screen and (min-width: $small-breakpoint) {
-			grid-template-columns: 1fr 1fr;
-			column-gap: 12px;
-			row-gap: 20px;
-		}
-		@media screen and (min-width: $medium-breakpoint) {
-			grid-template-columns: 1fr 1fr 1fr;
-			column-gap: 32px;
-			row-gap: 52px;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 16px;
+
+		app-card {
+			width: 100%;
 		}
 	}
 
 	h2 {
-		position: relative;
 		grid-column-start: 1;
 		grid-column-end: -1;
-		margin: 32px 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 16px 0;
 		button {
-			position: absolute;
-			top: 0;
-			right: 0;
 			font-size: initial;
 		}
 		button.add-interaction-mobile {

@@ -1,20 +1,27 @@
-import { inject, Injectable, signal } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
+import { FormArray } from '@angular/forms'
 import { Observable } from 'rxjs'
 import { DateTime } from 'luxon'
 
 import { ApiService } from './api.service'
 import { DeletionService } from './deletion.service'
-import { Interaction, InteractionGroup, TimeUnit } from "../interfaces/interaction.interface"
+import { Interaction, InteractionFormGroup, InteractionGroup, TimeUnit } from "../interfaces/interaction.interface"
+import { RelationshipDerivedProperties } from '../interfaces/relationship.interface'
 
 @Injectable({ providedIn: 'root' })
 export class InteractionsService {
-	readonly interactionsForUnsavedRelationship = signal<Interaction[]>([])
-
 	private readonly api = inject(ApiService)
 	private readonly deletionService = inject(DeletionService)
 
 	/** Inserts an interaction into the proper spot in an array of interactions sorted descending by date. */
-	insertInteractionInOrder(sortedInteractions: Interaction[], newInteraction: Interaction): Interaction[] {
+	insertInteractionInOrder(sortedInteractions: FormArray<InteractionFormGroup>, newInteraction: InteractionFormGroup): void
+	insertInteractionInOrder(sortedInteractions: Interaction[], newInteraction: Interaction): Interaction[]
+	insertInteractionInOrder(sortedInteractions: Interaction[]|FormArray<InteractionFormGroup>, newInteraction: Interaction|InteractionFormGroup): Interaction[]|void {
+		if (sortedInteractions instanceof FormArray && 'controls' in newInteraction) {
+			return this.insertInteractionFormInOrder(sortedInteractions, newInteraction)
+		}
+		if (!Array.isArray(sortedInteractions) || 'controls' in newInteraction) return
+
 		let low = 0
 		let high = sortedInteractions.length
 
@@ -31,8 +38,20 @@ export class InteractionsService {
 		]
 	}
 
+	private insertInteractionFormInOrder(sortedInteractions: FormArray, newInteraction: InteractionFormGroup): void {
+		let low = 0
+		let high = sortedInteractions.length
+
+		while (low < high) {
+			const mid = Math.floor((low + high) / 2)
+			if (sortedInteractions.at(mid).value.date! > newInteraction.value.date!) low = mid + 1
+			else high = mid
+		}
+		sortedInteractions.insert(low, newInteraction)
+	}
+
 	/** @returns false if user clicked Cancel, true if interaction was deleted */
-	deleteInteraction(deleteTarget: Interaction, relationshipId: string, personName: string): Observable<boolean> {
+	deleteInteraction(deleteTarget: Interaction, relationshipId: string, personName: string): Observable<RelationshipDerivedProperties|boolean> {
 		return this.deletionService.deleteWithConfirmation(
 			this.api.deleteInteraction(deleteTarget._id!, relationshipId),
 			`an interaction with ${personName}`

@@ -1,4 +1,4 @@
-import { Interaction, InteractionResponse } from "./interaction.interface"
+import { Interaction, InteractionResponse, InteractionWriteResponse } from "./interaction.interface"
 import { RelationshipMapperService } from "../services/mappers/relationship.mapper.service"
 
 //#region models for INTERNAL use
@@ -11,12 +11,12 @@ export interface Relationship {
 	interactionRateGoal: InteractionRate|null
 	notes: string
 
-	lastInteractionDate: Date|null
-	lastInteractionRelativeTime: string|null
-	daysUntilAttentionNeeded: number|null
-	attentionNeededText: string
-	attentionNeededStatus: AttentionNeededStatus
-	attentionStatusColor: string
+	lastInteractionDate?: Date|null
+	lastInteractionRelativeTime?: string|null
+	daysUntilAttentionNeeded?: number|null
+	attentionNeededText?: string
+	attentionNeededStatus?: AttentionNeededStatus
+	attentionStatusColor?: string
 }
 export interface RelationshipGroup {
 	status: AttentionNeededStatus,
@@ -26,6 +26,18 @@ export interface RelationshipGroup {
 export type RelationshipsGroupedByStatus = Record<AttentionNeededStatus, RelationshipGroup>
 export type RelationshipFormGroup = ReturnType<typeof RelationshipMapperService.prototype.mapModelToForm>
 export type RelationshipFormGroupValue = RelationshipFormGroup['value']
+export interface UpdatedRelationshipProperties {
+	updatedRelationshipProperties: RelationshipDerivedProperties
+}
+export interface RelationshipDerivedProperties {
+	lastInteractionDate: Date|null
+	lastInteractionRelativeTime?: string|null
+	daysUntilAttentionNeeded?: number|null
+	attentionNeededText?: string
+	attentionNeededStatus?: AttentionNeededStatus
+	attentionStatusColor?: string
+	fullName?: string
+}
 //#endregion models for INTERNAL use
 
 //#region API PAYLOAD interfaces
@@ -61,6 +73,16 @@ export interface RelationshipGroupResponse {
 	relationships: RelationshipResponse[],
 }
 export type RelationshipsGroupedByStatusResponse = Record<AttentionNeededStatus, RelationshipGroupResponse>
+export interface RelationshipDerivedPropertiesResponse {
+	lastInteractionDate: string|null
+	lastInteractionRelativeTime?: string|null
+	daysUntilAttentionNeeded?: number|null
+	attentionNeededText?: string
+	attentionNeededStatus?: AttentionNeededStatus
+	attentionStatusColor?: string
+	fullName?: string
+}
+export type RelationshipUpdateResponse = InteractionWriteResponse
 //#endregion API RESPONSE interfaces
 
 //#region enums

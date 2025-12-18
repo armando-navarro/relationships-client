@@ -5,15 +5,28 @@
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
+	max-height: 250px;
 	border: 1px solid var(--header-background-color);
 	border-radius: var(--primary-border-radius);
+	overflow: hidden;
+	transition:
+		max-height 0.5s,
+		padding 0.5s;
+
 	@media screen and (min-width: $small-breakpoint) {
 		min-width: 315px;
 		width: 315px;
 	}
+
+	&.hidden {
+		max-height: 48px;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
 }
 
 .header {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 4px;
@@ -26,11 +39,81 @@
 	border-top-left-radius: var(--primary-border-radius);
 	border-top-right-radius: var(--primary-border-radius);
 
+	.name,
+	.edit,
+	.delete {
+		position: relative;
+		left: 0;
+		transition:
+			left 0.5s 0.2s,
+			opacity 0.5s 0.2s;
+		&.hidden {
+			opacity: 0;
+			transition:
+				left 0.5s,
+				opacity 0.5s;
+		}
+	}
 	.name {
 		flex: 1;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
+		justify-content: start;
+		&.hidden {
+			left: -165px;
+		}
+		::ng-deep .mdc-button__label {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+	.edit.hidden {
+		left: 90px;
+	}
+	.delete.hidden {
+		left: 45px;
+	}
+	.collapse-expand mat-icon {
+		transition: transform 0.5s;
+		&.open {
+			transform: rotate(-90deg);
+		}
+		&:not(.open) {
+			transform: rotate(90deg);
+		}
+	}
+
+	.collapsed-header {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		justify-content: start;
+		align-items: center;
+		gap: 64px;
+		padding: 0 48px 0 16px;
+		opacity: 0;
+		color: var(--mat-app-text-color, inherit);
+		font-size: 1rem;
+		font-weight: normal;
+		transition: opacity 0.5s;
+		@media screen and (min-width: $small-breakpoint) {
+			gap: 32px;
+		}
+		&.visible {
+			opacity: 1;
+			transition: opacity 0.5s 0.4s;
+		}
+		.collapsed-left-text {
+			flex: none;
+			width: 6.56rem;
+		}
+		.collapsed-right-text {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
 	}
 }
 
@@ -40,6 +123,7 @@
 	gap: 32px;
 	width: 100%;
 	height: 100%;
+	max-height: 250px;
 	background: var(--card-background);
 	padding: 12px;
 }

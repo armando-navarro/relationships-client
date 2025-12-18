@@ -1,4 +1,4 @@
-<app-page-header-bar [dialog]="true" justify-content="center">
+<app-page-header-bar dialog justify-content="center">
 	{{pageHeading()}}
 </app-page-header-bar>
 
@@ -62,7 +62,7 @@
 				<button (click)="onAddTopicClick()" class="add-topic-mobile" mat-icon-button aria-label="Add Topic" type="button">
 					<mat-icon>add</mat-icon>
 				</button>
-				<button (click)="onAddTopicClick()" class="add-topic-desktop" mat-stroked-button aria-label="Add Topic" type="button">
+				<button (click)="onAddTopicClick()" class="add-topic-desktop" mat-button aria-label="Add Topic" type="button">
 					Add Topic
 				</button>
 			</h2>
@@ -94,6 +94,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-	<button (click)="onCancelClick()" [mat-dialog-close]="false" mat-button>Cancel</button>
+	<button [mat-dialog-close]="false" mat-button>Cancel</button>
 	<button (click)="onSaveClick()" mat-button>Save</button>
 </mat-dialog-actions>

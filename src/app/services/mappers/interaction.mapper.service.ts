@@ -41,7 +41,7 @@ export class InteractionMapperService {
 		}
 	}
 
-	mapModelToForm(interaction?: Interaction) {
+	mapModelToForm(interaction?: Interaction, relationshipId?: string, personName?: string) {
 		const form = this.fb.group({
 			_id: [interaction?._id ?? null],
 			type: [interaction?.type ?? null, { validators: [Validators.required] }],
@@ -49,8 +49,12 @@ export class InteractionMapperService {
 			topicsDiscussed: this.fb.array([
 				this.mapTopicsModelToForm()
 			]),
-			idOfRelationship: this.fb.control<string|null>(interaction?.idOfRelationship ?? null, Validators.required),
-			nameOfPerson: this.fb.control<string|null>(interaction?.nameOfPerson ?? null, Validators.required,)
+			idOfRelationship: this.fb.control<string|null>(
+				(interaction?.idOfRelationship || relationshipId) ?? null, Validators.required
+			),
+			nameOfPerson: this.fb.control<string|null>(
+				(interaction?.nameOfPerson || personName) ?? null, Validators.required
+			)
 		})
 		if (interaction?.topicsDiscussed.length) {
 			form.controls.topicsDiscussed.clear()
@@ -111,19 +115,21 @@ export class InteractionMapperService {
 		return interaction
 	}
 
-	mapFormToPayload(form: InteractionFormGroup): InteractionPayloadWithRelationshipId {
+	mapFormToPayload(form: InteractionFormGroup): InteractionPayload {
 		return {
-			payload: {
-				_id: form.value._id ?? null,
-				type: form.value.type!,
-				date: form.value.date!,
-				topicsDiscussed: form.value.topicsDiscussed!.map(topic => ({
-					topic: topic.topic!,
-					notes: topic.notes!,
-				}))
-			},
-			relationshipId: form.value.idOfRelationship ?? null,
+			_id: form.value._id ?? null,
+			type: form.value.type!,
+			date: form.value.date!,
+			topicsDiscussed: form.value.topicsDiscussed!.map(topic => ({
+				topic: topic.topic!,
+				notes: topic.notes!,
+			}))
 		}
+	}
+
+	mapFormToPayloadWithRelationshipId(form: InteractionFormGroup): InteractionPayloadWithRelationshipId {
+		const payload = this.mapFormToPayload(form)
+		return { payload, relationshipId: form.value.idOfRelationship ?? null }
 	}
 
 }

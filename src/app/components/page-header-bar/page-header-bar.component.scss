@@ -57,7 +57,5 @@
 
 :host.dialog {
 	position: relative;
-	h1 {
-		font-size: var(--mdc-dialog-subhead-size);
-	}
+	font-size: var(--mdc-dialog-subhead-size);
 }

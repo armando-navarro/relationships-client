@@ -1,81 +1,76 @@
-import { Component, inject, model, OnInit, signal } from '@angular/core'
-import { Location } from '@angular/common'
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms'
-import { ActivatedRoute, Router } from '@angular/router'
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { DatePipe } from '@angular/common'
+import { ReactiveFormsModule } from '@angular/forms'
+import { pairwise, startWith, Subject, takeUntil } from 'rxjs'
+
 import { MatButtonModule } from '@angular/material/button'
-import { MatDialog } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
-import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
-import { EditInteractionComponent, InteractionDialogData } from '../edit-interaction/edit-interaction.component'
-import { Interaction, InteractionFormGroup } from "../../interfaces/interaction.interface"
+import { EditInteractionComponent, InteractionDialogSaveResult } from '../edit-interaction/edit-interaction.component'
+import { Interaction } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
-import { InteractionRate } from "../../interfaces/relationship.interface"
+import { InteractionRate, Relationship, RelationshipFormGroup } from "../../interfaces/relationship.interface"
 import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
-import { RelationshipsService } from '../../services/relationships.service'
-import { REQUIRED_ERROR, SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
+import { RelationshipFormService } from '../../services/relationship-form.service'
 import { RelationshipMapperService } from '../../services/mappers/relationship.mapper.service'
+import { REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
+
+export interface RelationshipDialogData {
+	relationship: Relationship|null
+	isAddingRelationship?: boolean
+	isEditingRelationship?: true
+}
 
 @Component({
 	selector: 'app-edit-relationship',
 	standalone: true,
 	imports: [
-		CardComponent, InteractionCardContentComponent, MatButtonModule,
-		MatIconModule, MatFormFieldModule, MatInputModule, PageHeaderBarComponent, ReactiveFormsModule
+		CardComponent, DatePipe, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
+		MatDialogClose, MatDialogContent, MatIconModule, MatFormFieldModule, MatInputModule,
+		PageHeaderBarComponent, ReactiveFormsModule
 	],
+	providers: [RelationshipFormService],
 	templateUrl: './edit-relationship.component.html',
 	styleUrl: './edit-relationship.component.scss'
 })
-export class EditRelationshipComponent implements OnInit {
-	private readonly api = inject(ApiService)
+export class EditRelationshipComponent implements OnInit, OnDestroy {
+	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)
 	private readonly dialog = inject(MatDialog)
-	private readonly fb = inject(FormBuilder)
+	private readonly dialogRef = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly interactionsService = inject(InteractionsService)
-	private readonly location = inject(Location)
+	private readonly relationshipFormService = inject(RelationshipFormService)
 	private readonly relationshipMapper = inject(RelationshipMapperService)
-	private readonly relationshipsService = inject(RelationshipsService)
-	private readonly route = inject(ActivatedRoute)
-	private readonly router = inject(Router)
 	private readonly snackBar = inject(MatSnackBar)
 
-	readonly relationshipId = model<string>() // route parameter
 	interactions: Interaction[] = []
-	readonly isAddMode = signal(false)
 	form = this.relationshipMapper.mapModelToForm()
+	readonly pageHeading = signal('')
+	readonly isFormSaved = signal(false)
+
 	readonly InteractionRates = InteractionRate
+	private readonly destroy$ = new Subject<void>()
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
 	private readonly SAVE_RELATIONSHIP_ERROR = 'Failed to save relationship. Please try again.'
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
-	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
 
 	ngOnInit(): void {
 		this.form.controls.interactions.clear()
+		this.pageHeading.set(this.data.isAddingRelationship ? 'Add Relationship' : 'Edit Relationship')
 
-		this.isAddMode.set(!this.relationshipId())
-		if (this.isAddMode()) {
+		if (this.data.isAddingRelationship) this.initAddRelationship()
+		else this.initEditRelationship()
 
-		} else { // user is editing an existing relationship
-			this.api.getRelationship(this.relationshipId()!).subscribe(relationship => {
-				this.form.patchValue({
-					firstName: relationship.firstName,
-					lastName: relationship.lastName,
-					interactionRateGoal: relationship.interactionRateGoal,
-					notes: relationship.notes.replaceAll('<br />', '\n'),
-				})
-				this.form.controls.interactions.clear()
-				relationship.interactions.forEach(interaction =>
-					this.form.controls.interactions.push(this.interactionMapper.mapModelToForm(interaction))
-				)
-			})
-		}
+		// keep track of unsaved edits so the correct buttons are displayed
+		this.trackFormSavedState()
 
 		// keep a model of interactions to pass to card components (in some scenarios, form values don't exist for card components to consume)
 		this.form.controls.interactions.valueChanges.subscribe(interactions => {
@@ -83,9 +78,64 @@ export class EditRelationshipComponent implements OnInit {
 		})
 	}
 
-	onCancelClick(): void {
-		this.interactionsService.interactionsForUnsavedRelationship.set([])
-		this.location.back()
+	private initAddRelationship(): void {
+		this.form = this.relationshipFormService.initForm()
+	}
+
+	private initEditRelationship(): void {
+		this.form = this.relationshipFormService.initForm(this.data.relationship!)
+		this.interactions = this.data.relationship!.interactions
+		this.isFormSaved.set(true)
+	}
+
+	private trackFormSavedState(): void {
+		this.form.valueChanges.pipe(
+			takeUntil(this.destroy$),
+			startWith(this.form.value),
+			pairwise(),
+		).subscribe(([ previous, current ]) => {
+			// ignore changes to interactions because those are saved in the interactions dialog
+			if (
+				previous._id !== current._id ||
+				previous.firstName !== current.firstName ||
+				previous.lastName !== current.lastName ||
+				previous.interactionRateGoal !==  current.interactionRateGoal ||
+				previous.notes !== current.notes
+			) {
+				this.isFormSaved.set(false)
+			}
+		})
+	}
+
+	async onAddInteractionClick(): Promise<void> {
+		if (this.form.invalid) {
+			this.snackBar.open(this.REQUIRED_ERROR, undefined, this.SNACKBAR_CONFIG)
+			return
+		}
+		const data = await this.relationshipFormService.getAddInteractionData()
+		this.dialog.open(EditInteractionComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+			if (!dataOrCancel) return
+			this.relationshipFormService.processAddInteractionResult(dataOrCancel)
+		})
+	}
+
+	onEditInteractionClick(editTarget: Interaction): void {
+		const data = this.relationshipFormService.getEditInteractionData(editTarget)
+		this.dialog.open(EditInteractionComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+			if (!dataOrCancel) return
+			this.relationshipFormService.processEditInteractionResult(dataOrCancel)
+		})
+	}
+
+	onDeleteInteractionClick(deleteTarget: Interaction): void {
+		this.interactionsService.deleteInteraction(
+			deleteTarget,
+			this.data.relationship!._id!,
+			this.form.controls.firstName.value!
+		).subscribe(updatedPropertiesOrCancel => {
+			if (typeof updatedPropertiesOrCancel === 'boolean') return
+			this.relationshipFormService.proccessDeleteInteractionResult(deleteTarget, updatedPropertiesOrCancel)
+		})
 	}
 
 	onSaveClick(): void {
@@ -93,59 +143,18 @@ export class EditRelationshipComponent implements OnInit {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined, this.SNACKBAR_CONFIG)
 			return
 		}
-		const relationship = this.relationshipMapper.mapFormToPayload(this.form)
-
-		if (this.isAddMode()) {
-			this.api.addRelationship(relationship).subscribe({
-				next: () => {
-					this.interactionsService.interactionsForUnsavedRelationship.set([])
-					this.location.back()
-				},
-				error: error => this.snackBar.open(this.SAVE_RELATIONSHIP_ERROR, undefined, this.SNACKBAR_CONFIG)
-			})
-		} else { // user is editing an existing relationship
-			this.api.updateRelationship(relationship).subscribe({
-				next: () => this.location.back(),
-				error: error => this.snackBar.open(this.SAVE_RELATIONSHIP_ERROR, undefined, this.SNACKBAR_CONFIG)
-			})
-		}
-	}
-
-	onAddInteractionClick(): void {
-		const data: InteractionDialogData = {
-			relationshipId: this.relationshipId() ?? null,
-			interactionId: null,
-			interaction: null,
-			isAddingInteraction: true,
-		}
-		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((form: InteractionFormGroup) => {
-			this.form.controls.interactions.insert(this.form.controls.interactions.length * -2, form)
+		this.relationshipFormService.saveRelationship().subscribe({
+			next: () => this.onDoneClick(),
+			error: error => this.snackBar.open(this.SAVE_RELATIONSHIP_ERROR, undefined, this.SNACKBAR_CONFIG)
 		})
 	}
 
-	onEditInteractionClick(editTarget: Interaction): void {
-		const data: InteractionDialogData = {
-			relationshipId: this.relationshipId() ?? null,
-			interactionId: editTarget._id,
-			interaction: editTarget,
-			isEditingInteraction: true,
-		}
-		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((form: InteractionFormGroup) => {
-			const targetIndex = this.form.controls.interactions.controls.findIndex(({ value }) => value._id === form.value._id)
-			this.form.controls.interactions.setControl(targetIndex, form)
-		})
+	onDoneClick(): void {
+		this.dialogRef.close(this.relationshipFormService.getRelationship())
 	}
 
-	onDeleteInteractionClick(deleteTarget: Interaction): void {
-		const firstName = this.form.controls.firstName.value!
-		const interactionsArray = this.form.controls.interactions
-
-		this.interactionsService.deleteInteraction(deleteTarget, this.relationshipId()!, firstName).subscribe(targetDeleted => {
-			if (targetDeleted) {
-				const deleteIndex = interactionsArray.controls.findIndex(control => control.value._id === deleteTarget._id)
-				if (deleteIndex !== -1) interactionsArray.removeAt(deleteIndex)
-			}
-		})
+	ngOnDestroy(): void {
+		this.destroy$.next()
 	}
 
 }

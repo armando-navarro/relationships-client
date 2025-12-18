@@ -1,3 +1,5 @@
+import { RelationshipDerivedPropertiesResponse } from "./relationship.interface"
+import { InsertedId } from "./misc.interface"
 import { InteractionMapperService } from "../services/mappers/interaction.mapper.service"
 
 //#region models for INTERNAL use
@@ -42,6 +44,11 @@ export interface InteractionResponse {
 	date: string
 	topicsDiscussed: Topic[]
 }
+export interface InteractionWriteResponse {
+	updatedRelationshipProperties: RelationshipDerivedPropertiesResponse
+}
+export type AddInteractionResponse = InsertedId&InteractionWriteResponse
+
 //#endregion
 
 //#region enums

@@ -1,10 +1,12 @@
-import { Component, computed, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
+
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatButtonModule } from '@angular/material/button'
+import { MatDialog } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatIconModule } from '@angular/material/icon'
@@ -18,6 +20,7 @@ import { AttentionNeededStatus, Relationship, RelationshipGroup, RelationshipsGr
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { RelationshipsService } from '../../services/relationships.service'
 import { RelationshipCardContentComponent } from '../../components/relationship-card-content/relationship-card-content.component'
+import { EditRelationshipComponent, RelationshipDialogData } from '../edit-relationship/edit-relationship.component'
 import { SNACKBAR_CONFIG } from '../../constants/misc-constants'
 
 @Component({
@@ -32,12 +35,13 @@ import { SNACKBAR_CONFIG } from '../../constants/misc-constants'
 	styleUrl: './relationships-list.component.scss'
 })
 export class RelationshipsListComponent implements OnInit {
-	private readonly cardGroups = viewChildren(CardGroupComponent)
-
 	// services
 	private readonly api = inject(ApiService)
+	private readonly dialog = inject(MatDialog)
 	private readonly relationshipsService = inject(RelationshipsService)
 	private readonly snackBar = inject(MatSnackBar)
+
+	private readonly cardGroups = viewChildren(CardGroupComponent)
 
 	// relationship data processing
 	readonly groupedRelationships = signal<RelationshipGroup[]>([])
@@ -53,14 +57,9 @@ export class RelationshipsListComponent implements OnInit {
 		takeUntilDestroyed(),
 		debounceTime(300),
 		distinctUntilChanged(),
-	).subscribe(searchValue => {
-		const { filteredNames, filteredGroups } = this.applySearchFilter(searchValue)
-		this.filteredNames.set(filteredNames)
-		this.filteredGroupedRelationships.set(filteredGroups)
-	})
+	).subscribe(searchValue => this.applySearchFilter(searchValue))
 	readonly filteredNames = signal<string[]>(this.relationshipNames())
 	readonly filteredGroupedRelationships = signal<RelationshipGroup[]>(this.groupedRelationships() || [])
-	readonly filterEffect = effect(() => this.applySearchFilter(this.searchValue()), { allowSignalWrites: true })
 
 	// misc
 	readonly allGroupsCollapsed = signal(false)
@@ -88,22 +87,24 @@ export class RelationshipsListComponent implements OnInit {
 		])
 	}
 
-	private applySearchFilter(searchValue: string): { filteredNames: string[], filteredGroups: RelationshipGroup[] } {
+	private applySearchFilter(searchValue: string) {
 		const lowerSearchValue = searchValue.toLowerCase().trim()
+		let filteredNames = this.relationshipNames()
+		let filteredGroups = this.groupedRelationships()
 
-		// no filter
-		if (!lowerSearchValue) return { filteredNames: this.relationshipNames(), filteredGroups: this.groupedRelationships() }
+		if (lowerSearchValue) {
+			// filter autocomplete suggested names
+			filteredNames = this.relationshipNames().filter(name => name.toLowerCase().includes(lowerSearchValue))
 
-		// filter autocomplete suggested names
-		const filteredNames = this.relationshipNames().filter(name => name.toLowerCase().includes(lowerSearchValue))
-
-		// filter grouped relationships
-		const filteredGroups = this.groupedRelationships().map<RelationshipGroup>(({ status, statusColor, relationships }) => ({
-			status,
-			statusColor,
-			relationships: relationships.filter(({ fullName }) => fullName?.toLowerCase().includes(lowerSearchValue))
-		}))
-		return { filteredNames, filteredGroups }
+			// filter grouped relationships
+			filteredGroups = this.groupedRelationships().map<RelationshipGroup>(({ status, statusColor, relationships }) => ({
+				status,
+				statusColor,
+				relationships: relationships.filter(({ fullName }) => fullName?.toLowerCase().includes(lowerSearchValue))
+			}))
+		}
+		this.filteredNames.set(filteredNames)
+		this.filteredGroupedRelationships.set(filteredGroups)
 	}
 
 	onCollapseOrExpandAllClick(open: boolean): void {
@@ -118,6 +119,30 @@ export class RelationshipsListComponent implements OnInit {
 	private setGroupsCollapsedState(): void {
 		this.allGroupsCollapsed.set(!this.cardGroups().some(group => group.open()))
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
+	}
+
+	onAddRelationshipClick(): void {
+		const data: RelationshipDialogData = {
+			relationship: null,
+			isAddingRelationship: true,
+		}
+		this.dialog.open(EditRelationshipComponent, { data, disableClose: true }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
+			if (!relationshipOrCancel) return
+			this.relationshipsService.addRelationshipToGroups(relationshipOrCancel, this.groupedRelationships)
+		})
+	}
+
+	onEditRelationshipClick(editTarget: Relationship): void {
+		const data: RelationshipDialogData = {
+			relationship: editTarget,
+			isEditingRelationship: true,
+		}
+		this.dialog.open(EditRelationshipComponent, { data, disableClose: true }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
+			if (!relationshipOrCancel) return
+			const relationshipsGroupedByStatus = this.relationshipsService.updateRelationshipInGroups(relationshipOrCancel, this.groupedRelationships())
+			this.initGroups(relationshipsGroupedByStatus)
+			this.applySearchFilter(this.searchValue())
+		})
 	}
 
 	onDeleteRelationshipClick(deleteTarget: Relationship): void {
