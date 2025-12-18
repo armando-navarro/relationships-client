@@ -15,8 +15,8 @@ import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
 import { Interaction, TimeUnit } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
+import { InteractionDialogComponent, InteractionDialogData, InteractionDialogSaveResult } from '../../components/interaction-dialog/interaction-dialog.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
-import { EditInteractionComponent, InteractionDialogData, InteractionDialogSaveResult } from '../edit-interaction/edit-interaction.component'
 import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
@@ -97,7 +97,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			isAddingInteraction: true,
 			showRelationshipPicker: true,
 		}
-		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
+		this.dialog.open(InteractionDialogComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form)
@@ -113,7 +113,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			interaction: editTarget,
 			isEditingInteraction: true,
 		}
-		this.dialog.open(EditInteractionComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
+		this.dialog.open(InteractionDialogComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)

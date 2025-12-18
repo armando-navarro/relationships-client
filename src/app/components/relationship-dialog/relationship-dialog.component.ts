@@ -10,14 +10,14 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
-import { CardComponent } from '../../components/card/card.component'
-import { EditInteractionComponent, InteractionDialogSaveResult } from '../edit-interaction/edit-interaction.component'
+import { CardComponent } from '../card/card.component'
 import { Interaction } from "../../interfaces/interaction.interface"
-import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
+import { InteractionCardContentComponent } from '../interaction-card-content/interaction-card-content.component'
+import { InteractionDialogComponent, InteractionDialogSaveResult } from '../interaction-dialog/interaction-dialog.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
-import { InteractionRate, Relationship, RelationshipFormGroup } from "../../interfaces/relationship.interface"
+import { InteractionRate, Relationship } from "../../interfaces/relationship.interface"
 import { InteractionsService } from '../../services/interactions.service'
-import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
+import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { RelationshipFormService } from '../../services/relationship-form.service'
 import { RelationshipMapperService } from '../../services/mappers/relationship.mapper.service'
 import { REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
@@ -29,7 +29,7 @@ export interface RelationshipDialogData {
 }
 
 @Component({
-	selector: 'app-edit-relationship',
+	selector: 'app-relationship-dialog',
 	standalone: true,
 	imports: [
 		CardComponent, DatePipe, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
@@ -37,10 +37,10 @@ export interface RelationshipDialogData {
 		PageHeaderBarComponent, ReactiveFormsModule
 	],
 	providers: [RelationshipFormService],
-	templateUrl: './edit-relationship.component.html',
-	styleUrl: './edit-relationship.component.scss'
+	templateUrl: './relationship-dialog.component.html',
+	styleUrl: './relationship-dialog.component.scss'
 })
-export class EditRelationshipComponent implements OnInit, OnDestroy {
+export class RelationshipDialogComponent implements OnInit, OnDestroy {
 	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)
 	private readonly dialog = inject(MatDialog)
 	private readonly dialogRef = inject(MatDialogRef)
@@ -113,7 +113,7 @@ export class EditRelationshipComponent implements OnInit, OnDestroy {
 			return
 		}
 		const data = await this.relationshipFormService.getAddInteractionData()
-		this.dialog.open(EditInteractionComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+		this.dialog.open(InteractionDialogComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			this.relationshipFormService.processAddInteractionResult(dataOrCancel)
 		})
@@ -121,7 +121,7 @@ export class EditRelationshipComponent implements OnInit, OnDestroy {
 
 	onEditInteractionClick(editTarget: Interaction): void {
 		const data = this.relationshipFormService.getEditInteractionData(editTarget)
-		this.dialog.open(EditInteractionComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+		this.dialog.open(InteractionDialogComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			this.relationshipFormService.processEditInteractionResult(dataOrCancel)
 		})

@@ -14,7 +14,7 @@ import { ApiService } from '../../services/api.service'
 import { Interaction, InteractionFormGroup, InteractionPayload } from "../../interfaces/interaction.interface"
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionType } from "../../interfaces/interaction.interface"
-import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
+import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { Relationship, UpdatedRelationshipProperties } from '../../interfaces/relationship.interface'
 import { RelationshipsService } from '../../services/relationships.service'
 import { REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
@@ -33,18 +33,18 @@ export interface InteractionDialogSaveResult extends UpdatedRelationshipProperti
 }
 
 @Component({
-	selector: 'app-edit-interaction',
+	selector: 'app-interaction-dialog',
 	standalone: true,
 	imports: [
     MatButtonModule, MatDatepickerModule, MatDialogContent, MatDialogActions,
 		MatDialogClose, MatFormFieldModule, MatIconModule, MatInputModule,
 		PageHeaderBarComponent, ReactiveFormsModule,
 ],
-	templateUrl: './edit-interaction.component.html',
-	styleUrl: './edit-interaction.component.scss'
+	templateUrl: './interaction-dialog.component.html',
+	styleUrl: './interaction-dialog.component.scss'
 })
 
-export class EditInteractionComponent implements OnInit {
+export class InteractionDialogComponent implements OnInit {
 	private readonly api = inject(ApiService)
 	readonly data = inject<InteractionDialogData>(MAT_DIALOG_DATA)
 	private readonly dialogRef = inject(MatDialogRef)

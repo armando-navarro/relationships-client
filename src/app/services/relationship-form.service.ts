@@ -3,7 +3,7 @@ import { lastValueFrom, map, Observable, Subscription, tap } from 'rxjs'
 
 import { ApiService } from './api.service'
 import { Interaction } from '../interfaces/interaction.interface'
-import { InteractionDialogData, InteractionDialogSaveResult } from '../pages/edit-interaction/edit-interaction.component'
+import { InteractionDialogData, InteractionDialogSaveResult } from '../components/interaction-dialog/interaction-dialog.component'
 import { InteractionMapperService } from './mappers/interaction.mapper.service'
 import { InteractionsService } from './interactions.service'
 import { RelationshipDerivedProperties, Relationship, RelationshipFormGroup } from '../interfaces/relationship.interface'
