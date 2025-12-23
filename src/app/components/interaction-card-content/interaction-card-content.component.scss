@@ -21,4 +21,20 @@ mat-chip-set {
 
 mat-chip-set {
 	margin-top: 32px;
+	::ng-deep .mdc-evolution-chip-set__chips {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+	}
+}
+
+// global style
+::ng-deep .topic-bottom-sheet {
+	position: relative;
+	min-height: 300px;
+}
+
+button.close-topic {
+	position: absolute;
+	top: 18px;
+	right: 16px;
 }

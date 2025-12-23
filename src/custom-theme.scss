@@ -37,6 +37,7 @@ $relationships-client-theme: mat.define-theme((
 	--mdc-outlined-text-field-container-shape: var(--primary-border-radius);
 	--mdc-dialog-subhead-size: 1.5rem;
 	--mdc-text-button-label-text-size: 1.25rem;
+	--mat-bottom-sheet-container-background-color: var(--card-background);
 	--mdc-dialog-container-color: var(--card-background);
 }
 

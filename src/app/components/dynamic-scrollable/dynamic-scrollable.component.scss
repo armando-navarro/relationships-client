@@ -1,0 +1,37 @@
+:host {
+	position: relative;
+	display: block;
+}
+
+svg {
+	position: absolute;
+	top: calc(50% - 30px);
+	right: 0;
+	&.slide-down {
+		animation: 1.5s 3 slide-down forwards;
+	}
+}
+
+#gradient-start {
+	stop-color: var(--header-background-color);
+}
+
+#gradient-end {
+	stop-color: var(--primary-accent-color);
+}
+
+#down-arrow {
+	stroke: var(--large-card-border-color);
+	fill: url("#gradient");
+}
+
+@keyframes slide-down {
+	from {
+		translate: 0 -30px;
+		display: block;
+	}
+	to {
+		translate: 0 30px;
+		display: none;
+	}
+}

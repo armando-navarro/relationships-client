@@ -3,7 +3,7 @@
 </app-page-header-bar>
 
 <mat-dialog-content class="custom-scrollbar">
-	<form (ngSubmit)="onSaveClick()" [formGroup]="form">
+	<form (ngSubmit)="onSaveInteractionClick()" [formGroup]="form">
 
 		@if (data.showRelationshipPicker) {
 			<section class="relationship" aria-labelledby="relationship-details-title">
@@ -56,44 +56,63 @@
 			</mat-form-field>
 		</section>
 
-		<section class="topics" formArrayName="topicsDiscussed" aria-labelledby="topics-title">
-			<h2 id="topics-title">
-				Topics Discussed
-				<button (click)="onAddTopicClick()" class="add-topic-mobile" mat-icon-button aria-label="Add Topic" type="button">
-					<mat-icon>add</mat-icon>
-				</button>
-				<button (click)="onAddTopicClick()" class="add-topic-desktop" mat-button aria-label="Add Topic" type="button">
-					Add Topic
-				</button>
-			</h2>
+		<section class="topics" aria-labelledby="topics-title">
+			<h2 id="topics-title">Topics Discussed</h2>
 
 			@for (topic of form.controls.topicsDiscussed.controls; track topic; let index = $index) {
-				<div class="topic-card" [formGroupName]="index">
-
-					<mat-form-field hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
-						<mat-label>Topic</mat-label>
-						<input matInput formControlName="topic" required>
-						@if (topic.hasError('required')) {
-							<mat-error>Topic is required</mat-error>
-						}
-					</mat-form-field>
-
-					<button (click)="onRemoveTopicClick(index)" mat-icon-button aria-label="Remove Topic" type="button">
-						<mat-icon>remove</mat-icon>
-					</button>
-
-					<mat-form-field hintLabel="What do you want to remember about this topic?" appearance="outline" floatLabel="auto">
-						<mat-label>Notes</mat-label>
-						<textarea matInput formControlName="notes" rows="5"></textarea>
-					</mat-form-field>
-
-				</div>
+				<app-card
+					[collapsed-left-text]="topic.value.topic!"
+					[collapsed-right-text]="topic.value.notes!"
+					always-show-left-text
+					(edit-topic)="onEditTopicClick(index)"
+					(delete-topic)="onDeleteTopicClick(index)"
+					[open]="false"
+					collapsible
+					scrollable-body
+					hide-footer
+				>
+					{{topic.value.notes}}
+				</app-card>
 			}
+
+			<div class="topic-card" [formGroup]="topicForm">
+
+				<mat-form-field hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
+					<mat-label>Topic</mat-label>
+					<input #topicNameInput matInput formControlName="topic" required>
+					@if (topicForm.hasError('required')) {
+						<mat-error>Topic is required</mat-error>
+					}
+				</mat-form-field>
+
+				@if (topicForm.value.topic || topicForm.value.notes) {
+					<button (click)="onCancelTopicClick()" class="cancel-edit" mat-button aria-label="Cancel editing topic" type="button">
+						{{isEditTopicForm() ? 'Cancel' : 'Clear'}}
+					</button>
+				}
+				<button (click)="onSaveTopicClick()" class="save-topic" mat-button aria-label="Save Topic" type="button">
+					{{isAddTopicForm() ? 'Add' : 'Save'}} Topic
+				</button>
+
+				<mat-form-field hintLabel="What do you want to remember about this topic?" appearance="outline" floatLabel="auto">
+					<mat-label>Notes</mat-label>
+					<textarea matInput formControlName="notes" rows="5"></textarea>
+				</mat-form-field>
+
+			</div>
 		</section>
+
 	</form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-	<button [mat-dialog-close]="false" mat-button>Cancel</button>
-	<button (click)="onSaveClick()" mat-button>Save</button>
+	@if (!wasInteractionModified() && this.data.isAddingInteraction) {
+		<button [mat-dialog-close]="false" mat-button>Cancel</button>
+	}
+	@if (wasInteractionModified()) {
+		<button (click)="onSaveInteractionClick()" mat-button>Save</button>
+	}
+	@else if (!this.data.isAddingInteraction) {
+		<button (click)="onOkayClick()" mat-button>Okay</button>
+	}
 </mat-dialog-actions>

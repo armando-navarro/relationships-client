@@ -7,6 +7,7 @@ import {
 	InteractionFormGroupValue,
 	InteractionPayload,
 	InteractionResponse,
+	InteractionTopicFormGroup,
 	Topic
 } from '../../interfaces/interaction.interface'
 import { MiscMapperService } from './misc.mapper.service'
@@ -47,7 +48,7 @@ export class InteractionMapperService {
 			type: [interaction?.type ?? null, { validators: [Validators.required] }],
 			date: [interaction?.date ?? null],
 			topicsDiscussed: this.fb.array([
-				this.mapTopicsModelToForm()
+				this.mapTopicModelToForm()
 			]),
 			idOfRelationship: this.fb.control<string|null>(
 				(interaction?.idOfRelationship || relationshipId) ?? null, Validators.required
@@ -56,20 +57,27 @@ export class InteractionMapperService {
 				(interaction?.nameOfPerson || personName) ?? null, Validators.required
 			)
 		})
+		form.controls.topicsDiscussed.clear()
 		if (interaction?.topicsDiscussed.length) {
-			form.controls.topicsDiscussed.clear()
 			interaction.topicsDiscussed.forEach(topic => {
-				form.controls.topicsDiscussed.push(this.mapTopicsModelToForm(topic))
+				form.controls.topicsDiscussed.push(this.mapTopicModelToForm(topic))
 			})
 		}
 		return form
 	}
 
-	mapTopicsModelToForm(topicsDiscussed?: Topic) {
+	mapTopicModelToForm(topicDiscussed?: Topic) {
 		return this.fb.group({
-			topic: [topicsDiscussed?.topic ?? null, Validators.required],
-			notes: [topicsDiscussed?.notes ?? null, Validators.required]
+			topic: [topicDiscussed?.topic ?? null, Validators.required],
+			notes: [topicDiscussed?.notes ?? '']
 		})
+	}
+
+	mapTopicFormToModel(topicForm: InteractionTopicFormGroup): Topic {
+		return {
+			topic: (topicForm.value.topic ?? '').trim(),
+			notes: (topicForm.value.notes ?? '').trim(),
+		}
 	}
 
 	mapFormValueToModel(formValue: InteractionFormGroupValue): Interaction
@@ -88,7 +96,7 @@ export class InteractionMapperService {
 			date: formValue.date ?? null,
 			topicsDiscussed: (formValue.topicsDiscussed ?? []).map(topic => ({
 				topic: topic.topic ?? '',
-				notes: topic.notes ?? '',
+				notes: this.miscMapper.convertNewlinesToLineBreaks(topic.notes ?? ''),
 			}))
 		}
 		if (formValue.idOfRelationship) interaction.idOfRelationship = formValue.idOfRelationship
@@ -103,7 +111,7 @@ export class InteractionMapperService {
 			date: form.value.date ?? null,
 			topicsDiscussed: (form.value.topicsDiscussed ?? []).map(topic => ({
 				topic: topic.topic ?? '',
-				notes: topic.notes ?? '',
+				notes: this.miscMapper.convertNewlinesToLineBreaks(topic.notes ?? ''),
 			})),
 		}
 		if (form.value.idOfRelationship) interaction.idOfRelationship = form.value.idOfRelationship

@@ -61,19 +61,9 @@ section.topics {
 		}
 	}
 
-	button.add-topic-mobile {
-		mat-icon {
-			transform: scale(1.6);
-		}
-		@media screen and (min-width: $small-breakpoint) {
-			display: none;
-		}
-	}
-	button.add-topic-desktop {
-		font-size: initial;
-		@media screen and (max-width: $small-breakpoint) {
-			display: none;
-		}
+	app-card {
+		width: 100%;
+		margin-bottom: 24px;
 	}
 
 	.topic-card {
@@ -86,8 +76,15 @@ section.topics {
 		mat-form-field:has(input) {
 			min-width: 220px;
 		}
-		button {
+		button.cancel-edit,
+		button.save-topic {
 			position: absolute;
+			font-size: 1.05rem;
+		}
+		button.cancel-edit {
+			right: 128px;
+		}
+		button.save-topic {
 			right: 12px;
 		}
 		mat-form-field:not(:last-child) {

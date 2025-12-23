@@ -1,16 +1,18 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
-import { map, Observable } from 'rxjs'
+import { map, Observable, pairwise, startWith, Subject, takeUntil } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from "@angular/material/input"
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { ApiService } from '../../services/api.service'
+import { CardComponent } from '../card/card.component'
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirmation-dialog/confirmation-dialog.component'
 import { Interaction, InteractionFormGroup, InteractionPayload } from "../../interfaces/interaction.interface"
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionType } from "../../interfaces/interaction.interface"
@@ -36,26 +38,34 @@ export interface InteractionDialogSaveResult extends UpdatedRelationshipProperti
 	selector: 'app-interaction-dialog',
 	standalone: true,
 	imports: [
-    MatButtonModule, MatDatepickerModule, MatDialogContent, MatDialogActions,
-		MatDialogClose, MatFormFieldModule, MatIconModule, MatInputModule,
-		PageHeaderBarComponent, ReactiveFormsModule,
+    CardComponent, MatButtonModule, MatDatepickerModule, MatDialogContent,
+		MatDialogActions, MatDialogClose, MatFormFieldModule, MatIconModule,
+		MatInputModule, PageHeaderBarComponent, ReactiveFormsModule,
 ],
 	templateUrl: './interaction-dialog.component.html',
 	styleUrl: './interaction-dialog.component.scss'
 })
 
-export class InteractionDialogComponent implements OnInit {
+export class InteractionDialogComponent implements OnInit, OnDestroy {
 	private readonly api = inject(ApiService)
 	readonly data = inject<InteractionDialogData>(MAT_DIALOG_DATA)
+	private readonly dialog = inject(MatDialog)
 	private readonly dialogRef = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly relationshipsService = inject(RelationshipsService)
 	private readonly snackBar = inject(MatSnackBar)
+	private readonly topicNameInput = viewChild<ElementRef<HTMLInputElement>>('topicNameInput')
 
 	form = this.interactionMapper.mapModelToForm()
+	topicForm = this.interactionMapper.mapTopicModelToForm()
 	readonly relationships = signal<Relationship[]|undefined>(undefined)
 	readonly pageHeading = signal('')
+	readonly wasInteractionModified = signal(false)
+	readonly isAddTopicForm = signal(true)
+	readonly isEditTopicForm = computed(() => !this.isAddTopicForm())
+	private editTopicIndex: number|null = null
 	readonly typeOptions = InteractionType
+	private readonly destroy$ = new Subject<void>()
 
 	private readonly RELATIONSHIP_ERROR = 'Failed to load relationships. Try again later.'
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
@@ -67,6 +77,9 @@ export class InteractionDialogComponent implements OnInit {
 
 		if (this.data.isAddingInteraction) this.initAddInteraction()
 		else if (this.data.isEditingInteraction) this.initEditInteraction()
+
+		// keep track of unsaved edits so the correct buttons are displayed
+		this.trackFormSavedState()
 
 		this.pageHeading.set(this.data.isAddingInteraction ? 'Add Interaction' : 'Edit Interaction')
 	}
@@ -93,18 +106,97 @@ export class InteractionDialogComponent implements OnInit {
 		})
 	}
 
-	onAddTopicClick(): void {
-		this.form.controls.topicsDiscussed.push(this.interactionMapper.mapTopicsModelToForm())
+	private trackFormSavedState(): void {
+		this.form.valueChanges.pipe(
+			takeUntil(this.destroy$),
+			startWith(this.form.value),
+			pairwise(),
+		).subscribe(([ previous, current ]) => {
+			if (
+				previous._id !== current._id ||
+				previous.type !== current.type ||
+				previous.date?.valueOf() !== current.date?.valueOf() ||
+				previous.topicsDiscussed !==  current.topicsDiscussed
+			) {
+				this.wasInteractionModified.set(true)
+			}
+		})
 	}
 
-	onRemoveTopicClick(index: number): void {
-		const removedTopic = this.form.controls.topicsDiscussed.at(index)
+	onCancelTopicClick(): void {
+		this.topicForm = this.interactionMapper.mapTopicModelToForm()
+		this.editTopicIndex = null
+		this.isAddTopicForm.set(true)
+	}
+
+	onEditTopicClick(index: number): void {
+		if (index === this.editTopicIndex) {
+			this.topicNameInput()?.nativeElement.focus()
+			return
+		}
+
+		if (this.hasUnsavedTopicChanges()) {
+			const data: ConfirmationDialogData = {
+				titleText: 'Unsaved Changes',
+				dialogText: `You have unsaved changes that will be overwritten in topic: ${this.topicForm.value.topic?.trim()}.<br />Would you like to save it?`,
+				noText: 'No, discard changes',
+				yesText: 'Yes, save it',
+			}
+			this.dialog.open(ConfirmationDialogComponent, { data }).afterClosed().subscribe((userConfirmed: boolean) => {
+				let okayToEdit = true
+				if (userConfirmed) okayToEdit = this.onSaveTopicClick()
+				if (okayToEdit) this.editTopic(index)
+			})
+		} else {
+			this.editTopic(index)
+		}
+	}
+
+	private hasUnsavedTopicChanges(): boolean {
+		const { topic: formTopic, notes: formNotes } = this.topicForm.value
+		if (this.isEditTopicForm()) {
+			const { topic: originalTopic, notes: originalNotes } = this.form.controls.topicsDiscussed.at(this.editTopicIndex!).value
+			return formTopic !== originalTopic || formNotes !== originalNotes
+		} else {
+			return !!(formTopic?.trim() || formNotes?.trim())
+		}
+	}
+
+	private editTopic(index: number) {
+		// create a copy of the target topic form
+		const targetTopicForm = this.form.controls.topicsDiscussed.controls.at(index)
+		const targetTopic = this.interactionMapper.mapTopicFormToModel(targetTopicForm!)
+		this.topicForm = this.interactionMapper.mapTopicModelToForm(targetTopic)
+
+		this.editTopicIndex = index
+		this.isAddTopicForm.set(false)
+		this.topicNameInput()?.nativeElement.focus()
+	}
+
+	onDeleteTopicClick(index: number): void {
+		const deletedTopic = this.form.controls.topicsDiscussed.at(index)
 		this.form.controls.topicsDiscussed.removeAt(index)
 		const snackBarRef = this.snackBar.open('Topic removed', 'Undo', this.SNACKBAR_CONFIG)
-		snackBarRef.onAction().subscribe(() => this.form.controls.topicsDiscussed.insert(index, removedTopic))
+		snackBarRef.onAction().subscribe(() => this.form.controls.topicsDiscussed.insert(index, deletedTopic))
 	}
 
-	onSaveClick(): void {
+	/** @returns `true` if the topic was saved, or `false` otherwise. */
+	onSaveTopicClick(): boolean {
+		if (this.topicForm.invalid) {
+			this.snackBar.open(this.REQUIRED_ERROR, undefined, this.SNACKBAR_CONFIG)
+			return false
+		}
+		if (this.isAddTopicForm()) this.form.controls.topicsDiscussed.push(this.topicForm)
+		else /* isEditTopicForm */ {
+			this.form.controls.topicsDiscussed.setControl(this.editTopicIndex!, this.topicForm)
+			this.editTopicIndex = null
+		}
+		this.topicForm = this.interactionMapper.mapTopicModelToForm()
+		this.isAddTopicForm.set(true)
+		return true
+	}
+
+	onSaveInteractionClick(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined, this.SNACKBAR_CONFIG)
 			return
@@ -139,6 +231,14 @@ export class InteractionDialogComponent implements OnInit {
 				updatedRelationshipProperties,
 			}))
 		)
+	}
+
+	onOkayClick(): void {
+		this.dialogRef.close(false)
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next()
 	}
 
 }

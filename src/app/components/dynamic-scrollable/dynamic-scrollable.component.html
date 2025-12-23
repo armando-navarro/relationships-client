@@ -1,0 +1,12 @@
+<ng-content />
+@if (isOverflowing()) {
+	<svg #arrow [class.slide-down]="animateArrow()" [ngStyle]="animationCompleted() ? {display: 'none'} : {}" width="50" height="50" viewBox="0 0 100 100" role="img">
+		<defs>
+			<linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
+				<stop id="gradient-start" offset="0%" />
+				<stop id="gradient-end" offset="100%" />
+			</linearGradient>
+		</defs>
+		<path id="down-arrow" d="M 30 0 h 40 v 60 h 20 l -40 40 l -40 -40 h 20 Z"></path>
+	</svg>
+}

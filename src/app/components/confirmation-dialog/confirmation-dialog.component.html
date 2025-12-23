@@ -1,13 +1,10 @@
-<h2 mat-dialog-title>Confirm deletion</h2>
+<h2 mat-dialog-title>{{data.titleText ?? 'Confirm deletion'}}</h2>
 
 <mat-dialog-content>
-	<p>
-		Are you sure you want to delete {{data.deleteTarget}}?<br />
-		This action cannot be undone.
-	</p>
+	<p [innerHTML]="data.dialogText">	</p>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-	<button mat-button [mat-dialog-close]="false">Cancel</button>
-	<button mat-button [mat-dialog-close]="true">Delete</button>
+	<button mat-button [mat-dialog-close]="false">{{data.noText ?? 'Cancel'}}</button>
+	<button mat-button [mat-dialog-close]="true">{{data.yesText ?? 'Delete'}}</button>
 </mat-dialog-actions>

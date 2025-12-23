@@ -1,31 +1,33 @@
 <div class="header">
-	<button class="name" [class.hidden]="!open()" mat-button>{{relationshipName()}}</button>
+	@if (relationshipName()) {
+		<button class="name" (click)="onEditClick()" [class.hidden]="!open()" mat-button>{{relationshipName()}}</button>
+	}
+	@if (alwaysShowLeftText()) {
+		<span class="spacer" [class.hidden]="!open()"></span>
+	}
+	@if (collapsedLeftText() || collapsedRightText()) {
+		<div class="collapsed-header">
+			<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
+			<span class="collapsed-right-text" [class.hidden]="open()">{{collapsedRightText()}}</span>
+		</div>
+	}
 
-	<div class="collapsed-header" [class.visible]="!open()">
-		@if (collapsedLeftText()) {
-		<span class="collapsed-left-text">{{collapsedLeftText()}}</span>
-		}
-		@if (collapsedRightText()) {
-			<span class="collapsed-right-text">{{collapsedRightText()}}</span>
-		}
-	</div>
-
-	<button class="edit" (click)="onEditClick()" [class.hidden]="!open()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()">
+	<button class="edit" (click)="onEditClick()" [class.hidden]="!open()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()" type="button">
 		<mat-icon>edit</mat-icon>
 	</button>
-	<button class="delete" (click)="onDeleteClick()" [class.hidden]="!open()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()">
+	<button class="delete" (click)="onDeleteClick()" [class.hidden]="!open()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()" type="button">
 		<mat-icon>delete</mat-icon>
 	</button>
 	@if (collapsible()) {
-		<button class="collapse-expand" (click)="onCollapseExpandClick()" mat-icon-button [attr.aria-label]="(open() ? 'Collapse' : 'Expand') + ' card'">
+		<button class="collapse-expand" (click)="onCollapseExpandClick()" mat-icon-button [attr.aria-label]="(open() ? 'Collapse' : 'Expand') + ' card'" type="button">
 			<mat-icon [class.open]="open()">chevron_right</mat-icon>
 		</button>
 	}
 </div>
 
-<div class="body">
+<app-dynamic-scrollable class="body" [scrollable]="scrollableBody()" [is-visible]="open()" [style.display]="scrollableBody() ? 'block' : 'grid'">
 	<ng-content />
-</div>
+</app-dynamic-scrollable>
 
 @if (!hideFooter() && relationship()) {
 	<div class="footer">

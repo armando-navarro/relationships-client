@@ -1,14 +1,17 @@
 import { booleanAttribute, Component, computed, input, model, output } from '@angular/core'
+import { NgStyle } from '@angular/common'
+
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 
+import { DynamicScrollableComponent } from "../dynamic-scrollable/dynamic-scrollable.component"
 import { Interaction } from '../../interfaces/interaction.interface'
 import { Relationship } from '../../interfaces/relationship.interface'
 
 @Component({
 	selector: 'app-card',
 	standalone: true,
-	imports: [MatButtonModule, MatIconModule],
+	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, NgStyle],
 	templateUrl: './card.component.html',
 	styleUrl: './card.component.scss',
 	host: {
@@ -20,30 +23,38 @@ export class CardComponent {
 	readonly interaction = input<Interaction>()
 	readonly hideFooter = input(false, { alias: 'hide-footer', transform: booleanAttribute })
 	readonly collapsible = input(false, { transform: booleanAttribute })
-	readonly collapsedLeftText = input('', { alias: 'collapsed-left' })
-	readonly collapsedRightText = input('', { alias: 'collapsed-right' })
+	readonly scrollableBody = input(false, { alias: 'scrollable-body', transform: booleanAttribute })
+	readonly collapsedLeftText = input('', { alias: 'collapsed-left-text' })
+	readonly collapsedRightText = input('', { alias: 'collapsed-right-text' })
+	readonly alwaysShowLeftText = input(false, { alias: 'always-show-left-text', transform: booleanAttribute })
+
 	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
 	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
+	readonly editTopic = output({ alias: 'edit-topic'})
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
 	readonly deleteInteraction = output<Interaction>({ alias: 'delete-interaction'})
+	readonly deleteTopic = output({ alias: 'delete-topic'})
+
 	readonly open = model(true)
 
 	readonly relationshipId = computed(() => this.relationship()?._id || this.interaction()?.idOfRelationship)
 	readonly relationshipName = computed(() => this.relationship()?.fullName || this.interaction()?.nameOfPerson)
-	readonly modelName = computed(() => this.relationship() ? 'relationship' : 'interaction')
+	readonly modelName = computed(() => {
+		if (this.relationship()) return 'relationship'
+		else if (this.interaction()) return 'interaction'
+		else return 'topic'
+	})
 
 	onEditClick(): void {
-		if (this.interaction()) {
-			this.editInteraction.emit(this.interaction()!)
-		} else if (this.relationship()) {
-			this.editRelationship.emit(this.relationship()!)
-		}
+		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
+		else if (this.relationship()) this.editRelationship.emit(this.relationship()!)
+		else this.editTopic.emit()
 	}
 
 	onDeleteClick(): void {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
-		else throw new Error('Either relationship or interaction must exist for deletion.')
+		else this.deleteTopic.emit()
 	}
 
 	onCollapseExpandClick(): void {

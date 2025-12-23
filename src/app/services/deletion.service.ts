@@ -14,7 +14,8 @@ export class DeletionService {
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	deleteWithConfirmation(deleteObservable: Observable<RelationshipDerivedProperties>, deleteTarget: string): Observable<RelationshipDerivedProperties|boolean> {
-		return this.dialog.open(ConfirmationDialogComponent, { data: { deleteTarget }}).afterClosed().pipe(
+		const dialogText = `Are you sure you want to delete ${deleteTarget}?<br />This action cannot be undone.`
+		return this.dialog.open(ConfirmationDialogComponent, { data: { dialogText }}).afterClosed().pipe(
 			mergeMap(deleteConfirmed => {
 				if (!deleteConfirmed) return of(false)
 				return deleteObservable
