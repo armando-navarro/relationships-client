@@ -10,7 +10,6 @@ import {
 	InteractionTopicFormGroup,
 	Topic
 } from '../../interfaces/interaction.interface'
-import { MiscMapperService } from './misc.mapper.service'
 
 interface InteractionPayloadWithRelationshipId {
 	payload: InteractionPayload
@@ -20,7 +19,6 @@ interface InteractionPayloadWithRelationshipId {
 @Injectable({ providedIn: 'root' })
 export class InteractionMapperService {
 	private readonly fb = inject(FormBuilder)
-	private readonly miscMapper = inject(MiscMapperService)
 
 	mapResponseToModel(response: InteractionResponse): Interaction
 	mapResponseToModel(responses: InteractionResponse[]): Interaction[]
@@ -35,10 +33,7 @@ export class InteractionMapperService {
 		return {
 			...response,
 			date: new Date(response.date),
-			topicsDiscussed: response.topicsDiscussed.map(topic => ({
-				...topic,
-				notes: this.miscMapper.convertNewlinesToLineBreaks(topic.notes)
-			}))
+			topicsDiscussed: response.topicsDiscussed
 		}
 	}
 
@@ -96,7 +91,7 @@ export class InteractionMapperService {
 			date: formValue.date ?? null,
 			topicsDiscussed: (formValue.topicsDiscussed ?? []).map(topic => ({
 				topic: topic.topic ?? '',
-				notes: this.miscMapper.convertNewlinesToLineBreaks(topic.notes ?? ''),
+				notes: topic.notes ?? '',
 			}))
 		}
 		if (formValue.idOfRelationship) interaction.idOfRelationship = formValue.idOfRelationship
@@ -111,7 +106,7 @@ export class InteractionMapperService {
 			date: form.value.date ?? null,
 			topicsDiscussed: (form.value.topicsDiscussed ?? []).map(topic => ({
 				topic: topic.topic ?? '',
-				notes: this.miscMapper.convertNewlinesToLineBreaks(topic.notes ?? ''),
+				notes: topic.notes ?? '',
 			})),
 		}
 		if (form.value.idOfRelationship) interaction.idOfRelationship = form.value.idOfRelationship

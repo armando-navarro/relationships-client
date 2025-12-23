@@ -1,13 +1,10 @@
+@import '../../../styles/mixins.scss';
+
 .notes {
 	grid-column-start: 1;
 	grid-column-end: -1;
 	line-height: 1.5;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	line-clamp: 2;
-	-webkit-line-clamp: 2;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	@include limit-lines(2);
 }
 .interaction-goal-label,
 .interaction-goal-value {

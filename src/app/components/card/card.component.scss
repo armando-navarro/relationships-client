@@ -1,3 +1,4 @@
+@import '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
 :host {
@@ -109,7 +110,7 @@
 		.collapsed-left-text,
 		.collapsed-right-text {
 			white-space: nowrap;
-			text-overflow: ellipsis;
+			@include limit-lines(1);
 			transition: opacity 0.5s;
 			&.hidden {
 				opacity: 0;

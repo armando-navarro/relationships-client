@@ -7,12 +7,13 @@ import { MatChipsModule } from '@angular/material/chips'
 import { MatIconModule } from '@angular/material/icon'
 
 import { Interaction } from '../../interfaces/interaction.interface'
+import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { Topic } from "../../interfaces/interaction.interface"
 
 @Component({
 	selector: 'app-interaction-card-content',
 	standalone: true,
-	imports: [DatePipe, MatBottomSheetModule, MatButtonModule, MatChipsModule, MatIconModule],
+	imports: [DatePipe, MatBottomSheetModule, MatButtonModule, MatChipsModule, MatIconModule, NewlinesToBrPipe],
 	templateUrl: './interaction-card-content.component.html',
 	styleUrl: './interaction-card-content.component.scss'
 })

@@ -14,6 +14,6 @@
 
 <ng-template #topicNotes>
 	<h3>{{selectedTopic()?.topic}}</h3>
-	<p [innerHTML]="selectedTopic()?.notes"></p>
+	<p [innerHTML]="selectedTopic()?.notes | newlinesToBr"></p>
 	<button (click)="onCloseTopicClick()" class="close-topic" mat-icon-button><mat-icon>close</mat-icon></button>
 </ng-template>

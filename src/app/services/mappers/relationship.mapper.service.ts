@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms'
 import { DateTime } from 'luxon'
 
 import { InteractionMapperService } from './interaction.mapper.service'
-import { MiscMapperService } from './misc.mapper.service'
 import { AttentionNeededStatus,
 	RelationshipDerivedProperties,
 	Relationship,
@@ -19,7 +18,6 @@ import { AttentionNeededStatus,
 export class RelationshipMapperService {
 	private readonly fb = inject(FormBuilder)
 	private readonly interactionMapper = inject(InteractionMapperService)
-	private readonly miscMapper = inject(MiscMapperService)
 
 	mapResponseToModel(response: RelationshipResponse): Relationship
 	mapResponseToModel(responses: RelationshipResponse[]): Relationship[]
@@ -40,7 +38,7 @@ export class RelationshipMapperService {
 			interactionRateGoal: response.interactionRateGoal,
 			daysUntilAttentionNeeded: response.daysUntilAttentionNeeded,
 			...partialRelationship,
-			notes: this.miscMapper.convertNewlinesToLineBreaks(response.notes),
+			notes: response.notes,
 			interactions: this.interactionMapper.mapResponseToModel(response.interactions)
 		}
 	}

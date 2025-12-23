@@ -17,6 +17,7 @@ import { InteractionDialogComponent, InteractionDialogSaveResult } from '../inte
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionRate, Relationship } from "../../interfaces/relationship.interface"
 import { InteractionsService } from '../../services/interactions.service'
+import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { RelationshipFormService } from '../../services/relationship-form.service'
 import { RelationshipMapperService } from '../../services/mappers/relationship.mapper.service'
@@ -32,10 +33,11 @@ export interface RelationshipDialogData {
 	selector: 'app-relationship-dialog',
 	standalone: true,
 	imports: [
-		CardComponent, DatePipe, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
-		MatDialogClose, MatDialogContent, MatIconModule, MatFormFieldModule, MatInputModule,
-		PageHeaderBarComponent, ReactiveFormsModule
-	],
+    CardComponent, DatePipe, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
+    MatDialogClose, MatDialogContent, MatIconModule, MatFormFieldModule, MatInputModule,
+    PageHeaderBarComponent, ReactiveFormsModule,
+    NewlinesToBrPipe
+],
 	providers: [RelationshipFormService],
 	templateUrl: './relationship-dialog.component.html',
 	styleUrl: './relationship-dialog.component.scss'

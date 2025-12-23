@@ -8,7 +8,7 @@
 	@if (collapsedLeftText() || collapsedRightText()) {
 		<div class="collapsed-header">
 			<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
-			<span class="collapsed-right-text" [class.hidden]="open()">{{collapsedRightText()}}</span>
+			<span class="collapsed-right-text" [class.hidden]="open()" [innerHTML]="collapsedRightText()"></span>
 		</div>
 	}
 

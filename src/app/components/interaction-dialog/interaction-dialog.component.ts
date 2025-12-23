@@ -16,6 +16,7 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirma
 import { Interaction, InteractionFormGroup, InteractionPayload } from "../../interfaces/interaction.interface"
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionType } from "../../interfaces/interaction.interface"
+import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { Relationship, UpdatedRelationshipProperties } from '../../interfaces/relationship.interface'
 import { RelationshipsService } from '../../services/relationships.service'
@@ -39,8 +40,8 @@ export interface InteractionDialogSaveResult extends UpdatedRelationshipProperti
 	standalone: true,
 	imports: [
     CardComponent, MatButtonModule, MatDatepickerModule, MatDialogContent,
-		MatDialogActions, MatDialogClose, MatFormFieldModule, MatIconModule,
-		MatInputModule, PageHeaderBarComponent, ReactiveFormsModule,
+    MatDialogActions, MatDialogClose, MatFormFieldModule, MatIconModule,
+    MatInputModule, NewlinesToBrPipe, PageHeaderBarComponent, ReactiveFormsModule,
 ],
 	templateUrl: './interaction-dialog.component.html',
 	styleUrl: './interaction-dialog.component.scss'

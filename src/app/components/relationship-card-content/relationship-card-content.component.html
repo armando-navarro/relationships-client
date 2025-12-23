@@ -1,5 +1,5 @@
 <ng-template #template>
-	<span class="notes" [innerHTML]="relationship().notes || 'No notes'"></span>
+	<span class="notes" [innerHTML]="(relationship().notes | newlinesToBr) || 'No notes'"></span>
 
 	<span class="interaction-goal-label">Interaction Goal:</span>
 	<span class="interaction-goal-value">{{relationship().interactionRateGoal}}</span>

@@ -62,7 +62,7 @@
 			@for (topic of form.controls.topicsDiscussed.controls; track topic; let index = $index) {
 				<app-card
 					[collapsed-left-text]="topic.value.topic!"
-					[collapsed-right-text]="topic.value.notes!"
+					[collapsed-right-text]="topic.value.notes | newlinesToBr"
 					always-show-left-text
 					(edit-topic)="onEditTopicClick(index)"
 					(delete-topic)="onDeleteTopicClick(index)"
@@ -71,7 +71,7 @@
 					scrollable-body
 					hide-footer
 				>
-					{{topic.value.notes}}
+					<span [innerHTML]="topic.value.notes | newlinesToBr"></span>
 				</app-card>
 			}
 
