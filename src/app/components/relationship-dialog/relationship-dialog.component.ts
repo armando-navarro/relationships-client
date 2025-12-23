@@ -20,7 +20,7 @@ import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { RelationshipFormService } from '../../services/relationship-form.service'
 import { RelationshipMapperService } from '../../services/mappers/relationship.mapper.service'
-import { REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
+import { DIALOG_CONFIG, REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
 
 export interface RelationshipDialogData {
 	relationship: Relationship|null
@@ -113,7 +113,7 @@ export class RelationshipDialogComponent implements OnInit, OnDestroy {
 			return
 		}
 		const data = await this.relationshipFormService.getAddInteractionData()
-		this.dialog.open(InteractionDialogComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+		this.dialog.open(InteractionDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			this.relationshipFormService.processAddInteractionResult(dataOrCancel)
 		})
@@ -121,7 +121,7 @@ export class RelationshipDialogComponent implements OnInit, OnDestroy {
 
 	onEditInteractionClick(editTarget: Interaction): void {
 		const data = this.relationshipFormService.getEditInteractionData(editTarget)
-		this.dialog.open(InteractionDialogComponent, { data, disableClose: true }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+		this.dialog.open(InteractionDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			this.relationshipFormService.processEditInteractionResult(dataOrCancel)
 		})

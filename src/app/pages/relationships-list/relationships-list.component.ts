@@ -21,7 +21,7 @@ import { PageHeaderBarComponent } from '../../components/page-header-bar/page-he
 import { RelationshipsService } from '../../services/relationships.service'
 import { RelationshipCardContentComponent } from '../../components/relationship-card-content/relationship-card-content.component'
 import { RelationshipDialogComponent, RelationshipDialogData } from '../../components/relationship-dialog/relationship-dialog.component'
-import { SNACKBAR_CONFIG } from '../../constants/misc-constants'
+import { DIALOG_CONFIG, SNACKBAR_CONFIG } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-relationships-list',
@@ -126,7 +126,7 @@ export class RelationshipsListComponent implements OnInit {
 			relationship: null,
 			isAddingRelationship: true,
 		}
-		this.dialog.open(RelationshipDialogComponent, { data, disableClose: true }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
+		this.dialog.open(RelationshipDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
 			if (!relationshipOrCancel) return
 			this.relationshipsService.addRelationshipToGroups(relationshipOrCancel, this.groupedRelationships)
 		})
@@ -137,7 +137,7 @@ export class RelationshipsListComponent implements OnInit {
 			relationship: editTarget,
 			isEditingRelationship: true,
 		}
-		this.dialog.open(RelationshipDialogComponent, { data, disableClose: true }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
+		this.dialog.open(RelationshipDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
 			if (!relationshipOrCancel) return
 			const relationshipsGroupedByStatus = this.relationshipsService.updateRelationshipInGroups(relationshipOrCancel, this.groupedRelationships())
 			this.initGroups(relationshipsGroupedByStatus)

@@ -20,7 +20,7 @@ import { InteractionMapperService } from '../../services/mappers/interaction.map
 import { InteractionsService } from '../../services/interactions.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
-import { SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
+import { DIALOG_CONFIG, SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-interactions-list',
@@ -97,7 +97,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			isAddingInteraction: true,
 			showRelationshipPicker: true,
 		}
-		this.dialog.open(InteractionDialogComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
+		this.dialog.open(InteractionDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form)
@@ -113,7 +113,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			interaction: editTarget,
 			isEditingInteraction: true,
 		}
-		this.dialog.open(InteractionDialogComponent, { data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult) => {
+		this.dialog.open(InteractionDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)

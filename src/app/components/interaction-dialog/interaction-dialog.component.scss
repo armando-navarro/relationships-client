@@ -2,6 +2,10 @@
 
 :host {
 	display: block;
+	@media screen and (max-width: $small-breakpoint) {
+		--mat-dialog-with-actions-content-padding: var(--small-dialog-content-padding);
+		--mat-dialog-actions-padding: var(--small-dialog-actions-padding);
+	}
 }
 
 mat-form-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
@@ -79,10 +83,12 @@ section.topics {
 		border: 1px solid var(--large-card-border-color);
 		border-radius: var(--large-border-radius);
 		margin-bottom: 24px;
+		mat-form-field:has(input) {
+			min-width: 220px;
+		}
 		button {
 			position: absolute;
 			right: 12px;
-			margin-left: auto;
 		}
 		mat-form-field:not(:last-child) {
 			margin-bottom: 24px;

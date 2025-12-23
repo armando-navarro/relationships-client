@@ -32,6 +32,10 @@
 
 	--max-paragraph-width: 600px;
 
+	--small-dialog-header-bar-height: 46px;
+	--small-dialog-content-padding: 20px 12px 0;
+	--small-dialog-actions-padding: 12px 24px 8px;
+
 	--scrollbar-thumb-color: #114497;
 	--scrollbar-track-color: transparent;
 
@@ -48,11 +52,9 @@ a[mat-icon-button],
 button[mat-icon-button] {
 	color: var(--mdc-outlined-button-label-text-color);
 }
-mat-datepicker-toggle button[mat-icon-button] {
-	color: var(--mdc-icon-button-icon-color);
-}
 
 // misc global styles
+
 body.mat-app-background {
 	background: #050816;
 }
@@ -71,6 +73,12 @@ p {
 .span-cols {
 	grid-column-start: 1;
 	grid-column-end: -1;
+}
+
+// increase click target size on select dropdowns
+mat-form-field .mdc-text-field--outlined .mat-mdc-form-field-infix:has(select) {
+	display: flex;
+	padding: 0;
 }
 
 .custom-mat-panel {

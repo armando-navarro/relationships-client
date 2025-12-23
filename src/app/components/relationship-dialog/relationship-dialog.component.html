@@ -67,8 +67,8 @@
 					(edit-interaction)="onEditInteractionClick($event)"
 					(delete-interaction)="onDeleteInteractionClick($event)"
 					collapsible
-					[collapsed-left]="(interaction.date | date:'mediumDate')!"
-					[collapsed-right]="interaction.topicsDiscussed[0].notes"
+					[collapsed-left-text]="(interaction.date | date:'mediumDate')!"
+					[collapsed-right-text]="interaction.topicsDiscussed[0].notes"
 					[open]="false"
 				>
 					<app-interaction-card-content [interaction]="interaction" />
@@ -83,7 +83,7 @@
 			<button (click)="onDoneClick()" mat-button>Done</button>
 		}
 		@else {
-			<button [mat-dialog-close]="false" mat-button>Cnacel</button>
+			<button [mat-dialog-close]="false" mat-button>Cancel</button>
 			<button (click)="onSaveClick()" mat-button>Save</button>
 		}
 </mat-dialog-actions>

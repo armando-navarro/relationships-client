@@ -3,7 +3,8 @@
 :host {
 	display: block;
 	@media screen and (max-width: $small-breakpoint) {
-		--mat-dialog-with-actions-content-padding: 20px 12px 0;
+		--mat-dialog-with-actions-content-padding: var(--small-dialog-content-padding);
+		--mat-dialog-actions-padding: var(--small-dialog-actions-padding);
 	}
 }
 
