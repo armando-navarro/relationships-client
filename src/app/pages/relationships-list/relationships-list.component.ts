@@ -88,6 +88,7 @@ export class RelationshipsListComponent implements OnInit {
 			groupedRelationships[AttentionNeededStatus.Good],
 			groupedRelationships[AttentionNeededStatus.NotAvailable],
 		])
+		this.filteredGroupedRelationships.set(this.groupedRelationships())
 	}
 
 	private applySearchFilter(searchValue: string) {
