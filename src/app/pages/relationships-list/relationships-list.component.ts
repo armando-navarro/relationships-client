@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { ApiService } from '../../services/api.service'
@@ -28,8 +29,8 @@ import { DIALOG_CONFIG, SNACKBAR_CONFIG } from '../../constants/misc-constants'
 	standalone: true,
 	imports: [
 		CardComponent, CardGroupComponent, FormsModule, MatAutocompleteModule, MatButtonModule, MatFormFieldModule,
-		MatMenuModule, MatIconModule, MatInputModule, PageHeaderBarComponent, RelationshipCardContentComponent,
-		RouterLink,
+		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, PageHeaderBarComponent,
+		RelationshipCardContentComponent, RouterLink,
 	],
 	templateUrl: './relationships-list.component.html',
 	styleUrl: './relationships-list.component.scss'
@@ -64,12 +65,14 @@ export class RelationshipsListComponent implements OnInit {
 	// misc
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
+	readonly isLoadingRelationships = signal(true)
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
 				this.initGroups(groupedRelationships)
+				this.isLoadingRelationships.set(false)
 				// wait a tick for the groups to collapse themselves on small viewports
 				setTimeout(() => this.setGroupsCollapsedState())
 			},

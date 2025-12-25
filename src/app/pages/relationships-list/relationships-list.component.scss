@@ -31,3 +31,9 @@ app-page-header-bar {
 p {
 	max-width: var(--max-paragraph-width);
 }
+
+mat-spinner {
+	position: fixed;
+	top: calc(50vh - 37.5px);
+	left: calc(50vw - 37.5px);
+}

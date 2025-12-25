@@ -48,14 +48,19 @@
 	</p>
 }
 
-@for (group of filteredGroupedRelationships(); track group.status) {
-	@if (group.relationships.length) {
-		<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
-			@for (relationship of group.relationships; track relationship._id) {
-				<app-card [relationship]="relationship" (edit-relationship)="onEditRelationshipClick($event)" (delete-relationship)="onDeleteRelationshipClick($event)">
-					<app-relationship-card-content [relationship]="relationship" />
-				</app-card>
-			}
-		</app-card-group>
+@if (isLoadingRelationships()) {
+	<mat-spinner diameter="75" />
+}
+@else {
+	@for (group of filteredGroupedRelationships(); track group.status) {
+		@if (group.relationships.length) {
+			<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
+				@for (relationship of group.relationships; track relationship._id) {
+					<app-card [relationship]="relationship" (edit-relationship)="onEditRelationshipClick($event)" (delete-relationship)="onDeleteRelationshipClick($event)">
+						<app-relationship-card-content [relationship]="relationship" />
+					</app-card>
+				}
+			</app-card-group>
+		}
 	}
 }

@@ -48,12 +48,17 @@
 	{{TOPIC_HINT_VERBIAGE}}
 </p>
 
-@for (group of groupedInteractions(); track group.timeUnitsAgo) {
-	<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
-		@for (interaction of group.interactions; track interaction._id) {
-			<app-card [interaction]="interaction" (edit-interaction)="onEditInteractionClick($event)" (delete-interaction)="onDeleteInteractionClick($event)">
-				<app-interaction-card-content [interaction]="interaction" />
-			</app-card>
-		}
-	</app-card-group>
+@if (this.isLoadingInteractions()) {
+	<mat-spinner diameter="75" />
+}
+@else {
+	@for (group of groupedInteractions(); track group.timeUnitsAgo) {
+		<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
+			@for (interaction of group.interactions; track interaction._id) {
+				<app-card [interaction]="interaction" (edit-interaction)="onEditInteractionClick($event)" (delete-interaction)="onDeleteInteractionClick($event)">
+					<app-interaction-card-content [interaction]="interaction" />
+				</app-card>
+			}
+		</app-card-group>
+	}
 }

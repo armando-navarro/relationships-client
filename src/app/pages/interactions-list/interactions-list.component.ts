@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips'
 import { MatDialog } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { ApiService } from '../../services/api.service'
@@ -27,7 +28,8 @@ import { DIALOG_CONFIG, SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../const
 	standalone: true,
 	imports: [
 		CardComponent, CardGroupComponent, InteractionCardContentComponent, MatButtonModule,
-		MatChipsModule, MatIconModule, MatMenuModule, PageHeaderBarComponent, RouterLink
+		MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, PageHeaderBarComponent,
+		RouterLink,
 	],
 	templateUrl: './interactions-list.component.html',
 	styleUrl: './interactions-list.component.scss'
@@ -59,12 +61,16 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
+	readonly isLoadingInteractions = signal(true)
 	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
 		this.api.getInteractions().subscribe({
-			next: interactions => this.interactions.set(interactions),
+			next: interactions => {
+				this.interactions.set(interactions)
+				this.isLoadingInteractions.set(false)
+			},
 			error: error => this.snackBar.open('Failed to load interactions.', undefined, this.SNACKBAR_CONFIG)
 		})
 	}
