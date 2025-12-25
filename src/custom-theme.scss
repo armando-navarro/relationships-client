@@ -35,10 +35,14 @@ $relationships-client-theme: mat.define-theme((
 
 	--mat-option-focus-state-layer-color: var(--header-background-color);
 	--mdc-outlined-text-field-container-shape: var(--primary-border-radius);
+	--mdc-dialog-container-color: var(--card-background);
 	--mdc-dialog-subhead-size: 1.5rem;
 	--mdc-text-button-label-text-size: 1.25rem;
+	--mat-form-field-subscript-text-size: 0.8rem;
 	--mat-bottom-sheet-container-background-color: var(--card-background);
-	--mdc-dialog-container-color: var(--card-background);
+	--mdc-snackbar-container-color: var(--card-background);
+	--mdc-snackbar-supporting-text-color: var(--secondary-title-color);
+	--mat-snack-bar-button-color: var(--primary-accent-color);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.

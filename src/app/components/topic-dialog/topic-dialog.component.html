@@ -1,0 +1,35 @@
+<app-page-header-bar dialog justify-content="center">
+	{{pageHeading()}}
+</app-page-header-bar>
+
+<mat-dialog-content>
+	<form [formGroup]="form" (ngSubmit)="onSaveTopicClick()">
+
+		<mat-form-field class="topic-name" hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
+			<mat-label>Topic</mat-label>
+			<input #topicNameInput matInput formControlName="topic" required>
+			@if (form.hasError('required')) {
+				<mat-error>Topic is required</mat-error>
+			}
+		</mat-form-field>
+
+		@if (form.value.topic || form.value.notes) {
+			<button (click)="onCancelTopicClick()" class="clear-form" mat-button aria-label="Clear topic form" type="button">
+				Clear
+			</button>
+		}
+
+		<mat-form-field class="notes" hintLabel="What do you want to remember about this topic?" appearance="outline" floatLabel="auto">
+			<mat-label>Notes</mat-label>
+			<textarea matInput formControlName="notes" rows="5"></textarea>
+		</mat-form-field>
+
+	</form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button [mat-dialog-close]="false" mat-button>Cancel</button>
+	@if (wasTopicModified()) {
+		<button (click)="onSaveTopicClick()" mat-button>Save</button>
+	}
+</mat-dialog-actions>

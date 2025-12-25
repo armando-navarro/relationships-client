@@ -1,0 +1,26 @@
+:host {
+	display: block;
+}
+
+form {
+	background: var(--card-background);
+	position: relative;
+	padding: 20px 12px;
+	border: 1px solid var(--large-card-border-color);
+	border-radius: var(--large-border-radius);
+	mat-form-field.topic-name {
+		min-width: 220px;
+	}
+	button.clear-form {
+		position: absolute;
+		right: 12px;
+		font-size: 1.05rem;
+	}
+	mat-form-field:not(:last-child) {
+		margin-bottom: 24px;
+	}
+	mat-form-field.notes {
+		width: 100%;
+		min-height: 4em;
+	}
+}

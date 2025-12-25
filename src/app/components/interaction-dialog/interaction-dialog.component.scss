@@ -8,10 +8,6 @@
 	}
 }
 
-mat-form-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-	font-size: 0.8rem;
-}
-
 h2 {
 	font-size: 1.15rem;
 }
@@ -52,47 +48,24 @@ section.interaction-details {
 }
 
 section.topics {
+	position: relative;
+	padding-top: 20px;
 	h2 {
 		display: flex;
 		align-items: center;
-		margin: 20px 0;
+		margin: 0 0 20px;
 		button {
 			margin-left: auto;
 		}
 	}
-
+	button.add-topic {
+		position: absolute;
+		top: 13px;
+		right: 0;
+		font-size: 1.05rem;
+	}
 	app-card {
 		width: 100%;
 		margin-bottom: 24px;
-	}
-
-	.topic-card {
-		background: var(--card-background);
-		position: relative;
-		padding: 20px 12px;
-		border: 1px solid var(--large-card-border-color);
-		border-radius: var(--large-border-radius);
-		margin-bottom: 24px;
-		mat-form-field:has(input) {
-			min-width: 220px;
-		}
-		button.cancel-edit,
-		button.save-topic {
-			position: absolute;
-			font-size: 1.05rem;
-		}
-		button.cancel-edit {
-			right: 128px;
-		}
-		button.save-topic {
-			right: 12px;
-		}
-		mat-form-field:not(:last-child) {
-			margin-bottom: 24px;
-		}
-		mat-form-field:nth-of-type(2) {
-			width: 100%;
-			min-height: 4em;
-		}
 	}
 }
