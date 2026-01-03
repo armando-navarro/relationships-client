@@ -24,6 +24,32 @@
 		padding-top: 0;
 		padding-bottom: 0;
 	}
+
+	&.highlight {
+		animation: 0.25s 1.25s 4 highlight-border alternate;
+	}
+	&.highlight .header,
+	&.highlight .header > * {
+		animation: 0.25s 1.25s 4 highlight alternate;
+	}
+	@keyframes highlight {
+		from {
+			background: var(--header-background-color);
+			color: var(--primary-title-color);
+		}
+		to {
+			background: var(--primary-title-color);
+			color: var(--header-background-color);
+		}
+	}
+	@keyframes highlight-border {
+		from {
+			border-color: var(--header-background-color);
+		}
+		to {
+			border-color: var(--primary-title-color);
+		}
+	}
 }
 
 .header {

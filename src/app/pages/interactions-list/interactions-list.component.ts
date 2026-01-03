@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { AfterViewInit, Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { filter } from 'rxjs'
@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
-import { Interaction, TimeUnit } from "../../interfaces/interaction.interface"
+import { Interaction, InteractionGroup, TimeUnit } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
 import { InteractionDialogComponent, InteractionDialogData, InteractionDialogSaveResult } from '../../components/interaction-dialog/interaction-dialog.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
@@ -44,15 +44,20 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 
 	private readonly cardGroups = viewChildren(CardGroupComponent)
 
-	readonly interactions = signal<Interaction[]>([])
+	private readonly interactions = signal<Interaction[]>([])
 	private readonly interactionsSet$ = toObservable(this.cardGroups).pipe(
 		takeUntilDestroyed(),
 		filter(value => value.length > 0)
 	)
 
 	readonly groupBy = signal<TimeUnit>('week')
-	readonly groupedInteractions = computed(() => this.interactionsService.groupBy(this.interactions(), this.groupBy()))
-	readonly groupByChange$ = toObservable(this.groupBy).pipe(
+	readonly groupedInteractions = signal([] as InteractionGroup[])
+	private readonly groupInteractions = effect(() => {
+		const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
+		this.groupedInteractions.set(groups)
+		this.highlightedCard.set({ groupKey, indexInGroup })
+	}, { allowSignalWrites: true })
+	private readonly groupByChange$ = toObservable(this.groupBy).pipe(
 		takeUntilDestroyed(),
 	).subscribe(() => {
 		if (this.responsiveUiService.isSmallViewport()) this.onCollapseOrExpandAllClick(false)
@@ -62,6 +67,8 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingInteractions = signal(true)
+	readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
+	private highlightInteraction = {} as Interaction
 	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
@@ -108,6 +115,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form)
 			const updatedInteractions = this.interactionsService.insertInteractionInOrder(this.interactions(), newInteraction)
+			this.highlightInteraction = newInteraction
 			this.interactions.set(updatedInteractions)
 		})
 	}
@@ -123,6 +131,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)
+			this.highlightInteraction = newInteraction
 			this.interactions.update(interactions =>
 				interactions.map(interaction => interaction._id === newInteraction._id ? newInteraction : interaction)
 			)

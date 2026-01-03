@@ -1,5 +1,6 @@
-import { Component, computed, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
+import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
+
 import { MatIconModule } from '@angular/material/icon'
 
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
@@ -16,17 +17,17 @@ import { ResponsiveUiService } from '../../services/responsive-ui.service'
 	}
 })
 export class CardGroupComponent implements OnInit {
+	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
+	private readonly responsiveUiService = inject(ResponsiveUiService)
+
 	readonly header = input.required<string>()
 	readonly headerColor = input('white', { alias: 'header-color' })
 	readonly cardCount = input<number>(0, { alias: 'card-count' })
-	readonly open = signal(true)
+	readonly isCardInGroupHighlighted = input(false, { alias: 'is-card-in-group-highlighted', transform: booleanAttribute })
 	readonly headerClick = output<void>({ alias: 'header-click' })
 
+	readonly open = signal(true)
 	readonly instanceNumber = signal<number|undefined>(undefined)
-
-	readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
-	readonly responsiveUiService = inject(ResponsiveUiService)
-
 	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
 	readonly maxGroupHeight = computed(() => {
 		// small viewport: take max card height into account so group expands tall enough
@@ -39,6 +40,9 @@ export class CardGroupComponent implements OnInit {
 	static instanceCount = 0
 	constructor() {
 		this.instanceNumber.set(CardGroupComponent.instanceCount++)
+		effect(() => {
+			if (this.isCardInGroupHighlighted()) this.open.set(true)
+		}, { allowSignalWrites: true })
 	}
 
 	ngOnInit(): void {

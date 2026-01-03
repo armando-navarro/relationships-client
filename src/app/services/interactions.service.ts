@@ -8,6 +8,15 @@ import { DeletionService } from './deletion.service'
 import { Interaction, InteractionFormGroup, InteractionGroup, TimeUnit } from "../interfaces/interaction.interface"
 import { RelationshipDerivedProperties } from '../interfaces/relationship.interface'
 
+interface InteractionLocationInGroup {
+	groupKey: string
+	indexInGroup: number
+}
+
+interface InteractionGroupingResult extends InteractionLocationInGroup {
+	groups: InteractionGroup[]
+}
+
 @Injectable({ providedIn: 'root' })
 export class InteractionsService {
 	private readonly api = inject(ApiService)
@@ -59,8 +68,10 @@ export class InteractionsService {
 	}
 
 	/** Expects an array of interactions sorted descending by date. */
-	groupBy(sortedInteractions: Interaction[], groupBy: TimeUnit): InteractionGroup[] {
+	groupBy(sortedInteractions: Interaction[], groupBy: TimeUnit, targetInteraction: Interaction): InteractionGroupingResult {
 		const groupedInteractions: InteractionGroup[] = []
+		let groupKey = ''
+		let indexInGroup = -1
 
 		sortedInteractions.forEach(interaction => {
 			const startOfTargetTimeUnit = DateTime.fromJSDate(interaction.date!).startOf(groupBy, { useLocaleWeeks: true })
@@ -76,10 +87,20 @@ export class InteractionsService {
 					timeAgoText: timeAgoText.replace(/\b\w/g, (char) => char.toUpperCase()),
 					interactions: [interaction]
 				})
+				if (interaction._id === targetInteraction._id) {
+					groupKey = groupedInteractions[groupedInteractions.length-1].timeAgoText
+					indexInGroup = 0
+				}
 			}
-			else lastGroup.interactions.push(interaction)
+			else {
+				lastGroup.interactions.push(interaction)
+				if (interaction._id === targetInteraction._id) {
+					groupKey = lastGroup.timeAgoText
+					indexInGroup = lastGroup.interactions.length - 1
+				}
+			}
 		})
-		return groupedInteractions
+		return { groups: groupedInteractions, groupKey, indexInGroup }
 	}
 
 	sortInteractionsDesc(a: Interaction, b: Interaction): number {

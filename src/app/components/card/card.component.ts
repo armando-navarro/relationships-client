@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, input, model, output } from '@angular/core'
+import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, model, output } from '@angular/core'
 import { NgStyle } from '@angular/common'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -16,9 +16,12 @@ import { Relationship } from '../../interfaces/relationship.interface'
 	styleUrl: './card.component.scss',
 	host: {
 		'[class.hidden]': '!open()',
+		'[class.highlight]': 'scrollToAndHighlight()',
 	}
 })
 export class CardComponent {
+	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
+
 	readonly relationship = input<Relationship>()
 	readonly interaction = input<Interaction>()
 	readonly hideFooter = input(false, { alias: 'hide-footer', transform: booleanAttribute })
@@ -27,6 +30,7 @@ export class CardComponent {
 	readonly collapsedLeftText = input('', { alias: 'collapsed-left-text' })
 	readonly collapsedRightText = input('', { alias: 'collapsed-right-text' })
 	readonly alwaysShowLeftText = input(false, { alias: 'always-show-left-text', transform: booleanAttribute })
+	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
 
 	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
 	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
@@ -44,6 +48,15 @@ export class CardComponent {
 		else if (this.interaction()) return 'interaction'
 		else return 'topic'
 	})
+
+	constructor() {
+		effect(() => {
+			if (this.scrollToAndHighlight()) {
+				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
+			}
+		})
+	}
 
 	onEditClick(): void {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)

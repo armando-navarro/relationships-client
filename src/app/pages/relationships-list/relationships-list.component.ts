@@ -66,6 +66,7 @@ export class RelationshipsListComponent implements OnInit {
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingRelationships = signal(true)
+	readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
 	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
@@ -132,7 +133,8 @@ export class RelationshipsListComponent implements OnInit {
 		}
 		this.dialog.open(RelationshipDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
 			if (!relationshipOrCancel) return
-			this.relationshipsService.addRelationshipToGroups(relationshipOrCancel, this.groupedRelationships)
+			const { groupStatus, indexInGroup } = this.relationshipsService.addRelationshipToGroups(relationshipOrCancel, this.groupedRelationships)
+			this.highlightedCard.set({ groupStatus, indexInGroup })
 		})
 	}
 
@@ -143,9 +145,10 @@ export class RelationshipsListComponent implements OnInit {
 		}
 		this.dialog.open(RelationshipDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
 			if (!relationshipOrCancel) return
-			const relationshipsGroupedByStatus = this.relationshipsService.updateRelationshipInGroups(relationshipOrCancel, this.groupedRelationships())
-			this.initGroups(relationshipsGroupedByStatus)
+			const { groups, groupStatus, indexInGroup } = this.relationshipsService.updateRelationshipInGroups(relationshipOrCancel, this.groupedRelationships())
+			this.initGroups(groups)
 			this.applySearchFilter(this.searchValue())
+			this.highlightedCard.set({ groupStatus, indexInGroup })
 		})
 	}
 

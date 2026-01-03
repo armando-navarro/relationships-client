@@ -53,9 +53,20 @@
 }
 @else {
 	@for (group of groupedInteractions(); track group.timeUnitsAgo) {
-		<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.timeAgoText" [card-count]="group.interactions.length" header-color="var(--primary-button-color)">
-			@for (interaction of group.interactions; track interaction._id) {
-				<app-card [interaction]="interaction" (edit-interaction)="onEditInteractionClick($event)" (delete-interaction)="onDeleteInteractionClick($event)">
+		<app-card-group
+			(header-click)="onCardGroupHeaderClick()"
+			[header]="group.timeAgoText"
+			[card-count]="group.interactions.length"
+			header-color="var(--primary-button-color)"
+			[is-card-in-group-highlighted]="group.groupedBy === highlightedCard().groupKey"
+		>
+			@for (interaction of group.interactions; track interaction._id; let index = $index) {
+				<app-card
+					[interaction]="interaction"
+					(edit-interaction)="onEditInteractionClick($event)"
+					(delete-interaction)="onDeleteInteractionClick($event)"
+					[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
+				>
 					<app-interaction-card-content [interaction]="interaction" />
 				</app-card>
 			}

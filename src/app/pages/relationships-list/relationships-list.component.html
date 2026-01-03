@@ -54,9 +54,20 @@
 @else {
 	@for (group of filteredGroupedRelationships(); track group.status) {
 		@if (group.relationships.length) {
-			<app-card-group (header-click)="onCardGroupHeaderClick()" [header]="group.status" [card-count]="group.relationships.length" [header-color]="group.statusColor">
-				@for (relationship of group.relationships; track relationship._id) {
-					<app-card [relationship]="relationship" (edit-relationship)="onEditRelationshipClick($event)" (delete-relationship)="onDeleteRelationshipClick($event)">
+			<app-card-group
+				(header-click)="onCardGroupHeaderClick()"
+				[header]="group.status"
+				[card-count]="group.relationships.length"
+				[header-color]="group.statusColor"
+				[is-card-in-group-highlighted]="group.status === highlightedCard().groupStatus"
+			>
+				@for (relationship of group.relationships; track relationship._id; let index = $index) {
+					<app-card
+						[relationship]="relationship"
+						(edit-relationship)="onEditRelationshipClick($event)"
+						(delete-relationship)="onDeleteRelationshipClick($event)"
+						[scroll-to-and-highlight]="group.status === highlightedCard().groupStatus && index === highlightedCard().indexInGroup"
+					>
 						<app-relationship-card-content [relationship]="relationship" />
 					</app-card>
 				}
