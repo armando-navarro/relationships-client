@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
+import { NgTemplateOutlet } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
@@ -29,11 +30,14 @@ import { DIALOG_CONFIG, SNACKBAR_CONFIG } from '../../constants/misc-constants'
 	standalone: true,
 	imports: [
 		CardComponent, CardGroupComponent, FormsModule, MatAutocompleteModule, MatButtonModule, MatFormFieldModule,
-		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, PageHeaderBarComponent,
+		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, NgTemplateOutlet, PageHeaderBarComponent,
 		RelationshipCardContentComponent, RouterLink,
 	],
 	templateUrl: './relationships-list.component.html',
-	styleUrl: './relationships-list.component.scss'
+	styleUrl: './relationships-list.component.scss',
+	host: {
+		'[class.two-header-rows]': 'showSearchBar()'
+	}
 })
 export class RelationshipsListComponent implements OnInit {
 	// services
@@ -61,6 +65,7 @@ export class RelationshipsListComponent implements OnInit {
 	).subscribe(searchValue => this.applySearchFilter(searchValue))
 	readonly filteredNames = signal<string[]>(this.relationshipNames())
 	readonly filteredGroupedRelationships = signal<RelationshipGroup[]>(this.groupedRelationships() || [])
+	readonly showSearchBar = signal(false)
 
 	// misc
 	readonly allGroupsCollapsed = signal(false)
@@ -92,7 +97,12 @@ export class RelationshipsListComponent implements OnInit {
 		this.filteredGroupedRelationships.set(this.groupedRelationships())
 	}
 
-	private applySearchFilter(searchValue: string) {
+	onSearchClick(showSearch = !this.showSearchBar()): void {
+		this.showSearchBar.set(showSearch)
+		if (!showSearch) this.searchValue.set('')
+	}
+
+	private applySearchFilter(searchValue: string): void {
 		const lowerSearchValue = searchValue.toLowerCase().trim()
 		let filteredNames = this.relationshipNames()
 		let filteredGroups = this.groupedRelationships()

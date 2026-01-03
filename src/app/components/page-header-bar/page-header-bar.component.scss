@@ -1,50 +1,86 @@
 @import '../../../styles/variables.scss';
 
 :host {
+	--header-row-height: var(--page-small-header-bar-height);
+
 	display: block;
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	z-index: 10;
-	height: var(--page-small-header-bar-height);
+	height: var(--header-row-height);
 	background: var(--header-background-color);
 	color: var(--secondary-title-color);
-	padding: 0;
-	transition: top 0.5s;
-	&.hidden {
-		top: calc(var(--page-small-header-bar-height) * -1);
-		@media screen and (min-width: $small-breakpoint) {
-			top: calc(var(--page-large-header-bar-height) * -1);
-		}
-	}
+	transition:
+		top 0.5s,
+		height 0.5s;
 	@media screen and (min-width: $small-breakpoint) {
-		height: var(--page-large-header-bar-height);
-	}
-
-	.contents {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-		height: 100%;
-		max-width: var(--max-page-width);
-		padding: 8px;
-		white-space: nowrap;
-		margin: 0 auto;
-		@media screen and (min-width: $small-breakpoint) {
-			gap: 24px;
-		}
-	}
-
-	h1 {
-		flex: 1;
-		color: var(--secondary-title-color);
-		text-align: start;
-		margin: 0;
+		--header-row-height: var(--page-large-header-bar-height);
 	}
 }
 
+.contents {
+	position: relative;
+	top: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	height: var(--header-row-height);
+	max-width: var(--max-page-width);
+	background: var(--header-background-color);
+	padding: 8px;
+	white-space: nowrap;
+	margin: 0 auto;
+	transition: top 0.5s;
+	@media screen and (min-width: $small-breakpoint) {
+		gap: 24px;
+	}
+}
+
+.second-row {
+	position: relative;
+	top: calc(var(--header-row-height) * -1);
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	gap: 8px;
+	width: 100%;
+	height: var(--header-row-height);
+	background: var(--header-background-color);
+	padding: 8px;
+	z-index: -1;
+	transition: top 0.5s;
+}
+
+h1 {
+	flex: 1;
+	color: var(--secondary-title-color);
+	text-align: start;
+	margin: 0;
+}
+
+// 2-row styles
+:host.two-rows {
+	.second-row {
+		top: 0;
+	}
+}
+
+// hidden header styles
+:host.hidden {
+	height: 0;
+	.contents {
+		top: calc(var(--header-row-height) * -1);
+	}
+	.second-row {
+		top: calc(var(--header-row-height) * -2);
+	}
+}
+
+// page header styles vs dialog header
 :host:not(.dialog) {
 	margin-bottom: 48px;
 	h1 {
@@ -54,7 +90,6 @@
 		}
 	}
 }
-
 :host.dialog {
 	position: relative;
 	font-size: var(--mdc-dialog-subhead-size);
