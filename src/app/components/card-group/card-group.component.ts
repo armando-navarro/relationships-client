@@ -1,9 +1,11 @@
-import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
+import { AfterViewInit, booleanAttribute, Component, computed, effect, ElementRef, inject, input, OnDestroy, OnInit, output, signal, viewChild } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { Subject, takeUntil } from 'rxjs'
 
 import { MatIconModule } from '@angular/material/icon'
 
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
+import { ScrollResult, ScrollService } from '../../services/scroll.service'
 
 @Component({
 	selector: 'app-card-group',
@@ -16,9 +18,10 @@ import { ResponsiveUiService } from '../../services/responsive-ui.service'
 		role: 'region'
 	}
 })
-export class CardGroupComponent implements OnInit {
+export class CardGroupComponent implements OnInit, AfterViewInit, OnDestroy {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
 	private readonly responsiveUiService = inject(ResponsiveUiService)
+	private readonly scrollService = inject(ScrollService)
 
 	readonly header = input.required<string>()
 	readonly headerColor = input('white', { alias: 'header-color' })
@@ -26,18 +29,29 @@ export class CardGroupComponent implements OnInit {
 	readonly isCardInGroupHighlighted = input(false, { alias: 'is-card-in-group-highlighted', transform: booleanAttribute })
 	readonly headerClick = output<void>({ alias: 'header-click' })
 
+	readonly cardsContainerRef = viewChild<ElementRef<HTMLElement>>('cards')
+
 	readonly open = signal(true)
 	readonly instanceNumber = signal<number|undefined>(undefined)
 	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
+	readonly scrollResult = signal<ScrollResult>('no-overflow')
+	readonly hideLeftScrollButton = computed(() => (
+		this.scrollResult() === 'min' || this.scrollResult() === 'no-overflow' || this.isSmallViewport() || !this.open()
+	))
+	readonly hideRightScrollButton = computed(() => (
+		this.scrollResult() === 'max' || this.scrollResult() === 'no-overflow' || this.isSmallViewport() || !this.open()
+	))
 	readonly maxGroupHeight = computed(() => {
 		// small viewport: take max card height into account so group expands tall enough
 		// large viewport: fixed height since cards scroll horizontally
 		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : 300
 		else return 0
 	})
+	private readonly destroy$ = new Subject<void>()
 
 	// for assigning a unique ID to elements in each instance of this component
 	static instanceCount = 0
+
 	constructor() {
 		this.instanceNumber.set(CardGroupComponent.instanceCount++)
 		effect(() => {
@@ -50,6 +64,12 @@ export class CardGroupComponent implements OnInit {
 		this.open.set(!this.responsiveUiService.isSmallViewport())
 	}
 
+	ngAfterViewInit(): void {
+		this.scrollService.getHorizontalScrollResult(this.cardsContainerRef()!.nativeElement).pipe(
+			takeUntil(this.destroy$),
+		).subscribe(result => this.scrollResult.set(result))
+	}
+
 	onGroupHeaderClick(): void {
 		this.open.set(!this.open())
 		this.headerClick.emit()
@@ -58,6 +78,18 @@ export class CardGroupComponent implements OnInit {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth' })
 			}
 		}, 500) // wait for the CSS transition to complete
+	}
+
+	onScrollButtonClick(direction: 'left' | 'right'): void {
+		this.cardsContainerRef()?.nativeElement.scrollBy({
+			left: direction === 'left' ? -600 : 600,
+			behavior: 'smooth'
+		})
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next()
+		this.destroy$.complete()
 	}
 
 }

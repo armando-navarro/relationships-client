@@ -6,6 +6,14 @@
 	</button>
 </h2>
 
-<div class="card-scroll custom-scrollbar" [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
+<div class="cards custom-scrollbar" #cards [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
 	<ng-content />
 </div>
+
+<button (click)="onScrollButtonClick('left')" class="scroll left" [class.hidden]="hideLeftScrollButton()" aria-label="Scroll group left">
+	<mat-icon>chevron_left</mat-icon>
+</button>
+
+<button (click)="onScrollButtonClick('right')" class="scroll right" [class.hidden]="hideRightScrollButton()" aria-label="Scroll group right">
+	<mat-icon>chevron_right</mat-icon>
+</button>
