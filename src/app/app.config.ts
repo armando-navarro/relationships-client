@@ -2,9 +2,12 @@ import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } fr
 import { provideRouter, withComponentInputBinding } from '@angular/router'
 import { provideHttpClient } from '@angular/common/http'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
+
 import { MatNativeDateModule } from '@angular/material/core'
+import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip'
 
 import { routes } from './app.routes'
+import { tooltipDefaults } from './constants/material-default-configs'
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -13,5 +16,7 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(),
 		provideAnimationsAsync(),
 		importProvidersFrom(MatNativeDateModule),
+
+		{ provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaults },
 	]
 }

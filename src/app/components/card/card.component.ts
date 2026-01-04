@@ -3,6 +3,7 @@ import { NgStyle } from '@angular/common'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { DynamicScrollableComponent } from "../dynamic-scrollable/dynamic-scrollable.component"
 import { Interaction } from '../../interfaces/interaction.interface'
@@ -11,7 +12,7 @@ import { Relationship } from '../../interfaces/relationship.interface'
 @Component({
 	selector: 'app-card',
 	standalone: true,
-	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, NgStyle],
+	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule, NgStyle],
 	templateUrl: './card.component.html',
 	styleUrl: './card.component.scss',
 	host: {

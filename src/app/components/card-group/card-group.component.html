@@ -10,10 +10,10 @@
 	<ng-content />
 </div>
 
-<button (click)="onScrollButtonClick('left')" class="scroll left" [class.hidden]="hideLeftScrollButton()" aria-label="Scroll group left">
+<button (click)="onScrollButtonClick('left')" class="scroll left" [class.hidden]="hideLeftScrollButton()" matTooltip="Scroll left" matTooltipPosition="right" aria-label="Scroll group left">
 	<mat-icon>chevron_left</mat-icon>
 </button>
 
-<button (click)="onScrollButtonClick('right')" class="scroll right" [class.hidden]="hideRightScrollButton()" aria-label="Scroll group right">
+<button (click)="onScrollButtonClick('right')" class="scroll right" [class.hidden]="hideRightScrollButton()" matTooltip="Scroll right" matTooltipPosition="left" aria-label="Scroll group right">
 	<mat-icon>chevron_right</mat-icon>
 </button>

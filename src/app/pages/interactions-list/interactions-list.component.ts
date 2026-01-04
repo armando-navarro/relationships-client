@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
@@ -28,8 +29,8 @@ import { DIALOG_CONFIG, SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../const
 	standalone: true,
 	imports: [
 		CardComponent, CardGroupComponent, InteractionCardContentComponent, MatButtonModule,
-		MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, PageHeaderBarComponent,
-		RouterLink,
+		MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,
+		PageHeaderBarComponent, RouterLink,
 	],
 	templateUrl: './interactions-list.component.html',
 	styleUrl: './interactions-list.component.scss'

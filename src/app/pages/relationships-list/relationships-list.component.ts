@@ -1,6 +1,5 @@
 import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { NgTemplateOutlet } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
@@ -14,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
@@ -30,7 +30,7 @@ import { DIALOG_CONFIG, SNACKBAR_CONFIG } from '../../constants/misc-constants'
 	standalone: true,
 	imports: [
 		CardComponent, CardGroupComponent, FormsModule, MatAutocompleteModule, MatButtonModule, MatFormFieldModule,
-		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, NgTemplateOutlet, PageHeaderBarComponent,
+		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatTooltipModule, PageHeaderBarComponent,
 		RelationshipCardContentComponent, RouterLink,
 	],
 	templateUrl: './relationships-list.component.html',

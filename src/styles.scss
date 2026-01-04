@@ -89,9 +89,14 @@ mat-form-field .mdc-text-field--outlined .mat-mdc-form-field-infix:has(select) {
 	border: 1px solid var(--header-background-color);
 }
 
-// increase overlay darkness for modals, to elminate confusion when multiple modals are open
+// increase overlay darkness for modals, to eliminate confusion when multiple modals are open
 .cdk-overlay-dark-backdrop {
 	background: rgba(0, 0, 0, 0.55);
+}
+
+// tooltip borders
+.mdc-tooltip__surface.mdc-tooltip__surface-animation::before {
+	border: 1px solid #163668;
 }
 
 // applied to all scrollbars to match app theme colors

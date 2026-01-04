@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop'
 import { Subject, takeUntil } from 'rxjs'
 
 import { MatIconModule } from '@angular/material/icon'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
 import { ScrollResult, ScrollService } from '../../services/scroll.service'
@@ -10,7 +11,7 @@ import { ScrollResult, ScrollService } from '../../services/scroll.service'
 @Component({
 	selector: 'app-card-group',
 	standalone: true,
-	imports: [MatIconModule],
+	imports: [MatIconModule, MatTooltipModule],
 	templateUrl: './card-group.component.html',
 	styleUrl: './card-group.component.scss',
 	host: {

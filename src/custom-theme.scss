@@ -43,6 +43,9 @@ $relationships-client-theme: mat.define-theme((
 	--mdc-snackbar-container-color: var(--card-background);
 	--mdc-snackbar-supporting-text-color: var(--secondary-title-color);
 	--mat-snack-bar-button-color: var(--primary-accent-color);
+	--mdc-plain-tooltip-container-color: var(--header-hover-color);
+	--mdc-plain-tooltip-supporting-text-color: var(--secondary-title-color);
+	--mdc-plain-tooltip-container-shape: var(--primary-border-radius);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
