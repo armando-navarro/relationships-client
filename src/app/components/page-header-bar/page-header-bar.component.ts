@@ -23,7 +23,7 @@ export class PageHeaderBarComponent {
 	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly scrollService = inject(ScrollService)
 
-	readonly title = input('')
+	readonly title = input('', { alias: 'page-title' })
 	readonly isDialog = input(false, { alias: 'dialog', transform: booleanAttribute })
 	readonly showSecondRow = input(false, { alias: 'show-second-row', transform: booleanAttribute })
 	readonly justifyContent = input('normal', { alias: 'justify-content' })

@@ -1,8 +1,6 @@
-<app-page-header-bar title="Relationships" [second-row-template]="search" [show-second-row]="showSearchBar()">
+<app-page-header-bar page-title="Relationships" [second-row-template]="search" [show-second-row]="showSearchBar()">
 	<ng-container #firstRow></ng-container>
 	<a routerLink="/interactions" mat-button>Interactions</a>
-
-
 
 	<button class="toggle-search" (click)="onSearchClick()" mat-icon-button aria-label="Search relationships">
 		<mat-icon>search</mat-icon>
