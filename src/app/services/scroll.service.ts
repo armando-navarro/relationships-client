@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { distinctUntilChanged, filter, fromEvent, map, Observable, pairwise, startWith, throttleTime } from 'rxjs'
 
 export type ScrollDirection = 'up'|'down'
-export type ScrollResult = 'min'|'between'|'max'|'no-overflow'
+export type ScrollPosition = 'min'|'between'|'max'|'no-overflow'
 
 @Injectable({ providedIn: 'root' })
 export class ScrollService {
@@ -17,7 +17,8 @@ export class ScrollService {
 		distinctUntilChanged(),
 	)
 
-	getHorizontalScrollResult(scrollable: HTMLElement): Observable<ScrollResult> {
+	/** @returns A string describing whether an element's scroll position is at its min, max, between, or has no overflow. */
+	getHorizontalScrollResult(scrollable: HTMLElement): Observable<ScrollPosition> {
 		return fromEvent(scrollable, 'scroll').pipe(
 			throttleTime(50, undefined, { trailing: true }),
 			startWith(null), // trigger initial calculation

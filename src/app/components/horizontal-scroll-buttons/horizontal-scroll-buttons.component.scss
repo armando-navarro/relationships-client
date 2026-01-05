@@ -1,0 +1,43 @@
+button.scroll {
+	position: absolute;
+	// top, bottom, left, and right are set in the template
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+
+	background: rgba(60, 131, 246, 0.251);
+	color: var(--mdc-outlined-button-label-text-color);
+	padding: 0;
+	border: none;
+	cursor: pointer;
+	z-index: 1;
+
+	&.left {
+		left: 0;
+	}
+	&.right {
+		right: 0;
+	}
+	&.hidden {
+		display: none;
+	}
+	&.no-opacity {
+		background: var(--header-hover-color);
+		border: 1px solid black;
+	}
+
+	mat-icon.mat-icon {
+		font-weight: bold;
+		overflow: visible;
+	}
+
+	&:hover {
+		background: rgba(59, 130, 246, 0.65);
+		color: var(--header-background-color);
+		mat-icon.mat-icon {
+			color: black;
+		}
+	}
+}

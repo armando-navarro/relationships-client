@@ -1,0 +1,31 @@
+<ng-template #buttons>
+	<button
+		(click)="onScrollButtonClick('left')"
+		class="scroll left"
+		[class.hidden]="hideLeftScrollButton()"
+		[class.no-opacity]="noOpacity()"
+		matTooltip="Scroll left"
+		matTooltipPosition="right"
+		aria-label="Scroll group left"
+		[style.top.px]="buttonTopPx()"
+		[style.left.px]="buttonXPx()"
+		[style.bottom.px]="buttonBottomPx()"
+	>
+		<mat-icon>chevron_left</mat-icon>
+	</button>
+
+	<button
+		(click)="onScrollButtonClick('right')"
+		class="scroll right"
+		[class.hidden]="hideRightScrollButton()"
+		[class.no-opacity]="noOpacity()"
+		matTooltip="Scroll right"
+		matTooltipPosition="left"
+		aria-label="Scroll group right"
+		[style.top.px]="buttonTopPx()"
+		[style.right.px]="buttonXPx()"
+		[style.bottom.px]="buttonBottomPx()"
+	>
+		<mat-icon>chevron_right</mat-icon>
+	</button>
+</ng-template>
