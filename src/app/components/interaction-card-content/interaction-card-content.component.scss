@@ -1,11 +1,6 @@
-mat-chip-set,
-.topics-title {
+.topics {
 	grid-column-start: 1;
 	grid-column-end: -1;
-}
-
-.topics-title,
-mat-chip-set {
 	grid-row-start: 2;
 }
 
@@ -19,11 +14,22 @@ mat-chip-set {
 	margin-bottom: 16px;
 }
 
-mat-chip-set {
-	margin-top: 32px;
-	::ng-deep .mdc-evolution-chip-set__chips {
-		flex-wrap: nowrap;
-		overflow-x: auto;
+.topic-buttons {
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	margin-top: 16px;
+}
+
+button.topic {
+	--mdc-outlined-button-container-height: 1.5rem;
+	--mdc-outlined-button-label-text-size: 1rem;
+	--mat-outlined-button-horizontal-padding: 8px;
+	--mdc-outlined-button-container-shape: 24px;
+	--mdc-outlined-button-outline-color: var(--mdc-outlined-button-label-text-color);
+	--mat-outlined-button-hover-state-layer-opacity: 0.25;
+	&:not(:first-child) {
+		margin-left: 12px;
 	}
 }
 

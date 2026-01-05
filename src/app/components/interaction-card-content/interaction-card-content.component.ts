@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
 import { MatIconModule } from '@angular/material/icon'
 
+import { HorizontalScrollButtonsComponent } from '../horizontal-scroll-buttons/horizontal-scroll-buttons.component'
 import { Interaction } from '../../interfaces/interaction.interface'
 import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { Topic } from "../../interfaces/interaction.interface"
@@ -13,7 +14,10 @@ import { Topic } from "../../interfaces/interaction.interface"
 @Component({
 	selector: 'app-interaction-card-content',
 	standalone: true,
-	imports: [DatePipe, MatBottomSheetModule, MatButtonModule, MatChipsModule, MatIconModule, NewlinesToBrPipe],
+	imports: [
+		DatePipe, HorizontalScrollButtonsComponent,
+		MatBottomSheetModule, MatButtonModule, MatIconModule, NewlinesToBrPipe
+	],
 	templateUrl: './interaction-card-content.component.html',
 	styleUrl: './interaction-card-content.component.scss'
 })
