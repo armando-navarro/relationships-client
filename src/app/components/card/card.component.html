@@ -8,6 +8,9 @@
 	@if (collapsedLeftText() || collapsedRightText()) {
 		<div class="collapsed-header">
 			<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
+			@if (collapsedRightIcon()) {
+				<mat-icon class="collapsed-right-icon" [class.hidden]="open()">{{collapsedRightIcon()}}</mat-icon>
+			}
 			<span class="collapsed-right-text" [class.hidden]="open()" [innerHTML]="collapsedRightText()"></span>
 		</div>
 	}

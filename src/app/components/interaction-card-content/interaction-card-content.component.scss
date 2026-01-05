@@ -1,3 +1,9 @@
+.interaction-type {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .topics {
 	grid-column-start: 1;
 	grid-column-end: -1;

@@ -121,17 +121,14 @@
 		display: flex;
 		justify-content: start;
 		align-items: center;
-		gap: 64px;
 		padding: 0 48px 0 16px;
 		color: var(--mat-app-text-color, inherit);
 		font-size: 1rem;
 		font-weight: normal;
-		@media screen and (min-width: $small-breakpoint) {
-			gap: 32px;
-		}
 		.collapsed-left-text {
 			flex: none;
 			width: 6.56rem;
+			margin-right: 32px;
 		}
 		.collapsed-left-text,
 		.collapsed-right-text {
@@ -143,6 +140,17 @@
 			}
 			&:not(.hidden) {
 				overflow: hidden;
+			}
+		}
+		.collapsed-right-icon {
+			font-size: 1.2rem;
+			width: 1.2rem;
+			height: 1.2rem;
+			overflow: visible;
+			margin-right: 8px;
+			transition: opacity 0.5s;
+			&.hidden {
+				opacity: 0;
 			}
 		}
 	}

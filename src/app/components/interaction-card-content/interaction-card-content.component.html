@@ -1,5 +1,8 @@
 <ng-template #content>
-	<span>{{ interaction().type }}</span>
+	<span class="interaction-type">
+		<mat-icon>{{ interaction().typeIcon }}</mat-icon>
+		{{ interaction().type }}
+	</span>
 	<span>{{ interaction().date | date }}</span>
 
 	@if (interaction().topicsDiscussed.length) {

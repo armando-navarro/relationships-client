@@ -30,6 +30,7 @@ export class CardComponent {
 	readonly scrollableBody = input(false, { alias: 'scrollable-body', transform: booleanAttribute })
 	readonly collapsedLeftText = input('', { alias: 'collapsed-left-text' })
 	readonly collapsedRightText = input('', { alias: 'collapsed-right-text' })
+	readonly collapsedRightIcon = input('', { alias: 'collapsed-right-icon' })
 	readonly alwaysShowLeftText = input(false, { alias: 'always-show-left-text', transform: booleanAttribute })
 	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
 

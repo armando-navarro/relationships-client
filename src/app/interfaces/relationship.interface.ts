@@ -45,7 +45,7 @@ export interface RelationshipPayload {
 	_id: string|null
 	firstName: string
 	lastName: string|null
-	interactions: Interaction[]
+	interactions: Omit<Interaction, 'typeIcon'>[]
 	interactionRateGoal: InteractionRate|null
 	notes: string
 }

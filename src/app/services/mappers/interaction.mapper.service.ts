@@ -8,6 +8,7 @@ import {
 	InteractionPayload,
 	InteractionResponse,
 	InteractionTopicFormGroup,
+	interactionTypeToIcon,
 	Topic
 } from '../../interfaces/interaction.interface'
 
@@ -33,6 +34,7 @@ export class InteractionMapperService {
 		return {
 			...response,
 			date: new Date(response.date),
+			typeIcon: interactionTypeToIcon.get(response.type)!,
 			topicsDiscussed: response.topicsDiscussed
 		}
 	}
@@ -88,6 +90,7 @@ export class InteractionMapperService {
 		const interaction: Interaction = {
 			_id: formValue._id ?? null,
 			type: formValue.type ?? null,
+			typeIcon: interactionTypeToIcon.get(formValue.type!) ?? '',
 			date: formValue.date ?? null,
 			topicsDiscussed: (formValue.topicsDiscussed ?? []).map(topic => ({
 				topic: topic.topic ?? '',
@@ -103,6 +106,7 @@ export class InteractionMapperService {
 		const interaction: Interaction = {
 			_id: form.value._id ?? null,
 			type: form.value.type ?? null,
+			typeIcon: interactionTypeToIcon.get(form.value.type!) ?? '',
 			date: form.value.date ?? null,
 			topicsDiscussed: (form.value.topicsDiscussed ?? []).map(topic => ({
 				topic: topic.topic ?? '',
