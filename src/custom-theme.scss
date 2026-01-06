@@ -3,7 +3,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
-
+@import './styles/variables.scss';
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
@@ -46,6 +46,11 @@ $relationships-client-theme: mat.define-theme((
 	--mdc-plain-tooltip-container-color: var(--header-hover-color);
 	--mdc-plain-tooltip-supporting-text-color: var(--secondary-title-color);
 	--mdc-plain-tooltip-container-shape: var(--primary-border-radius);
+
+	@media screen and (max-width: $small-breakpoint) {
+		--mat-dialog-with-actions-content-padding: var(--small-dialog-content-padding);
+		--mat-dialog-actions-padding: var(--small-dialog-actions-padding);
+	}
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
