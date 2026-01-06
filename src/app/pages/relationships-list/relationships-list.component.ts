@@ -19,11 +19,11 @@ import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
 import { AttentionNeededStatus, Relationship, RelationshipGroup, RelationshipsGroupedByStatus } from '../../interfaces/relationship.interface'
+import { MaterialConfigService } from '../../services/material-config.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { RelationshipsService } from '../../services/relationships.service'
 import { RelationshipCardContentComponent } from '../../components/relationship-card-content/relationship-card-content.component'
 import { RelationshipDialogComponent, RelationshipDialogData } from '../../components/relationship-dialog/relationship-dialog.component'
-import { DIALOG_CONFIG, SNACKBAR_CONFIG } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-relationships-list',
@@ -43,6 +43,7 @@ export class RelationshipsListComponent implements OnInit {
 	// services
 	private readonly api = inject(ApiService)
 	private readonly dialog = inject(MatDialog)
+	private readonly materialConfig = inject(MaterialConfigService)
 	private readonly relationshipsService = inject(RelationshipsService)
 	private readonly snackBar = inject(MatSnackBar)
 
@@ -72,7 +73,6 @@ export class RelationshipsListComponent implements OnInit {
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingRelationships = signal(true)
 	readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
-	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
@@ -82,7 +82,7 @@ export class RelationshipsListComponent implements OnInit {
 				// wait a tick for the groups to collapse themselves on small viewports
 				setTimeout(() => this.setGroupsCollapsedState())
 			},
-			error: error => this.snackBar.open('Failed to load relationships.', undefined, this.SNACKBAR_CONFIG)
+			error: error => this.snackBar.open('Failed to load relationships.', undefined)
 		})
 	}
 
@@ -141,7 +141,8 @@ export class RelationshipsListComponent implements OnInit {
 			relationship: null,
 			isAddingRelationship: true,
 		}
-		this.dialog.open(RelationshipDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(RelationshipDialogComponent, config).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
 			if (!relationshipOrCancel) return
 			const { groupStatus, indexInGroup } = this.relationshipsService.addRelationshipToGroups(relationshipOrCancel, this.groupedRelationships)
 			this.highlightedCard.set({ groupStatus, indexInGroup })
@@ -153,7 +154,8 @@ export class RelationshipsListComponent implements OnInit {
 			relationship: editTarget,
 			isEditingRelationship: true,
 		}
-		this.dialog.open(RelationshipDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(RelationshipDialogComponent, config).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
 			if (!relationshipOrCancel) return
 			const { groups, groupStatus, indexInGroup } = this.relationshipsService.updateRelationshipInGroups(relationshipOrCancel, this.groupedRelationships())
 			this.initGroups(groups)

@@ -20,9 +20,10 @@ import { InteractionCardContentComponent } from '../../components/interaction-ca
 import { InteractionDialogComponent, InteractionDialogData, InteractionDialogSaveResult } from '../../components/interaction-dialog/interaction-dialog.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionsService } from '../../services/interactions.service'
+import { MaterialConfigService } from '../../services/material-config.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
-import { DIALOG_CONFIG, SNACKBAR_CONFIG, TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
+import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-interactions-list',
@@ -40,6 +41,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	private readonly dialog = inject(MatDialog)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly interactionsService = inject(InteractionsService)
+	private readonly materialConfig = inject(MaterialConfigService)
 	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly snackBar = inject(MatSnackBar)
 
@@ -71,7 +73,6 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
 	private highlightInteraction = {} as Interaction
 	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
-	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
 		this.api.getInteractions().subscribe({
@@ -79,7 +80,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 				this.interactions.set(interactions)
 				this.isLoadingInteractions.set(false)
 			},
-			error: error => this.snackBar.open('Failed to load interactions.', undefined, this.SNACKBAR_CONFIG)
+			error: error => this.snackBar.open('Failed to load interactions.', undefined)
 		})
 	}
 
@@ -111,7 +112,8 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			isAddingInteraction: true,
 			showRelationshipPicker: true,
 		}
-		this.dialog.open(InteractionDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(InteractionDialogComponent, config).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form)
@@ -128,7 +130,8 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			interaction: editTarget,
 			isEditingInteraction: true,
 		}
-		this.dialog.open(InteractionDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(InteractionDialogComponent, config).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
 			if (!dataOrCancel) return
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)

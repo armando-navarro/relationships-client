@@ -16,12 +16,13 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirma
 import { Interaction, InteractionFormGroup, InteractionPayload } from "../../interfaces/interaction.interface"
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionType } from "../../interfaces/interaction.interface"
+import { MaterialConfigService } from '../../services/material-config.service'
 import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { Relationship, UpdatedRelationshipProperties } from '../../interfaces/relationship.interface'
 import { RelationshipsService } from '../../services/relationships.service'
 import { TopicDialogComponent, TopicDialogData } from '../topic-dialog/topic-dialog.component'
-import { DIALOG_CONFIG, REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
+import { REQUIRED_ERROR } from '../../constants/misc-constants'
 
 export interface InteractionDialogData {
 	relationshipId: string|null
@@ -54,6 +55,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 	private readonly dialog = inject(MatDialog)
 	private readonly dialogRef = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
+	private readonly materialConfig = inject(MaterialConfigService)
 	private readonly relationshipsService = inject(RelationshipsService)
 	private readonly snackBar = inject(MatSnackBar)
 
@@ -67,7 +69,6 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 	private readonly RELATIONSHIP_ERROR = 'Failed to load relationships. Try again later.'
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
 	private readonly SAVE_INTERACTION_ERROR = 'Failed to save interaction. Please try again.'
-	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
 		if (this.data.showRelationshipPicker) this.loadRelationships()
@@ -99,7 +100,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 				const sortedRels = this.relationshipsService.sortByFirstName(relationships)
 				this.relationships.set(sortedRels)
 			},
-			error: error => this.snackBar.open(this.RELATIONSHIP_ERROR, undefined, this.SNACKBAR_CONFIG)
+			error: error => this.snackBar.open(this.RELATIONSHIP_ERROR, undefined)
 		})
 	}
 
@@ -122,31 +123,34 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 
 	onAddTopicClick(): void {
 		const data: TopicDialogData = { interactionForm: this.form }
-		this.dialog.open(TopicDialogComponent, { ...DIALOG_CONFIG, data })
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(TopicDialogComponent, config)
 	}
 
 	onEditTopicClick(index: number): void {
 		const data: TopicDialogData = { interactionForm: this.form, editTopicIndex: index }
-		this.dialog.open(TopicDialogComponent, { ...DIALOG_CONFIG, data })
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(TopicDialogComponent, config)
 	}
 
 	onDeleteTopicClick(topicName: string, index: number): void {
 		const data: ConfirmationDialogData = {
 			dialogText: `Are you sure you want to delete the topic: ${topicName}?`
 		}
-		this.dialog.open(ConfirmationDialogComponent, { ...DIALOG_CONFIG, data }).afterClosed().subscribe(confirmed => {
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		this.dialog.open(ConfirmationDialogComponent, config).afterClosed().subscribe(confirmed => {
 			if (!confirmed) return
 
 			const deletedTopic = this.form.controls.topicsDiscussed.at(index)
 			this.form.controls.topicsDiscussed.removeAt(index)
-			const snackBarRef = this.snackBar.open('Topic removed', 'Undo', this.SNACKBAR_CONFIG)
+			const snackBarRef = this.snackBar.open('Topic removed', 'Undo')
 			snackBarRef.onAction().subscribe(() => this.form.controls.topicsDiscussed.insert(index, deletedTopic))
 		})
 	}
 
 	onSaveInteractionClick(): void {
 		if (this.form.invalid) {
-			this.snackBar.open(this.REQUIRED_ERROR, undefined, this.SNACKBAR_CONFIG)
+			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
 		}
 		const { payload, relationshipId } = this.interactionMapper.mapFormToPayloadWithRelationshipId(this.form)
@@ -156,7 +160,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 
 		saveInteraction$.subscribe({
 			next: saveResult => this.dialogRef.close(saveResult),
-			error: error => this.snackBar.open(this.SAVE_INTERACTION_ERROR, undefined, this.SNACKBAR_CONFIG)
+			error: error => this.snackBar.open(this.SAVE_INTERACTION_ERROR, undefined)
 		})
 	}
 

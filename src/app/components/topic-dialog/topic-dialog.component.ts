@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { InteractionFormGroup } from '../../interfaces/interaction.interface'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
-import { REQUIRED_ERROR, SNACKBAR_CONFIG } from '../../constants/misc-constants'
+import { REQUIRED_ERROR } from '../../constants/misc-constants'
 
 export interface TopicDialogData {
 	interactionForm: InteractionFormGroup
@@ -42,7 +42,6 @@ export class TopicDialogComponent implements OnInit, OnDestroy {
 	private readonly destroy$ = new Subject<void>()
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
-	private readonly SNACKBAR_CONFIG = SNACKBAR_CONFIG
 
 	ngOnInit(): void {
 		if (this.data.editTopicIndex !== undefined) {
@@ -72,7 +71,7 @@ export class TopicDialogComponent implements OnInit, OnDestroy {
 
 	onSaveTopicClick(): void {
 		if (this.form.invalid) {
-			this.snackBar.open(this.REQUIRED_ERROR, undefined, this.SNACKBAR_CONFIG)
+			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
 		}
 		if (this.data.editTopicIndex !== undefined) this.data.interactionForm.controls.topicsDiscussed.setControl(this.data.editTopicIndex!, this.form)

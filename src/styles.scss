@@ -94,6 +94,11 @@ mat-form-field .mdc-text-field--outlined .mat-mdc-form-field-infix:has(select) {
 	background: rgba(0, 0, 0, 0.55);
 }
 
+// material dialog content
+.mat-mdc-dialog-content.mdc-dialog__content {
+	max-height: calc(100vh - 117px);
+}
+
 // tooltip borders
 .mdc-tooltip__surface.mdc-tooltip__surface-animation::before {
 	border: 1px solid #163668;
