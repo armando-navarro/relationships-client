@@ -5,6 +5,7 @@
 	max-width: var(--max-page-width);
 	padding: var(--page-small-header-bar-height) 8px;
 	margin: 0 auto;
+	transition: padding 0.5s;
 	@media screen and (min-width: $small-breakpoint) {
 		padding: calc(var(--page-large-header-bar-height) + 12px) 12px 0;
 		button.toggle-search {
