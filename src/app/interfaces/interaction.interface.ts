@@ -57,7 +57,7 @@ export type AddInteractionResponse = InsertedId&InteractionWriteResponse
 export enum InteractionType {
 	Email = 'E-mail',
 	InPerson = 'In person',
-	OnlineGaming = 'OnlineGaming',
+	OnlineGaming = 'Online gaming',
 	PhoneCall = 'Phone call',
 	SocialMedia = 'Social media',
 	SnailMail = 'Snail mail',
