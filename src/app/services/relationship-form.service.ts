@@ -128,9 +128,13 @@ export class RelationshipFormService implements OnDestroy {
 			)
 		} else {
 			return this.api.addRelationship(payload).pipe(
-				tap(({ insertedId }) => {
+				tap(({ insertedId, attentionNeededStatus }) => {
 					this.relationshipForm!.controls._id.setValue(insertedId)
-					this.modifiedRelationship._id = insertedId
+					this.modifiedRelationship = {
+						...this.modifiedRelationship,
+						_id: insertedId,
+						attentionNeededStatus
+					}
 					this.wasRelationshipPersisted = true
 				}),
 				map(() => {})

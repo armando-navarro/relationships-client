@@ -7,14 +7,15 @@ import { InsertedId } from "../interfaces/misc.interface"
 import { AddInteractionResponse, Interaction, InteractionPayload, InteractionResponse, InteractionWriteResponse } from "../interfaces/interaction.interface"
 import { InteractionMapperService } from './mappers/interaction.mapper.service'
 import {
-	RelationshipDerivedProperties,
 	Relationship,
+	RelationshipAddResponse,
+	RelationshipDerivedProperties,
 	RelationshipPayload,
 	RelationshipResponse,
 	RelationshipsGroupedByStatus,
 	RelationshipsGroupedByStatusResponse,
+	RelationshipUpdateResponse,
 	UpdatedRelationshipProperties,
-	RelationshipUpdateResponse
 } from '../interfaces/relationship.interface'
 import { RelationshipMapperService } from './mappers/relationship.mapper.service'
 
@@ -39,8 +40,8 @@ export class ApiService {
 		)
 	}
 
-	addRelationship(relationship: RelationshipPayload): Observable<InsertedId> {
-		return this.http.post<InsertedId>(`${this.baseUrl}/relationships`, relationship)
+	addRelationship(relationship: RelationshipPayload): Observable<RelationshipAddResponse> {
+		return this.http.post<RelationshipAddResponse>(`${this.baseUrl}/relationships`, relationship)
 	}
 
 

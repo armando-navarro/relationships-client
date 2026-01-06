@@ -1,3 +1,4 @@
+import { InsertedId } from "./misc.interface"
 import { Interaction, InteractionResponse, InteractionWriteResponse } from "./interaction.interface"
 import { RelationshipMapperService } from "../services/mappers/relationship.mapper.service"
 
@@ -82,6 +83,7 @@ export interface RelationshipDerivedPropertiesResponse {
 	attentionStatusColor?: string
 	fullName?: string
 }
+export type RelationshipAddResponse = InsertedId & Pick<RelationshipDerivedPropertiesResponse, 'attentionNeededStatus'>
 export type RelationshipUpdateResponse = InteractionWriteResponse
 //#endregion API RESPONSE interfaces
 

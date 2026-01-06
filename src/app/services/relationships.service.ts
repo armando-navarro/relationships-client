@@ -92,6 +92,11 @@ export class RelationshipsService {
 
 	/** Inserts a relationship into the proper spot in an array of relationships sorted ascending by `daysUntilAttentionNeeded`. */
 	private insertRelationshipInOrder(sortedRelationships: Relationship[], newRelationship: Relationship): { relationships: Relationship[], insertIndex: number } {
+		if (newRelationship.daysUntilAttentionNeeded === undefined) {
+			const updatedrelationships = [ ...sortedRelationships, newRelationship ]
+			return { relationships: updatedrelationships, insertIndex: updatedrelationships.length - 1 }
+		}
+
 		let low = 0
 		let high = sortedRelationships.length
 
