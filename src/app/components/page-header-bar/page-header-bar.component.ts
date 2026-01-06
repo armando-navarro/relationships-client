@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, contentChild, effect, EmbeddedViewRef, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
+import { booleanAttribute, Component, computed, contentChild, effect, EmbeddedViewRef, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
@@ -34,7 +34,8 @@ export class PageHeaderBarComponent {
 	private firstRowSearchViewRef: EmbeddedViewRef<void>|null = null
 	private secondRowSearchViewRef: EmbeddedViewRef<void>|null = null
 
-	readonly hideHeaderBar = toSignal(this.scrollService.scrollDirection$.pipe(map(scrollDir => scrollDir === 'down')))
+	readonly hideHeaderBar = computed(() => this.isSmallViewport() && this.scrollingDown())
+	readonly scrollingDown = toSignal(this.scrollService.scrollDirection$.pipe(map(scrollDir => scrollDir === 'down')))
 	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
 
 	constructor() {
