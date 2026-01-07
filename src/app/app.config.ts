@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import { MatNativeDateModule } from '@angular/material/core'
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog'
+import { MAT_ICON_DEFAULT_OPTIONS } from '@angular/material/icon'
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar'
 import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip'
 
@@ -20,6 +21,7 @@ export const appConfig: ApplicationConfig = {
 		importProvidersFrom(MatNativeDateModule),
 
 		{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: dialogConfigDefaults },
+		{ provide: MAT_ICON_DEFAULT_OPTIONS, useValue: { fontSet: 'material-symbols-outlined' } },
 		{ provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: snackbarConfigDefaults },
 		{ provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaults },
 	]

@@ -35,6 +35,7 @@
 							"src/custom-theme.scss",
 							"src/styles/variables.scss",
 							"src/styles.scss",
+							"src/styles/icons.scss",
 							"src/styles/root.css"
 						],
 						"scripts": []

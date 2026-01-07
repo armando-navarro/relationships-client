@@ -1,0 +1,73 @@
+.material-symbols-outlined {
+	font-variation-settings:
+		'FILL' 0,
+		'wght' 400,
+		'GRAD' 0,
+		'opsz' 24
+}
+
+// for custom icon sizes
+// note that icon buttons need to have their size set separately,
+// allowing for ~8-12px visual padding per side
+@mixin icon-size($size) {
+	width: $size;
+	height: $size;
+	font-size: $size;
+	font-variation-settings: 'opsz' $size;
+}
+
+// small
+button.mat-icon-button.icon-sm {
+	width: 32px;
+	height: 32px;
+}
+button.mat-icon-button.icon-sm mat-icon {
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
+	font-variation-settings: 'opsz' 16;
+}
+.mat-icon.icon-sm {
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
+	font-variation-settings: 'opsz' 16;
+}
+
+// medium not specified because it's the default size
+
+// large
+button.mat-icon-button.icon-lg {
+	width: 56px;
+	height: 56px;
+}
+button.mat-icon-button.icon-lg mat-icon {
+	width: 32px;
+	height: 32px;
+	font-size: 32px;
+	font-variation-settings: 'opsz' 16;
+}
+.mat-icon.icon-lg {
+	width: 32px;
+	height: 32px;
+	font-size: 32px;
+	font-variation-settings: 'opsz' 32;
+}
+
+// extra large
+button.mat-icon-button.icon-xl {
+	width: 72px;
+	height: 72px;
+}
+button.mat-icon-button.icon-xl mat-icon {
+	width: 48px;
+	height: 48px;
+	font-size: 48px;
+	font-variation-settings: 'opsz' 48;
+}
+.mat-icon.icon-xl {
+	width: 48px;
+	height: 48px;
+	font-size: 48px;
+	font-variation-settings: 'opsz' 48;
+}
