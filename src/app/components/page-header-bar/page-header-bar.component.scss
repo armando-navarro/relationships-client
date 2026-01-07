@@ -25,7 +25,6 @@
 	top: 0;
 	display: flex;
 	align-items: center;
-	gap: 8px;
 	width: 100%;
 	height: var(--header-row-height);
 	max-width: var(--max-page-width);
@@ -58,6 +57,7 @@
 h1 {
 	flex: 1;
 	color: var(--secondary-title-color);
+	font-weight: normal;
 	text-align: start;
 	margin: 0;
 }

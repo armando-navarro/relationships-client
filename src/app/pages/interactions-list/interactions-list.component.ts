@@ -53,7 +53,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		filter(value => value.length > 0)
 	)
 
-	readonly groupBy = signal<TimeUnit>('week')
+	readonly groupBy = signal<TimeUnit>('month')
 	readonly groupedInteractions = signal([] as InteractionGroup[])
 	private readonly groupInteractions = effect(() => {
 		const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)

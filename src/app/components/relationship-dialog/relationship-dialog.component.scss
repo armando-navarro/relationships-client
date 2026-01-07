@@ -72,21 +72,6 @@ section.interactions {
 		button {
 			font-size: initial;
 		}
-		button.add-interaction-mobile {
-			mat-icon {
-				transform: scale(1.6);
-			}
-			@media screen and (min-width: $small-breakpoint) {
-				display: none;
-			}
-		}
-		button.add-interaction-desktop {
-			display: none;
-			align-items: center;
-			@media screen and (min-width: $small-breakpoint) {
-				display: flex;
-			}
-		}
 	}
 
 	p {

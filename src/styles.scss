@@ -19,8 +19,9 @@
 	--primary-title-color: #3B82F6;
 	--secondary-title-color: #c7c8d0;
 	--primary-button-color: #45a5ff;
+	--page-background-color: #050816;
 
-	--page-title-font-size-small: 1.05rem;
+	--page-title-font-size-small: 1.25rem;
 	--page-title-font-size-large: 2rem;
 	--page-small-header-bar-height: 56px;
 	--page-small-header-bar-height-with-search: 112px;
@@ -56,10 +57,6 @@ button[mat-icon-button] {
 }
 
 // misc global styles
-
-body.mat-app-background {
-	background: #050816;
-}
 
 h1.page-title {
 	margin: 16px auto 12px;
