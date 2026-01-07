@@ -74,6 +74,9 @@ export class CardComponent {
 
 	onCollapseExpandClick(): void {
 		this.open.set(!this.open())
+		setTimeout(() => {
+			this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+		}, 500) // wait for the CSS transition to complete
 	}
 
 }
