@@ -51,8 +51,17 @@ export class HorizontalScrollButtonsComponent implements AfterViewInit, OnDestro
 	}
 
 	onScrollButtonClick(direction: 'left' | 'right'): void {
+		let scrollBy = direction === 'left' ? -this.scrollAmountPx() : this.scrollAmountPx()
+
+		// adjust scrollBy to not exceed scroll bounds, which is possible on mobile devices
+		const endingScrollLeft = this.scrollableElement().scrollLeft + scrollBy
+		if (endingScrollLeft < 0) scrollBy = -this.scrollableElement().scrollLeft
+		if (endingScrollLeft + this.scrollableElement().clientWidth > this.scrollableElement().scrollWidth) {
+			scrollBy = this.scrollableElement().scrollWidth - this.scrollableElement().clientWidth - this.scrollableElement().scrollLeft
+		}
+
 		this.scrollableElement()?.scrollBy({
-			left: direction === 'left' ? -this.scrollAmountPx() : this.scrollAmountPx(),
+			left: scrollBy,
 			behavior: 'smooth'
 		})
 	}
