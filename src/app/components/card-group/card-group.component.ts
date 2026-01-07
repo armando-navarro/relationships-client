@@ -57,7 +57,7 @@ export class CardGroupComponent implements OnInit {
 		this.headerClick.emit()
 		setTimeout(() => {
 			if (this.responsiveUiService.isSmallViewport() && this.open()) {
-				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth' })
+				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
 			}
 		}, 500) // wait for the CSS transition to complete
 	}
