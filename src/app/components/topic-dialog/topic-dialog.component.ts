@@ -46,7 +46,7 @@ export class TopicDialogComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		if (this.data.editTopicIndex !== undefined) {
 			this.pageHeading.set('Edit Topic')
-			const targetTopicForm = this.data.interactionForm.controls.topicsDiscussed.controls.at(this.data.editTopicIndex)
+			const targetTopicForm = this.data.interactionForm.controls.topics.controls.at(this.data.editTopicIndex)
 			const targetTopic = this.interactionMapper.mapTopicFormToModel(targetTopicForm!)
 			this.form = this.interactionMapper.mapTopicModelToForm(targetTopic)
 		} else {
@@ -74,8 +74,8 @@ export class TopicDialogComponent implements OnInit, OnDestroy {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
 		}
-		if (this.data.editTopicIndex !== undefined) this.data.interactionForm.controls.topicsDiscussed.setControl(this.data.editTopicIndex!, this.form)
-		else this.data.interactionForm.controls.topicsDiscussed.push(this.form)
+		if (this.data.editTopicIndex !== undefined) this.data.interactionForm.controls.topics.setControl(this.data.editTopicIndex!, this.form)
+		else this.data.interactionForm.controls.topics.push(this.form)
 		this.form = this.interactionMapper.mapTopicModelToForm()
 		this.dialogRef.close()
 	}

@@ -61,14 +61,14 @@
 
 			<button class="add-topic" (click)="onAddTopicClick()" mat-button type="button">Add Topic</button>
 
-			@if (form.controls.topicsDiscussed.length) {
-				@for (topic of form.controls.topicsDiscussed.controls; track topic; let index = $index) {
+			@if (form.controls.topics.length) {
+				@for (topic of form.controls.topics.controls; track topic; let index = $index) {
 					<app-card
-						[collapsed-left-text]="topic.value.topic!"
+						[collapsed-left-text]="topic.value.name!"
 						[collapsed-right-text]="topic.value.notes | newlinesToBr"
 						always-show-left-text
 						(edit-topic)="onEditTopicClick(index)"
-						(delete-topic)="onDeleteTopicClick(topic.value.topic!, index)"
+						(delete-topic)="onDeleteTopicClick(topic.value.name!, index)"
 						[open]="false"
 						collapsible
 						scrollable-body

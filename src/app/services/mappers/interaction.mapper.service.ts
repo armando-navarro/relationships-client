@@ -35,7 +35,7 @@ export class InteractionMapperService {
 			...response,
 			date: new Date(response.date),
 			typeIcon: interactionTypeToIcon.get(response.type)!,
-			topicsDiscussed: response.topicsDiscussed
+			topics: response.topics
 		}
 	}
 
@@ -44,7 +44,7 @@ export class InteractionMapperService {
 			_id: [interaction?._id ?? null],
 			type: [interaction?.type ?? null, { validators: [Validators.required] }],
 			date: [interaction?.date ?? null],
-			topicsDiscussed: this.fb.array([
+			topics: this.fb.array([
 				this.mapTopicModelToForm()
 			]),
 			idOfRelationship: this.fb.control<string|null>(
@@ -54,25 +54,25 @@ export class InteractionMapperService {
 				(interaction?.nameOfPerson || personName) ?? null, Validators.required
 			)
 		})
-		form.controls.topicsDiscussed.clear()
-		if (interaction?.topicsDiscussed.length) {
-			interaction.topicsDiscussed.forEach(topic => {
-				form.controls.topicsDiscussed.push(this.mapTopicModelToForm(topic))
+		form.controls.topics.clear()
+		if (interaction?.topics.length) {
+			interaction.topics.forEach(topic => {
+				form.controls.topics.push(this.mapTopicModelToForm(topic))
 			})
 		}
 		return form
 	}
 
-	mapTopicModelToForm(topicDiscussed?: Topic) {
+	mapTopicModelToForm(topic?: Topic) {
 		return this.fb.group({
-			topic: [topicDiscussed?.topic ?? null, Validators.required],
-			notes: [topicDiscussed?.notes ?? '']
+			name: [topic?.name ?? null, Validators.required],
+			notes: [topic?.notes ?? '']
 		})
 	}
 
 	mapTopicFormToModel(topicForm: InteractionTopicFormGroup): Topic {
 		return {
-			topic: (topicForm.value.topic ?? '').trim(),
+			name: (topicForm.value.name ?? '').trim(),
 			notes: (topicForm.value.notes ?? '').trim(),
 		}
 	}
@@ -92,8 +92,8 @@ export class InteractionMapperService {
 			type: formValue.type ?? null,
 			typeIcon: interactionTypeToIcon.get(formValue.type!) ?? '',
 			date: formValue.date ?? null,
-			topicsDiscussed: (formValue.topicsDiscussed ?? []).map(topic => ({
-				topic: topic.topic ?? '',
+			topics: (formValue.topics ?? []).map(topic => ({
+				name: topic.name ?? '',
 				notes: topic.notes ?? '',
 			}))
 		}
@@ -108,8 +108,8 @@ export class InteractionMapperService {
 			type: form.value.type ?? null,
 			typeIcon: interactionTypeToIcon.get(form.value.type!) ?? '',
 			date: form.value.date ?? null,
-			topicsDiscussed: (form.value.topicsDiscussed ?? []).map(topic => ({
-				topic: topic.topic ?? '',
+			topics: (form.value.topics ?? []).map(topic => ({
+				name: topic.name ?? '',
 				notes: topic.notes ?? '',
 			})),
 		}
@@ -127,8 +127,8 @@ export class InteractionMapperService {
 			_id: form.value._id ?? null,
 			type: form.value.type!,
 			date: form.value.date!,
-			topicsDiscussed: form.value.topicsDiscussed!.map(topic => ({
-				topic: topic.topic!,
+			topics: form.value.topics!.map(topic => ({
+				name: topic.name!,
 				notes: topic.notes!,
 			}))
 		}

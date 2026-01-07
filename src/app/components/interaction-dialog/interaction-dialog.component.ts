@@ -114,7 +114,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 				previous._id !== current._id ||
 				previous.type !== current.type ||
 				previous.date?.valueOf() !== current.date?.valueOf() ||
-				previous.topicsDiscussed !==  current.topicsDiscussed
+				previous.topics !==  current.topics
 			) {
 				this.wasInteractionModified.set(true)
 			}
@@ -141,10 +141,10 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 		this.dialog.open(ConfirmationDialogComponent, config).afterClosed().subscribe(confirmed => {
 			if (!confirmed) return
 
-			const deletedTopic = this.form.controls.topicsDiscussed.at(index)
-			this.form.controls.topicsDiscussed.removeAt(index)
+			const deletedTopic = this.form.controls.topics.at(index)
+			this.form.controls.topics.removeAt(index)
 			const snackBarRef = this.snackBar.open('Topic removed', 'Undo')
-			snackBarRef.onAction().subscribe(() => this.form.controls.topicsDiscussed.insert(index, deletedTopic))
+			snackBarRef.onAction().subscribe(() => this.form.controls.topics.insert(index, deletedTopic))
 		})
 	}
 

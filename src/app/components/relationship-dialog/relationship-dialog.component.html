@@ -68,7 +68,7 @@
 					(delete-interaction)="onDeleteInteractionClick($event)"
 					collapsible
 					[collapsed-left-text]="(interaction.date | date:'mediumDate')!"
-					[collapsed-right-text]="interaction.topicsDiscussed[0]?.notes | newlinesToBr"
+					[collapsed-right-text]="interaction.topics[0]?.notes | newlinesToBr"
 					[collapsed-right-icon]="interaction.typeIcon"
 					[open]="false"
 				>

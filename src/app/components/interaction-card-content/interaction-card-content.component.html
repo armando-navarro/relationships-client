@@ -5,12 +5,12 @@
 	</span>
 	<span>{{ interaction().date | date }}</span>
 
-	@if (interaction().topicsDiscussed.length) {
+	@if (interaction().topics.length) {
 		<div class="topics">
 			<div class="topics-title">Topics Discussed</div>
 			<div class="topic-buttons" #topics>
-				@for (topic of interaction().topicsDiscussed; track topic.topic) {
-					<button class="topic" (click)="onTopicClick(topic)" mat-stroked-button>{{topic.topic}}</button>
+				@for (topic of interaction().topics; track topic.name) {
+					<button class="topic" (click)="onTopicClick(topic)" mat-stroked-button>{{topic.name}}</button>
 				}
 			</div>
 			<app-horizontal-scroll-buttons [scrollableElement]="topics" [scroll-amount-px]="200" [button-top-px]="19" [button-x-px]="-12" [button-bottom-px]="-19" no-opacity />
@@ -19,7 +19,7 @@
 </ng-template>
 
 <ng-template #topicNotes>
-	<h3>{{selectedTopic()?.topic}}</h3>
+	<h3>{{selectedTopic()?.name}}</h3>
 	<p [innerHTML]="selectedTopic()?.notes | newlinesToBr"></p>
 	<button (click)="onCloseTopicClick()" class="close-topic" mat-icon-button><mat-icon>close</mat-icon></button>
 </ng-template>

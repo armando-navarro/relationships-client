@@ -10,10 +10,10 @@ export interface Interaction {
 	idOfRelationship?: string
 	nameOfPerson?: string
 	date: Date|null
-	topicsDiscussed: Topic[]
+	topics: Topic[]
 }
 export interface Topic {
-	topic: string
+	name: string
 	notes: string
 }
 export interface InteractionGroup {
@@ -33,7 +33,7 @@ export interface InteractionPayload {
 	_id: string|null
 	type: InteractionType
 	date: Date
-	topicsDiscussed: Topic[]
+	topics: Topic[]
 }
 //#endregion
 
@@ -44,7 +44,7 @@ export interface InteractionResponse {
 	idOfRelationship: string
 	nameOfPerson: string
 	date: string
-	topicsDiscussed: Topic[]
+	topics: Topic[]
 }
 export interface InteractionWriteResponse {
 	updatedRelationshipProperties: RelationshipDerivedPropertiesResponse
