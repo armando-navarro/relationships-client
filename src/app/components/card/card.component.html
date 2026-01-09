@@ -1,5 +1,5 @@
 <div class="header">
-	@if (relationshipName()) {
+	@if (relationshipName() && !alwaysShowLeftText()) {
 		<button class="name" (click)="onEditClick()" [class.hidden]="!open()" [matTooltip]="'Edit ' + modelName()" mat-button>{{relationshipName()}}</button>
 	}
 	@if (alwaysShowLeftText()) {
@@ -7,11 +7,18 @@
 	}
 	@if (collapsedLeftText() || collapsedRightText()) {
 		<div class="collapsed-header">
-			<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
+			@if (relationship()) {
+				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}" mat-button (click)="onEditClick()" [attr.aria-label]="'Edit ' + collapsedLeftText()">{{collapsedLeftText()}}</button>
+			} @else {
+				<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
+			}
 			@if (collapsedRightIcon()) {
 				<mat-icon class="collapsed-right-icon" [class.hidden]="open()">{{collapsedRightIcon()}}</mat-icon>
 			}
-			<span class="collapsed-right-text" [class.hidden]="open()" [innerHTML]="collapsedRightText()"></span>
+			@if (relationship()) {
+				<span class="collapsed-right-text-prefix" [class.hidden]="open()">Last contact:</span>
+			}
+			<span class="collapsed-right-text" [class.hidden]="open()" [style.color]="relationship()?.attentionStatusColor || 'inherit'" [innerHTML]="collapsedRightText()"></span>
 		</div>
 	}
 

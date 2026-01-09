@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
@@ -24,6 +24,7 @@ import { PageHeaderBarComponent } from '../../components/page-header-bar/page-he
 import { RelationshipsService } from '../../services/relationships.service'
 import { RelationshipCardContentComponent } from '../../components/relationship-card-content/relationship-card-content.component'
 import { RelationshipDialogComponent, RelationshipDialogData } from '../../components/relationship-dialog/relationship-dialog.component'
+import { ResponsiveUiService } from '../../services/responsive-ui.service'
 
 @Component({
 	selector: 'app-relationships-list',
@@ -45,6 +46,7 @@ export class RelationshipsListComponent implements OnInit {
 	private readonly dialog = inject(MatDialog)
 	private readonly materialConfig = inject(MaterialConfigService)
 	private readonly relationshipsService = inject(RelationshipsService)
+	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly snackBar = inject(MatSnackBar)
 
 	private readonly cardGroups = viewChildren(CardGroupComponent)
@@ -72,6 +74,7 @@ export class RelationshipsListComponent implements OnInit {
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingRelationships = signal(true)
+	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
 	readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
 
 	ngOnInit(): void {

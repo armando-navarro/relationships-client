@@ -64,11 +64,19 @@ export class CardComponent implements OnInit {
 				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
 			}
 		})
+		// start card closed if collapsible
+		effect(() => { if (this.collapsible()) this.open.set(false) }, { allowSignalWrites: true })
 	}
 
 	ngOnInit(): void {
-		if (this.interaction()) this.initInteractionCard(this.interaction()!)
+		if (this.relationship()) this.initRelationshipCard(this.relationship()!)
+		else if (this.interaction()) this.initInteractionCard(this.interaction()!)
 		else if (this.topic()) this.initTopicCard(this.topic()!)
+	}
+
+	private initRelationshipCard(relationship: Relationship): void {
+		this.collapsedLeftText.set(relationship.fullName)
+		this.collapsedRightText.set(`${(relationship.lastInteractionRelativeTime || 'N/A')}`)
 	}
 
 	private initInteractionCard(interaction: Interaction): void {

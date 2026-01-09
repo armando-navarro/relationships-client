@@ -125,12 +125,19 @@
 		color: var(--mat-app-text-color, inherit);
 		font-size: 1rem;
 		font-weight: normal;
+		// left text is sometimes a button
+		button.collapsed-left-text {
+			font-size: 1.2rem;
+			text-align: left;
+		}
 		.collapsed-left-text {
 			flex: none;
 			width: 6.56rem;
+			padding: 0;
 			margin-right: 32px;
 		}
 		.collapsed-left-text,
+		.collapsed-right-text-prefix,
 		.collapsed-right-text {
 			white-space: nowrap;
 			@include limit-lines(1);
@@ -141,6 +148,9 @@
 			&:not(.hidden) {
 				overflow: hidden;
 			}
+		}
+		.collapsed-right-text-prefix {
+			margin-right: 0.5rem;
 		}
 		.collapsed-right-icon {
 			font-size: 1.2rem;

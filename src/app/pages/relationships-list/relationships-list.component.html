@@ -61,6 +61,8 @@
 						(edit-relationship)="onEditRelationshipClick($event)"
 						(delete-relationship)="onDeleteRelationshipClick($event)"
 						[scroll-to-and-highlight]="group.status === highlightedCard().groupStatus && index === highlightedCard().indexInGroup"
+						always-show-left-text
+						[collapsible]="isSmallViewport()"
 					>
 						<app-relationship-card-content [relationship]="relationship" />
 					</app-card>

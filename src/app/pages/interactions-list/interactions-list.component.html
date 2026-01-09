@@ -63,6 +63,7 @@
 			@for (interaction of group.interactions; track interaction._id; let index = $index) {
 				<app-card
 					[interaction]="interaction"
+					[collapsible]="isSmallViewport()"
 					(edit-interaction)="onEditInteractionClick($event)"
 					(delete-interaction)="onDeleteInteractionClick($event)"
 					[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
