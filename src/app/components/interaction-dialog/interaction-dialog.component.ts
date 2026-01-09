@@ -22,6 +22,7 @@ import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.compo
 import { Relationship, UpdatedRelationshipProperties } from '../../interfaces/relationship.interface'
 import { RelationshipsService } from '../../services/relationships.service'
 import { TopicDialogComponent, TopicDialogData } from '../topic-dialog/topic-dialog.component'
+import { TopicFormToModelPipe } from "../../pipes/topic-form-to-model.pipe"
 import { REQUIRED_ERROR } from '../../constants/misc-constants'
 
 export interface InteractionDialogData {
@@ -44,6 +45,7 @@ export interface InteractionDialogSaveResult extends UpdatedRelationshipProperti
     CardComponent, MatButtonModule, MatDatepickerModule, MatDialogContent,
     MatDialogActions, MatDialogClose, MatFormFieldModule, MatIconModule,
     MatInputModule, NewlinesToBrPipe, PageHeaderBarComponent, ReactiveFormsModule,
+    TopicFormToModelPipe
 ],
 	templateUrl: './interaction-dialog.component.html',
 	styleUrl: './interaction-dialog.component.scss'

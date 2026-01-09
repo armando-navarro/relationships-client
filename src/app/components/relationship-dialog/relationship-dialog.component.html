@@ -62,10 +62,6 @@
 					(edit-interaction)="onEditInteractionClick($event)"
 					(delete-interaction)="onDeleteInteractionClick($event)"
 					collapsible
-					[collapsed-left-text]="(interaction.date | date:'mediumDate')!"
-					[collapsed-right-text]="interaction.topics[0]?.notes | newlinesToBr"
-					[collapsed-right-icon]="interaction.typeIcon"
-					[open]="false"
 				>
 					<app-interaction-card-content [interaction]="interaction" />
 				</app-card>

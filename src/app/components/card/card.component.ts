@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, model, output } from '@angular/core'
+import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
 import { NgStyle } from '@angular/common'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -6,13 +6,15 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
 import { DynamicScrollableComponent } from "../dynamic-scrollable/dynamic-scrollable.component"
-import { Interaction } from '../../interfaces/interaction.interface'
+import { Interaction, Topic } from '../../interfaces/interaction.interface'
+import { NewlinesToBrPipe } from '../../pipes/newlines-to-br.pipe'
 import { Relationship } from '../../interfaces/relationship.interface'
 
 @Component({
 	selector: 'app-card',
 	standalone: true,
 	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule, NgStyle],
+	providers: [NewlinesToBrPipe],
 	templateUrl: './card.component.html',
 	styleUrl: './card.component.scss',
 	host: {
@@ -20,17 +22,16 @@ import { Relationship } from '../../interfaces/relationship.interface'
 		'[class.highlight]': 'scrollToAndHighlight()',
 	}
 })
-export class CardComponent {
+export class CardComponent implements OnInit {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
+	private readonly newlinesToBr = inject(NewlinesToBrPipe)
 
 	readonly relationship = input<Relationship>()
 	readonly interaction = input<Interaction>()
+	readonly topic = input<Topic>()
 	readonly hideFooter = input(false, { alias: 'hide-footer', transform: booleanAttribute })
 	readonly collapsible = input(false, { transform: booleanAttribute })
 	readonly scrollableBody = input(false, { alias: 'scrollable-body', transform: booleanAttribute })
-	readonly collapsedLeftText = input('', { alias: 'collapsed-left-text' })
-	readonly collapsedRightText = input('', { alias: 'collapsed-right-text' })
-	readonly collapsedRightIcon = input('', { alias: 'collapsed-right-icon' })
 	readonly alwaysShowLeftText = input(false, { alias: 'always-show-left-text', transform: booleanAttribute })
 	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
 
@@ -43,6 +44,10 @@ export class CardComponent {
 
 	readonly open = model(true)
 
+	readonly collapsedLeftText = signal('')
+	readonly collapsedRightText = signal('')
+	readonly collapsedRightIcon = signal('')
+
 	readonly relationshipId = computed(() => this.relationship()?._id || this.interaction()?.idOfRelationship)
 	readonly relationshipName = computed(() => this.relationship()?.fullName || this.interaction()?.nameOfPerson)
 	readonly modelName = computed(() => {
@@ -52,12 +57,30 @@ export class CardComponent {
 	})
 
 	constructor() {
+		// highlight card
 		effect(() => {
 			if (this.scrollToAndHighlight()) {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
 				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
 			}
 		})
+	}
+
+	ngOnInit(): void {
+		if (this.interaction()) this.initInteractionCard(this.interaction()!)
+		else if (this.topic()) this.initTopicCard(this.topic()!)
+	}
+
+	private initInteractionCard(interaction: Interaction): void {
+		const date = new Date(interaction.date!)
+		this.collapsedLeftText.set(date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }))
+		this.collapsedRightText.set(this.newlinesToBr.transform(interaction.topics[0]?.notes) || 'No notes')
+		this.collapsedRightIcon.set(interaction.typeIcon || '')
+	}
+
+	private initTopicCard(topic: Topic): void {
+		this.collapsedLeftText.set(topic.name)
+		this.collapsedRightText.set(this.newlinesToBr.transform(topic.notes))
 	}
 
 	onEditClick(): void {

@@ -64,8 +64,7 @@
 			@if (form.controls.topics.length) {
 				@for (topic of form.controls.topics.controls; track topic; let index = $index) {
 					<app-card
-						[collapsed-left-text]="topic.value.name!"
-						[collapsed-right-text]="topic.value.notes | newlinesToBr"
+						[topic]="topic | topicFormToModel"
 						always-show-left-text
 						(edit-topic)="onEditTopicClick(index)"
 						(delete-topic)="onDeleteTopicClick(topic.value.name!, index)"
