@@ -137,9 +137,17 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 			const { form } = dataOrCancel
 			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)
 			this.highlightInteraction = newInteraction
-			this.interactions.update(interactions =>
-				interactions.map(interaction => interaction._id === newInteraction._id ? newInteraction : interaction)
-			)
+			if (editTarget.date === newInteraction.date) {
+				// date is unchanged, so interaction stays in same position
+				this.interactions.update(interactions =>
+					interactions.map(interaction => interaction._id === newInteraction._id ? newInteraction : interaction)
+				)
+			} else {
+				// date changed, so interaction may need to move to a new position
+				const interactionsWithoutEdited = this.interactions().filter(interaction => interaction._id !== newInteraction._id)
+				const updatedInteractions = this.interactionsService.insertInteractionInOrder(interactionsWithoutEdited, newInteraction)
+				this.interactions.set(updatedInteractions)
+			}
 		})
 	}
 
