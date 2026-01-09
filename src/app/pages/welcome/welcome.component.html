@@ -1,0 +1,111 @@
+<app-page-header-bar page-title="Relationships App" always-show>
+	<a class="go-to-app" routerLink="/relationships" mat-button>Go to App</a>
+	 <button class="toc" (click)="isTableOfContentsOpen.set(!isTableOfContentsOpen())" mat-button>
+		Table of Contents
+	</button>
+</app-page-header-bar>
+
+<nav [class.open]="isTableOfContentsOpen()">
+	<a class="go-to-app" routerLink="/relationships" mat-flat-button>Go to App</a>
+
+	<button (click)="isTableOfContentsOpen.set(false)" mat-icon-button aria-label="Close table of contents" class="close-toc">
+		<mat-icon>close</mat-icon>
+	</button>
+
+	<ul>
+		<li><a [routerLink]="['/welcome']" fragment="overview" (click)="isTableOfContentsOpen.set(false)" mat-button>Overview</a></li>
+		<li><a [routerLink]="['/welcome']" fragment="demo-video" (click)="isTableOfContentsOpen.set(false)" mat-button>Demo Video</a></li>
+		<li>
+			<a [routerLink]="['/welcome']" fragment="tech-stack" (click)="isTableOfContentsOpen.set(false)" mat-button>Tech Stack</a>
+		</li>
+		<li><a [routerLink]="['/welcome']" fragment="room-for-growth" (click)="isTableOfContentsOpen.set(false)" mat-button>Room for Growth</a></li>
+		<li>
+			<a [routerLink]="['/welcome']" fragment="additional-technical-details" (click)="isTableOfContentsOpen.set(false)" mat-button>Additional Technical Details</a>
+		</li>
+		<li><a [routerLink]="['/welcome']" fragment="possible-future-features" (click)="isTableOfContentsOpen.set(false)" mat-button>Possible Future Features</a></li>
+	</ul>
+</nav>
+
+<main>
+	<a class="go-to-app" routerLink="/relationships" mat-raised-button>Go to Relationships App</a>
+
+	<span id="overview" class="anchor"></span>
+	<h2>Overview</h2>
+	<p>
+		This web app is meant to help me track and maintain relationships with people I don't often
+		interact with (such as long-distance relationships), but with whom I still want to keep in touch with long term.
+	</p>
+	<p>It's currently in very early stages, with much to be added and improved upon.</p>
+
+	<span id="demo-video" class="anchor"></span>
+	<h2>Demo Video</h2>
+	<p><code class="code-inline">&lt;Demo video will be embedded here when ready&gt;</code></p>
+
+	<span id="tech-stack" class="anchor"></span>
+	<h2>Tech Stack</h2>
+	<p>
+		I chose the MEAN stack because I wanted to learn these technologies. That's how I usually choose a tech stack for
+		personal projects.
+	</p>
+	<h3>Frontend:</h3>
+	<ul>
+		<li>Angular (w/TypeScript, Sass, RxJs, and Angular Material)</li>
+		<li>Luxon (date/time library)</li>
+	</ul>
+	<h3>Backend:</h3>
+	<ul>
+		<li>Node.js</li>
+		<li>Express</li>
+		<li>MongoDB</li>
+	</ul>
+
+	<span id="room-for-growth" class="anchor"></span>
+	<h2>Room for Growth</h2>
+	<p>
+		This project has so far been built in a very fluid manner. Production-level concerns were sometimes sidelined while I
+		explored ideas and just had fun with it.
+	</p>
+	<p>Here are some such concerns that need to be addressed:</p>
+	<ul>
+		<li>Authentication is absent.</li>
+		<li>No test code has been written.</li>
+		<li>API requests and responses are far from efficient.</li>
+	</ul>
+
+	<span id="additional-technical-details" class="anchor"></span>
+	<h2>Additional Technical Details</h2>
+	<h3>Standalone Components Architecture</h3>
+	<ul>
+		<li>No NgModules - uses Angular's modern standalone components API</li>
+		<li>Direct imports for better tree-shaking and smaller bundle sizes</li>
+	</ul>
+	<h3>Signal-Based Reactive State</h3>
+	<ul>
+		<li>Angular signals for reactive state management</li>
+		<li>Improved performance with fine-grained reactivity</li>
+	</ul>
+	<h3>Responsive Design</h3>
+	<ul>
+		<li>A mobile-first approach that aims for ease of use no matter what device is used.</li>
+	</ul>
+
+	<span id="possible-future-features" class="anchor"></span>
+	<h2>Possible Future Features</h2>
+	<ul>
+		<li>Notification system for alerts when attention is needed for a relationship.</li>
+		<li>Charts/graphs to visualize interaction patterns and statistics.</li>
+		<li>Additional view options for Relationships/Interactions pages (e.g. data table view).</li>
+		<li>Additional filters for Relationships/Interactions pages (e.g. date range, topic, etc.)</li>
+		<li>Multi-user support in case I want to share this app with friends/family.</li>
+		<li>Pagination or virtual scrolling of data.</li>
+		<li>Autocomplete for previously used topics.</li>
+		<li>Add special “follow up on” notes to remind yourself of what"s needed in future interactions.</li>
+		<li>Pause/disable/snooze notifications on a particular relationship.</li>
+		<li>Multi-select for bulk deletions/etc. of relationships/interactions/topics.</li>
+		<li>Upload a photo of the people you want to stay in touch with.</li>
+		<li>Support for multiple UI themes.</li>
+		<li>Custom interaction types beyond the predefined set.</li>
+		<li>Calender integration with reminder system.</li>
+		<li>Data export/import support.</li>
+	</ul>
+</main>

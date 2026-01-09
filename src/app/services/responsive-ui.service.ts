@@ -3,6 +3,11 @@ import { debounceTime, fromEvent, map, startWith } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class ResponsiveUiService {
+	readonly pageHeaderBarHeight = {
+		smallPageHeaderBarHeight: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-small-header-bar-height'), 10),
+		largePageHeaderBarHeight: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-large-header-bar-height'), 10)
+	}
+
 	// provide a continuous stream to observe viewport size changes
 	readonly isSmallViewport$ = fromEvent(window, 'resize').pipe(
 		startWith(this.isSmallViewport()),

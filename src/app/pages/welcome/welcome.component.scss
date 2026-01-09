@@ -1,0 +1,120 @@
+@import '../../../styles/variables.scss';
+
+:host {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap : 24px;
+	padding: calc(var(--page-small-header-bar-height) + 12px) 8px;
+	@media screen and (min-width: $small-breakpoint) {
+		grid-template-columns: 300px 1fr;
+		padding: calc(var(--page-large-header-bar-height) + 24px) 12px 0;
+	}
+}
+
+app-page-header-bar {
+	a.go-to-app {
+		@media screen and (max-width: $small-breakpoint) {
+			display: none;
+		}
+	}
+	button.toc {
+		@media screen and (min-width: $small-breakpoint) {
+			display: none;
+		}
+	}
+}
+
+nav a.go-to-app,
+main a.go-to-app {
+	display: flex;
+	width: max-content;
+	font-weight: bold;
+	text-align: center;
+	margin: 8px auto 12px;
+}
+
+nav {
+	position: fixed;
+	top: -582px;
+	left: 8px;
+	right: 8px;
+	background: var(--card-background);
+	z-index: 9;
+	transition: top 0.5s;
+	@media screen and (min-width: $small-breakpoint) {
+		position: sticky;
+		top: calc(var(--page-large-header-bar-height) + 24px);
+		height: fit-content;
+	}
+
+	&.open {
+		top: var(--page-small-header-bar-height);
+		@media screen and (min-width: $small-breakpoint) {
+			top: calc(var(--page-large-header-bar-height) + 24px);
+		}
+	}
+
+	a.go-to-app {
+		height: 1.35rem;
+		font-size: 1rem;
+		@media screen and (min-width: $small-breakpoint) {
+			display: none;
+		}
+	}
+
+	button.close-toc {
+		position: absolute;
+		top: 0;
+		right: 0;
+		@media screen and (min-width: $small-breakpoint) {
+			display: none;
+		}
+	}
+
+	ul {
+		list-style: none;
+		padding-left: 16px;
+		margin-top: 0;
+		@media screen and (min-width: $small-breakpoint) {
+			padding-left: 24px;
+		}
+		li {
+			margin-bottom: 8px;
+		}
+	}
+}
+
+main {
+	a.go-to-app {
+		font-size: 1.25rem;
+		margin-top: 0;
+	}
+
+	.anchor {
+		position: relative;
+		top: 12px;
+		visibility: hidden;
+	}
+	h2 {
+		position: sticky;
+		top: var(--page-small-header-bar-height);
+		background: var(--card-background);
+		border-bottom: 1px solid var(--large-card-border-color);
+		&:first-of-type {
+			margin-top: 0;
+		}
+		&:not(:first-of-type) {
+			margin-top: 32px;
+		}
+		@media screen and (min-width: $small-breakpoint) {
+			top: calc(var(--page-large-header-bar-height));
+			scroll-margin-top: var(--page-large-header-bar-height);
+		}
+	}
+
+	li {
+		&:not(:first-child) {
+			margin-top: 12px;
+		}
+	}
+}

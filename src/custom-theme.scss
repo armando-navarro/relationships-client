@@ -41,6 +41,7 @@ $relationships-client-theme: mat.define-theme((
 	--mdc-dialog-subhead-size: 1.5rem;
 	--mat-form-field-subscript-text-size: 0.8rem;
 	--mat-bottom-sheet-container-background-color: var(--card-background);
+	--mdc-protected-button-container-color: var(--card-background);
 	--mdc-snackbar-container-color: var(--card-background);
 	--mdc-snackbar-supporting-text-color: var(--secondary-title-color);
 	--mat-snack-bar-button-color: var(--primary-accent-color);

@@ -1,4 +1,9 @@
 <div class="contents" [style.justify-content]="justifyContent()">
+	@if (!isDialog()) {
+		<a class="home" routerLink="/welcome" mat-icon-button aria-label="Go to home page">
+			<mat-icon class="logo">partner_exchange</mat-icon>
+		</a>
+	}
 	@if (title()) {
 		<h1>{{title()}}</h1>
 	}
