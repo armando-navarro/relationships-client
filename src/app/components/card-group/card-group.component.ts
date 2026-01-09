@@ -1,9 +1,11 @@
-import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
+import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
+import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 
+import { CardComponent } from '../card/card.component'
 import { HorizontalScrollButtonsComponent } from '../horizontal-scroll-buttons/horizontal-scroll-buttons.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
 import { ScrollService } from '../../services/scroll.service'
@@ -11,7 +13,7 @@ import { ScrollService } from '../../services/scroll.service'
 @Component({
 	selector: 'app-card-group',
 	standalone: true,
-	imports: [HorizontalScrollButtonsComponent, MatIconModule],
+	imports: [HorizontalScrollButtonsComponent, MatButtonModule, MatIconModule],
 	templateUrl: './card-group.component.html',
 	styleUrl: './card-group.component.scss',
 	host: {
@@ -30,7 +32,11 @@ export class CardGroupComponent implements OnInit {
 	readonly isCardInGroupHighlighted = input(false, { alias: 'is-card-in-group-highlighted', transform: booleanAttribute })
 	readonly headerClick = output<void>({ alias: 'header-click' })
 
+	readonly cards = contentChildren(CardComponent)
+
 	readonly open = signal(true)
+	readonly allCardsOpen = signal(!this.responsiveUiService.isSmallViewport())
+	readonly allCardsClosed = signal(this.responsiveUiService.isSmallViewport())
 	readonly instanceNumber = signal<number|undefined>(undefined)
 	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
 	readonly maxGroupHeight = computed(() => {
@@ -49,6 +55,14 @@ export class CardGroupComponent implements OnInit {
 		effect(() => {
 			if (this.isCardInGroupHighlighted()) this.open.set(true)
 		}, { allowSignalWrites: true })
+
+		// track cards collapsed/expanded states when cards added/removed or when card collapsed/expanded
+		effect(() => {
+			this.cards().forEach(card => {
+				card.open() // causes effect to rerun when any card's open state changes
+				this.setCardsCollapsedState()
+			})
+		}, { allowSignalWrites: true })
 	}
 
 	ngOnInit(): void {
@@ -64,6 +78,16 @@ export class CardGroupComponent implements OnInit {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
 			}
 		}, 500) // wait for the CSS transition to complete
+	}
+
+	onExpandOrCollapseCardsClick(cardsOpen: boolean): void {
+		this.cards().forEach(card => card.open.set(cardsOpen))
+		this.setCardsCollapsedState()
+	}
+
+	private setCardsCollapsedState(): void {
+		this.allCardsOpen.set(this.cards().every(card => card.open()))
+		this.allCardsClosed.set(this.cards().every(card => !card.open()))
 	}
 
 }

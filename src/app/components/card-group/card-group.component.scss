@@ -19,7 +19,7 @@
 		&.offset-top {
 			top: var(--page-small-header-bar-height);
 		}
-		button {
+		> button {
 			display: flex;
 			align-items: center;
 			gap: 12px;
@@ -45,6 +45,31 @@
 				&:not(.open) {
 					transform: rotate(90deg);
 				}
+			}
+		}
+		.group-actions {
+			position: relative;
+			top: -31px;
+			overflow: hidden;
+			height: 0;
+			z-index: -1;
+			display: flex;
+			justify-content: end;
+			align-items: center;
+			background: var(--header-background-color);
+			transition:
+				top 0.5s,
+				height 0.5s,
+				border-top 0.5s;
+			&.show {
+				top: 0;
+				height: 31px;
+				border-top: 2px solid var(--page-background-color);
+			}
+
+			button {
+				height: 1.8rem;
+				font-size: 0.9rem;
 			}
 		}
 	}

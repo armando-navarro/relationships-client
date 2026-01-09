@@ -4,6 +4,17 @@
 		<span>({{cardCount()}})</span>
 		<mat-icon [class.open]="open()">chevron_right</mat-icon>
 	</button>
+
+	@if (isSmallViewport()) {
+		<div class="group-actions" [class.show]="open()">
+			@if (!allCardsOpen()) {
+				<button (click)="onExpandOrCollapseCardsClick(true)" mat-button>Expand All</button>
+			}
+			@if (!allCardsClosed()) {
+				<button (click)="onExpandOrCollapseCardsClick(false)" mat-button>Collapse All</button>
+			}
+		</div>
+	}
 </h2>
 
 <div class="cards custom-scrollbar" #cards [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
