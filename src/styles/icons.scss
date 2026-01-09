@@ -1,3 +1,5 @@
+@import './mixins.scss';
+
 .material-symbols-outlined {
 	font-variation-settings:
 		'FILL' 0,
@@ -17,11 +19,12 @@
 }
 
 // small
-button.mat-icon-button.icon-sm {
+.mdc-icon-button.icon-sm {
 	width: 32px;
 	height: 32px;
+	&:has(img) { @include flex-center() }
 }
-button.mat-icon-button.icon-sm mat-icon {
+.mdc-icon-button.icon-sm mat-icon {
 	width: 16px;
 	height: 16px;
 	font-size: 16px;
@@ -35,13 +38,16 @@ button.mat-icon-button.icon-sm mat-icon {
 }
 
 // medium not specified because it's the default size
+// it uses 40px button with 24px icon
 
 // large
-button.mat-icon-button.icon-lg {
+.mdc-icon-button.icon-lg {
 	width: 56px;
 	height: 56px;
+	&:has(img) { @include flex-center() }
 }
-button.mat-icon-button.icon-lg mat-icon {
+.mdc-icon-button.icon-lg mat-icon,
+.mdc-icon-button.icon-lg img {
 	width: 32px;
 	height: 32px;
 	font-size: 32px;
@@ -55,11 +61,12 @@ button.mat-icon-button.icon-lg mat-icon {
 }
 
 // extra large
-button.mat-icon-button.icon-xl {
+.mdc-icon-button.icon-xl {
 	width: 72px;
 	height: 72px;
+	&:has(img) { @include flex-center() }
 }
-button.mat-icon-button.icon-xl mat-icon {
+.mdc-icon-button.icon-xl mat-icon {
 	width: 48px;
 	height: 48px;
 	font-size: 48px;

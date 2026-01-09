@@ -1,8 +1,11 @@
-<app-page-header-bar page-title="Relationships App" always-show>
+<app-page-header-bar [page-title]="isSmallViewport() ? 'Relationships' : 'Relationships App'" always-show>
 	<a class="go-to-app" routerLink="/relationships" mat-button>Go to App</a>
 	 <button class="toc" (click)="isTableOfContentsOpen.set(!isTableOfContentsOpen())" mat-button>
 		Table of Contents
 	</button>
+	<a class="icon-lg" href="https://github.com/armando-navarro/relationships-client" target="_blank" matTooltip="View on GitHub"  aria-label="View this project on GitHub" mat-icon-button>
+		<img src="/assets/logos/github-mark-white.svg" alt="GitHub logo" />
+	</a>
 </app-page-header-bar>
 
 <nav [class.open]="isTableOfContentsOpen()">
