@@ -1,27 +1,58 @@
-# RelationshipsClient
+# Relationships App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
+## Overview
 
-## Development server
+This web app is meant to help me track and maintain relationships with people I don't often interact with (such as long-distance relationships), but with whom I still want to keep in touch with long term.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+It’s currently in very early stages, with much to be added and improved upon.
 
-## Code scaffolding
+## Demo Video
+`<Demo video will be embedded here when ready>`
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Tech Stack
+I chose the MEAN stack because I wanted to learn these technologies.  That’s how I usually choose a tech stack for personal projects.
+Frontend:
+- Angular (w/TypeScript, Sass, RxJs, and Angular Material)
+- Luxon (date/time library)
+Backend:
+- Node.js
+- Express
+- MongoDB
 
-## Build
+## Room for Growth
+This project has so far been built in a very fluid manner.  Production-level concerns were sometimes sidelined while I explored ideas and just had fun with it.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Here are some such concerns that need to be addresssed:
+- Authentication is absent.
+- No test code has been written.
+- API requests and responses are far from efficient.
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Additional Technical Details
+**Standalone Components Architecture**
+- No NgModules - uses Angular's modern standalone components API
+- Direct imports for better tree-shaking and smaller bundle sizes
+  
+**Signal-Based Reactive State**
+- Angular signals for reactive state management
+- Improved performance with fine-grained reactivity
 
-## Running end-to-end tests
+**Responsive Design**
+- A mobile-first approach that aims for ease of use no matter what device is used.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Possible Future Features
+- Notification system for alerts when attention is needed for a relationship.
+- Charts/graphs to visualize interaction patterns and statistics.
+- Additional view options for Relationships/Interactions pages (e.g. data table view).
+- Additional filters for Relationships/Interactions pages (e.g. date range, topic, etc.)
+- Multi-user support in case I want to share this app with friends/family.
+- Pagination or virtual scrolling of data.
+- Autocomplete for previously used topics.
+- Add special “follow up on” notes to remind yourself of what’s needed in future interactions.
+- Pause/disable/snooze notifications on a particular relationship.
+- Multi-select for bulk deletions/etc. of relationships/interactions/topics.
+- Upload a photo of the people you want to stay in touch with.
+- Support for multiple UI themes.
+- Custom interaction types beyond the predefined set.
+- Calender integration with reminder system.
+- Data export/import support.
