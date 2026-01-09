@@ -1,10 +1,12 @@
 import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { map } from 'rxjs'
 
 import { MatIconModule } from '@angular/material/icon'
 
 import { HorizontalScrollButtonsComponent } from '../horizontal-scroll-buttons/horizontal-scroll-buttons.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
+import { ScrollService } from '../../services/scroll.service'
 
 @Component({
 	selector: 'app-card-group',
@@ -20,6 +22,7 @@ import { ResponsiveUiService } from '../../services/responsive-ui.service'
 export class CardGroupComponent implements OnInit {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
 	private readonly responsiveUiService = inject(ResponsiveUiService)
+	private readonly scrollService = inject(ScrollService)
 
 	readonly header = input.required<string>()
 	readonly headerColor = input('white', { alias: 'header-color' })
@@ -36,6 +39,7 @@ export class CardGroupComponent implements OnInit {
 		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : 300
 		else return 0
 	})
+	readonly scrollingUp = toSignal(this.scrollService.scrollDirection$.pipe(map(scrollDir => scrollDir === 'up')))
 
 	// for assigning a unique ID to elements in each instance of this component
 	static instanceCount = 0

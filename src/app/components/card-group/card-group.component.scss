@@ -7,10 +7,18 @@
 	border-radius: var(--primary-border-radius);
 	margin-top: 32px;
 	h2 {
+		position: sticky;
+		top: 0;
+		z-index: 2;
 		border-top-left-radius: var(--primary-border-radius);
 		border-top-right-radius: var(--primary-border-radius);
 		font-size: 1.35rem;
 		margin: 0;
+		transition: top 0.5s;;
+		// offset top value to accomodate page header bar when it's visible
+		&.offset-top {
+			top: var(--page-small-header-bar-height);
+		}
 		button {
 			display: flex;
 			align-items: center;

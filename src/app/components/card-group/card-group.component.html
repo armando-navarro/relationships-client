@@ -1,4 +1,4 @@
-<h2 [id]="'card-group-title-' + instanceNumber()" [style.color]="headerColor()">
+<h2 [id]="'card-group-title-' + instanceNumber()" [style.color]="headerColor()" [class.offset-top]="scrollingUp()">
 	<button (click)="onGroupHeaderClick()" [attr.aria-label]="(open() ? 'Collapse' : 'Expand') + ' card'">
 		<span>{{header()}}</span>
 		<span>({{cardCount()}})</span>
