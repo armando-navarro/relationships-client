@@ -58,7 +58,7 @@
 			[header]="group.timeAgoText"
 			[card-count]="group.interactions.length"
 			header-color="var(--primary-button-color)"
-			[is-card-in-group-highlighted]="group.groupedBy === highlightedCard().groupKey"
+			[is-card-in-group-highlighted]="group.timeAgoText === highlightedCard().groupKey"
 		>
 			@for (interaction of group.interactions; track interaction._id; let index = $index) {
 				<app-card
