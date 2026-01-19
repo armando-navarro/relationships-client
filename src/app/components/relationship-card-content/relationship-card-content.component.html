@@ -2,7 +2,7 @@
 	<span class="notes" [innerHTML]="(relationship().notes | newlinesToBr) || 'No notes'"></span>
 
 	<span class="interaction-goal-label">Interaction Goal:</span>
-	<span class="interaction-goal-value">{{relationship().interactionRateGoal}}</span>
+	<span class="interaction-goal-value">{{relationship().interactionRateGoal || 'No goal set'}}</span>
 
 	<span>Last contact:</span>
 	<span class="last-contact-value">{{(relationship().lastInteractionRelativeTime) || 'N/A'}}</span>
