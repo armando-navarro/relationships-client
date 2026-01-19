@@ -188,10 +188,6 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 		)
 	}
 
-	onOkayClick(): void {
-		this.dialogRef.close(false)
-	}
-
 	ngOnDestroy(): void {
 		this.destroy$.next()
 	}

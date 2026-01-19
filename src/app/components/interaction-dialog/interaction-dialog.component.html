@@ -87,13 +87,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-	@if (!wasInteractionModified() && this.data.isAddingInteraction) {
-		<button [mat-dialog-close]="false" mat-button>Cancel</button>
-	}
+	<button [mat-dialog-close]="false" mat-button>Cancel</button>
 	@if (wasInteractionModified()) {
 		<button (click)="onSaveInteractionClick()" mat-button>Save</button>
-	}
-	@else if (!this.data.isAddingInteraction) {
-		<button (click)="onOkayClick()" mat-button>Okay</button>
 	}
 </mat-dialog-actions>
