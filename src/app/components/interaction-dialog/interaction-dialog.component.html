@@ -47,11 +47,13 @@
 
 			<mat-form-field appearance="outline" floatLabel="auto">
 				<mat-label>Date</mat-label>
-				<input matInput [matDatepicker]="datePicker" formControlName="date" required>
+				<input matInput [matDatepicker]="datePicker" formControlName="date" [max]="dateMax" required>
 				<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
 				<mat-datepicker #datePicker></mat-datepicker>
 				@if (form.controls.date.hasError('required')) {
 					<mat-error>Date is required</mat-error>
+				} @else if (form.controls.date.hasError('matDatepickerMax')) {
+					<mat-error>Date cannot be in the future</mat-error>
 				}
 			</mat-form-field>
 		</section>

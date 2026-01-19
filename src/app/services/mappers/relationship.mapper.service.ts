@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core'
 import { FormBuilder, Validators } from '@angular/forms'
 import { DateTime } from 'luxon'
 
+import AppValidators from '../../constants/input-validation.constants'
 import { InteractionMapperService } from './interaction.mapper.service'
 import { AttentionNeededStatus,
 	RelationshipDerivedProperties,
@@ -75,10 +76,10 @@ export class RelationshipMapperService {
 	mapModelToForm(relationship?: Relationship) {
 		const form = this.fb.group({
 			_id: [relationship?._id ?? null],
-			firstName: [relationship?.firstName ?? null, Validators.required],
-			lastName: [relationship?.lastName ?? null],
+			firstName: [relationship?.firstName ?? null, [Validators.required, AppValidators.relationshipNamePart]],
+			lastName: [relationship?.lastName ?? null, AppValidators.relationshipNamePart],
 			interactionRateGoal: [relationship?.interactionRateGoal ?? null],
-			notes: [relationship?.notes ?? null],
+			notes: [relationship?.notes ?? null, AppValidators.notes],
 			interactions: this.fb.array([
 				this.interactionMapper.mapModelToForm(undefined, relationship?._id ?? undefined, relationship?.fullName)
 			])

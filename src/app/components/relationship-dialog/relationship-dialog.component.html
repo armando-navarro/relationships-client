@@ -13,12 +13,25 @@
 				<input matInput formControlName="firstName" required>
 				@if (form.controls.firstName.hasError('required')) {
 					<mat-error>First name is required</mat-error>
+				} @else if (form.controls.firstName.hasError('maxlength')) {
+					<mat-error>
+						Over {{form.controls.firstName.getError('maxlength').requiredLength}}
+						character limit
+						({{form.controls.firstName.getError('maxlength').actualLength - form.controls.firstName.getError('maxlength').requiredLength}})
+					</mat-error>
 				}
 			</mat-form-field>
 
 			<mat-form-field appearance="outline" floatLabel="auto">
 				<mat-label>Last Name</mat-label>
 				<input matInput formControlName="lastName">
+				 @if (form.controls.lastName.hasError('maxlength')) {
+					<mat-error>
+						Over {{form.controls.lastName.getError('maxlength').requiredLength}}
+						character limit
+						({{form.controls.lastName.getError('maxlength').actualLength - form.controls.lastName.getError('maxlength').requiredLength}})
+					</mat-error>
+				}
 			</mat-form-field>
 
 			<mat-form-field class="interaction-goal" hintLabel="How often would you like to stay in contact?" appearance="outline" floatLabel="auto">
@@ -37,6 +50,13 @@
 			<mat-form-field class="notes" appearance="outline" floatLabel="auto">
 				<mat-label>Notes</mat-label>
 				<textarea matInput formControlName="notes" rows="3"></textarea>
+				@if (form.controls.notes.hasError('maxlength')) {
+					<mat-error>
+						Over {{form.controls.notes.getError('maxlength').requiredLength}}
+						character limit (by
+						{{form.controls.notes.getError('maxlength').actualLength - form.controls.notes.getError('maxlength').requiredLength}})
+					</mat-error>
+				}
 			</mat-form-field>
 		</form>
 	</section>

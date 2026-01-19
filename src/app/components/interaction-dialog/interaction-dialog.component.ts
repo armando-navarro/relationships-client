@@ -66,6 +66,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 	readonly pageHeading = signal('')
 	readonly wasInteractionModified = signal(false)
 	readonly typeOptions = InteractionType
+	readonly dateMax = new Date()
 	private readonly destroy$ = new Subject<void>()
 
 	private readonly RELATIONSHIP_ERROR = 'Failed to load relationships. Try again later.'

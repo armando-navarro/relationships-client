@@ -10,6 +10,12 @@
 			<input #topicNameInput matInput formControlName="name" required>
 			@if (form.hasError('required')) {
 				<mat-error>Topic is required</mat-error>
+			} @else if (form.controls.name.hasError('maxlength')) {
+				<mat-error>
+					Over {{form.controls.name.getError('maxlength').requiredLength}}
+					character limit
+					({{form.controls.name.getError('maxlength').actualLength - form.controls.name.getError('maxlength').requiredLength}})
+				</mat-error>
 			}
 		</mat-form-field>
 
@@ -22,6 +28,13 @@
 		<mat-form-field class="notes" hintLabel="What do you want to remember about this topic?" appearance="outline" floatLabel="auto">
 			<mat-label>Notes</mat-label>
 			<textarea matInput formControlName="notes" rows="5"></textarea>
+			@if (form.controls.notes.hasError('maxlength')) {
+				<mat-error>
+					Over {{form.controls.notes.getError('maxlength').requiredLength}}
+					character limit (by
+					{{form.controls.notes.getError('maxlength').actualLength - form.controls.notes.getError('maxlength').requiredLength}})
+				</mat-error>
+			}
 		</mat-form-field>
 
 	</form>

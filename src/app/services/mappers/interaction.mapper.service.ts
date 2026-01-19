@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { FormBuilder, Validators } from '@angular/forms'
 
+import AppValidators from '../../constants/input-validation.constants'
 import {
 	Interaction,
 	InteractionFormGroup,
@@ -65,8 +66,8 @@ export class InteractionMapperService {
 
 	mapTopicModelToForm(topic?: Topic) {
 		return this.fb.group({
-			name: [topic?.name ?? null, Validators.required],
-			notes: [topic?.notes ?? '']
+			name: [topic?.name ?? null, AppValidators.topicName],
+			notes: [topic?.notes ?? '', AppValidators.notes],
 		})
 	}
 
