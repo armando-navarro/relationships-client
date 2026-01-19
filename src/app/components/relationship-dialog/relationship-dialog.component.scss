@@ -9,20 +9,14 @@ h2 {
 }
 
 section.relationship-details form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 	border-bottom: 2px solid var(--large-card-border-color);
 	h2 {
 		margin: 0 0 20px;
 	}
-	mat-form-field {
-		display: flex;
-		&.interaction-goal {
-			margin-bottom: 36px;
-			@media screen and (max-width: 384px) {
-				margin-bottom: 24px;
-			}
-		}
-	}
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: $dialog-max-width) {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		column-gap: 24px;
@@ -39,12 +33,6 @@ section.relationship-details form {
 			&.notes {
 				grid-column-start: 1;
 				grid-column-end: -1;
-			}
-			&.interaction-goal {
-				margin: 0;
-			}
-			&.notes {
-				margin-top: 24px;
 			}
 		}
 	}

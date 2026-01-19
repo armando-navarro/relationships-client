@@ -19,27 +19,21 @@ section.interaction-details {
 	padding-bottom: 20px;
 	border-bottom: 2px solid var(--large-card-border-color);
 	mat-form-field {
-		display: flex;
+	display: flex;
 		width: min-content;
-		@media screen and (min-width: $small-breakpoint) {
-			display: inline-flex;
-			width: unset;
-		}
 	}
 }
 
 section.interaction-details {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 	h2 {
-		margin-top: 0;
+		flex: none;
+		width: 100%;
 	}
-	@media screen and (min-width: $small-breakpoint) {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 24px;
-		h2 {
-			grid-column-start: 1;
-			grid-column-end: -1;
-		}
+	mat-form-field {
+		flex: 1;
 	}
 }
 
