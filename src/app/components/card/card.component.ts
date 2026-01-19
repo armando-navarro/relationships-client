@@ -64,8 +64,8 @@ export class CardComponent implements OnInit {
 				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
 			}
 		})
-		// start card closed if collapsible
-		effect(() => { if (this.collapsible()) this.open.set(false) }, { allowSignalWrites: true })
+		// close card if collapsible, open if not
+		effect(() => { this.open.set(!this.collapsible()) }, { allowSignalWrites: true })
 	}
 
 	ngOnInit(): void {

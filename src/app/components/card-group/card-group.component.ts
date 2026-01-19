@@ -39,6 +39,7 @@ export class CardGroupComponent implements OnInit {
 	readonly allCardsClosed = signal(this.responsiveUiService.isSmallViewport())
 	readonly instanceNumber = signal<number|undefined>(undefined)
 	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
+	readonly isSmallViewport$ = this.responsiveUiService.isSmallViewport$
 	readonly maxGroupHeight = computed(() => {
 		// small viewport: take max card height into account so group expands tall enough
 		// large viewport: fixed height since cards scroll horizontally
@@ -63,6 +64,16 @@ export class CardGroupComponent implements OnInit {
 				this.setCardsCollapsedState()
 			})
 		}, { allowSignalWrites: true })
+
+		// start group closed on small viewports
+		// observable used instead of effect to prevent other signal updates from interfering
+		this.isSmallViewport$.subscribe(isSmallViewport => {
+			if (isSmallViewport) {
+				this.open.set(false)
+				this.setCardsCollapsedState()
+				this.headerClick.emit()
+			}
+		})
 	}
 
 	ngOnInit(): void {
