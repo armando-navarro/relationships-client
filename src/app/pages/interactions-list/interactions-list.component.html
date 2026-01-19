@@ -28,6 +28,12 @@
 				<span>Group by Month</span>
 			</button>
 		}
+		@if (groupBy() !== 'year') {
+			<button (click)="groupBy.set('year')" mat-menu-item>
+				<mat-icon>calendar_clock</mat-icon>
+				<span>Group by Year</span>
+			</button>
+		}
 		@if (!allGroupsExpanded()) {
 			<button (click)="onCollapseOrExpandAllClick(true)" mat-menu-item>
 				<mat-icon>unfold_more</mat-icon>

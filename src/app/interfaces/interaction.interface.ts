@@ -22,7 +22,7 @@ export interface InteractionGroup {
 	timeAgoText: string,
 	interactions: Interaction[],
 }
-export type TimeUnit = 'day'|'week'|'month'
+export type TimeUnit = 'day'|'week'|'month'|'year'
 export type InteractionTopicFormGroup = ReturnType<typeof InteractionMapperService.prototype.mapTopicModelToForm>
 export type InteractionFormGroup = ReturnType<typeof InteractionMapperService.prototype.mapModelToForm>
 export type InteractionFormGroupValue = InteractionFormGroup['value']
