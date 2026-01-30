@@ -5,7 +5,7 @@
 }
 
 @mixin limit-lines($number-of-lines) {
-	display: -webkit-box;
+	display: inline;
 	-webkit-box-orient: vertical;
 	line-clamp: $number-of-lines;
 	-webkit-line-clamp: $number-of-lines;
