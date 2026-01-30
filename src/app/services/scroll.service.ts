@@ -1,11 +1,17 @@
-import { Injectable } from '@angular/core'
-import { distinctUntilChanged, filter, fromEvent, map, Observable, pairwise, startWith, throttleTime } from 'rxjs'
+import { inject, Injectable } from '@angular/core'
+import { distinctUntilChanged, filter, fromEvent, map, merge, Observable, pairwise, startWith, throttleTime } from 'rxjs'
+import { ResponsiveUiService } from './responsive-ui.service'
 
-export type ScrollDirection = 'up'|'down'
-export type ScrollPosition = 'min'|'between'|'max'|'no-overflow'
+type ScrollDirection = 'up'|'down'
+interface CanScrollHorizontally {
+	canScrollLeft: boolean
+	canScrollRight: boolean
+}
 
 @Injectable({ providedIn: 'root' })
 export class ScrollService {
+	private readonly responsiveUiService = inject(ResponsiveUiService)
+
 	readonly scrollDirection$ = fromEvent(window, 'scroll').pipe(
 		throttleTime(50),
 		map(() => window.scrollY),
@@ -17,19 +23,39 @@ export class ScrollService {
 		distinctUntilChanged(),
 	)
 
-	/** @returns A string describing whether an element's scroll position is at its min, max, between, or has no overflow. */
-	getHorizontalScrollResult(scrollable: HTMLElement): Observable<ScrollPosition> {
-		return fromEvent(scrollable, 'scroll').pipe(
-			throttleTime(50, undefined, { trailing: true }),
+	/** @returns An object describing whether an element can scroll left or right. */
+	getHorizontalScrollability(scrollable: HTMLElement): Observable<CanScrollHorizontally> {
+		const resize$ = this.responsiveUiService.observeResize(scrollable)
+		const scroll$ = fromEvent(scrollable, 'scroll')
+		return merge(resize$, scroll$).pipe(
+			throttleTime(75, undefined, { trailing: true }),
 			startWith(null), // trigger initial calculation
-			map(() => {
-				if (scrollable.scrollWidth <= scrollable.clientWidth) return 'no-overflow'
-				if (scrollable.scrollLeft === 0) return 'min'
-				if (scrollable.scrollLeft + scrollable.clientWidth >= scrollable.scrollWidth) return 'max'
-				return 'between'
-			}),
+			map(() => ({
+				canScrollLeft: scrollable.scrollLeft > 0,
+				// account for sub-pixel rendering by using Math.ceil, and also the scroll button width
+				canScrollRight: Math.ceil(scrollable.scrollLeft) + scrollable.clientWidth < scrollable.scrollWidth - 20,
+			})),
 			distinctUntilChanged()
 		)
+	}
+
+	/** Scrolls the scrollable element horizontally by the specified number of pixels.
+	 * Negative values scroll left, positive values scroll right. */
+	scrollHorizontally(scrollable: HTMLElement, scrollByPx: number): void {
+		const scrollLeft = Math.ceil(scrollable.scrollLeft)
+		const { clientWidth, scrollWidth } = scrollable
+
+		// adjust scroll amount to not exceed scroll bounds, which is possible on mobile devices
+		const scrollLeftAfterScroll = scrollLeft + scrollByPx
+		if (scrollLeftAfterScroll < 0) scrollByPx = -scrollLeft
+		if (scrollLeftAfterScroll + clientWidth > scrollWidth) {
+			scrollByPx = scrollWidth - clientWidth - scrollLeft
+		}
+
+		scrollable.scrollBy({
+			left: scrollByPx,
+			behavior: 'smooth'
+		})
 	}
 
 }

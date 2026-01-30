@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { debounceTime, fromEvent, map, startWith } from 'rxjs'
+import { debounceTime, fromEvent, map, Observable, startWith } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class ResponsiveUiService {
@@ -19,6 +19,15 @@ export class ResponsiveUiService {
 	isSmallViewport(): boolean {
 		const smallBreakpoint = getComputedStyle(document.documentElement).getPropertyValue('--small-breakpoint')
 		return window.innerWidth <= parseInt(smallBreakpoint, 10)
+	}
+
+	/** Creates a new ResizeObserver and converts it to an Observable. */
+	observeResize(element: HTMLElement): Observable<ResizeObserverEntry[]> {
+		return new Observable(observer => {
+			const resizeObserver = new ResizeObserver(entries => observer.next(entries))
+			resizeObserver.observe(element)
+			return () => resizeObserver.disconnect()
+		})
 	}
 
 }

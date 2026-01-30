@@ -1,18 +1,18 @@
 button.scroll {
-	position: absolute;
-	// top, bottom, left, and right are set in the template
+	position: sticky;
 
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	width: 20px;
+	height: 100%;
 
 	background: rgba(60, 131, 246, 0.251);
 	color: var(--mdc-outlined-button-label-text-color);
 	padding: 0;
 	border: none;
 	cursor: pointer;
-	z-index: 1;
+	z-index: 2;
 
 	&.left {
 		left: 0;
