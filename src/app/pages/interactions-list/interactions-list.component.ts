@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { filter } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -70,7 +70,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingInteractions = signal(true)
-	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
+	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
 	readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
 	private highlightInteraction = {} as Interaction
 	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE

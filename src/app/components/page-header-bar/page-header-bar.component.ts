@@ -41,7 +41,7 @@ export class PageHeaderBarComponent {
 
 	readonly hideHeaderBar = computed(() => !this.alwaysShow() && this.isSmallViewport() && this.scrollingDown())
 	readonly scrollingDown = toSignal(this.scrollService.scrollDirection$.pipe(map(scrollDir => scrollDir === 'down')))
-	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
+	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
 
 	constructor() {
 		effect(() => this.setSearchView(), { allowSignalWrites: true})

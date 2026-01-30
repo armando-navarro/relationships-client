@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
@@ -74,7 +74,7 @@ export class RelationshipsListComponent implements OnInit {
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingRelationships = signal(true)
-	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
+	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
 	readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
 
 	ngOnInit(): void {

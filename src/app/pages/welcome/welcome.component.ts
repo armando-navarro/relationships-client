@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { toSignal } from '@angular/core/rxjs-interop'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
@@ -19,7 +18,7 @@ import { ResponsiveUiService } from '../../services/responsive-ui.service'
 export class WelcomeComponent {
 	private readonly responsivUiService = inject(ResponsiveUiService)
 
-	readonly isSmallViewport = toSignal(this.responsivUiService.isSmallViewport$)
+	readonly isSmallViewport = this.responsivUiService.isSmallViewport
 	isTableOfContentsOpen = signal(false)
 
 	onTableOfContentsClick(): void {

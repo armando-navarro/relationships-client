@@ -1,5 +1,4 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
-import { DatePipe } from '@angular/common'
 import { ReactiveFormsModule } from '@angular/forms'
 import { pairwise, startWith, Subject, takeUntil } from 'rxjs'
 
@@ -18,7 +17,6 @@ import { InteractionMapperService } from '../../services/mappers/interaction.map
 import { InteractionRate, Relationship } from "../../interfaces/relationship.interface"
 import { InteractionsService } from '../../services/interactions.service'
 import { MaterialConfigService } from '../../services/material-config.service'
-import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { RelationshipFormService } from '../../services/relationship-form.service'
 import { RelationshipMapperService } from '../../services/mappers/relationship.mapper.service'
@@ -34,10 +32,9 @@ export interface RelationshipDialogData {
 	selector: 'app-relationship-dialog',
 	standalone: true,
 	imports: [
-    CardComponent, DatePipe, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
+    CardComponent, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
     MatDialogClose, MatDialogContent, MatIconModule, MatFormFieldModule, MatInputModule,
     PageHeaderBarComponent, ReactiveFormsModule,
-    NewlinesToBrPipe
 ],
 	providers: [RelationshipFormService],
 	templateUrl: './relationship-dialog.component.html',

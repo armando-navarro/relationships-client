@@ -1,5 +1,5 @@
 import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
-import { toSignal } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -38,8 +38,8 @@ export class CardGroupComponent implements OnInit {
 	readonly allCardsOpen = signal(!this.responsiveUiService.isSmallViewport())
 	readonly allCardsClosed = signal(this.responsiveUiService.isSmallViewport())
 	readonly instanceNumber = signal<number|undefined>(undefined)
-	readonly isSmallViewport = toSignal(this.responsiveUiService.isSmallViewport$)
-	readonly isSmallViewport$ = this.responsiveUiService.isSmallViewport$
+	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
+	readonly isSmallViewport$ = toObservable(this.responsiveUiService.isSmallViewport).pipe(takeUntilDestroyed())
 	readonly maxGroupHeight = computed(() => {
 		// small viewport: take max card height into account so group expands tall enough
 		// large viewport: fixed height since cards scroll horizontally
