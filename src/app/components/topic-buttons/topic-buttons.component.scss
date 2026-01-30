@@ -1,0 +1,35 @@
+:host {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 56px;
+
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+}
+
+button.topic {
+	flex: none;
+	--mdc-outlined-button-container-height: 1.5rem;
+	--mdc-outlined-button-label-text-size: 1rem;
+	--mat-outlined-button-horizontal-padding: 8px;
+	--mdc-outlined-button-container-shape: 24px;
+	--mdc-outlined-button-outline-color: var(--mdc-outlined-button-label-text-color);
+	--mat-outlined-button-hover-state-layer-opacity: 0.25;
+	&:not(:nth-child(1)):not(:nth-child(2)) {
+		margin-left: 12px;
+	}
+}
+
+// global style
+::ng-deep .topic-bottom-sheet {
+	position: relative;
+	min-height: 300px;
+}
+
+button.close-topic {
+	position: absolute;
+	top: 18px;
+	right: 16px;
+}

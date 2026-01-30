@@ -1,0 +1,22 @@
+@for (topic of topics(); track topic.name) {
+	<button class="topic" (click)="onTopicClick(topic)" mat-stroked-button>{{topic.name}}</button>
+}
+<app-horizontal-scroll-buttons no-opacity />
+
+
+
+<ng-template #topicNotesSheet>
+	<h3>{{selectedTopic()?.name}}</h3>
+	<p [innerHTML]="selectedTopic()?.notes | newlinesToBr"></p>
+	<button (click)="onCloseTopicClick()" class="close-topic" mat-icon-button><mat-icon>close</mat-icon></button>
+</ng-template>
+
+<ng-template #topicNotesDialog>
+	<h2 mat-dialog-title>Topic: {{selectedTopic()?.name}}</h2>
+	<mat-dialog-content>
+		<p [innerHTML]="selectedTopic()?.notes | newlinesToBr"></p>
+	</mat-dialog-content>
+	<mat-dialog-actions>
+		<button mat-button [mat-dialog-close]="false">Okay</button>
+	</mat-dialog-actions>
+</ng-template>
