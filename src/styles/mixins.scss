@@ -12,3 +12,30 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+@mixin table-grid() {
+	display: grid;
+	justify-items: start;
+	align-items: center;
+	gap: 16px;
+}
+
+@mixin relationship-grid() {
+	@include table-grid();
+	// name, notes, interaction goal, last contact, interaction count, buttons
+	grid-template-columns: 175px 1fr 125px 100px 75px 80px;
+
+	// remove notes column when not enough space
+	@media screen and (max-width: 805px) {
+		grid-template-columns: 1fr 125px 100px 75px 80px;
+		.notes {
+			display: none;
+		}
+	}
+}
+
+@mixin interaction-grid() {
+	@include table-grid();
+	// name, type, date, topics, buttons
+	grid-template-columns: minmax(112px, 1fr) 125px 100px 4fr 80px;
+}

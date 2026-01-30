@@ -25,6 +25,7 @@ import { RelationshipsService } from '../../services/relationships.service'
 import { RelationshipCardContentComponent } from '../../components/relationship-card-content/relationship-card-content.component'
 import { RelationshipDialogComponent, RelationshipDialogData } from '../../components/relationship-dialog/relationship-dialog.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
+import { RowComponent } from '../../components/row/row.component'
 
 @Component({
 	selector: 'app-relationships-list',
@@ -32,7 +33,7 @@ import { ResponsiveUiService } from '../../services/responsive-ui.service'
 	imports: [
 		CardComponent, CardGroupComponent, FormsModule, MatAutocompleteModule, MatButtonModule, MatFormFieldModule,
 		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatTooltipModule, PageHeaderBarComponent,
-		RelationshipCardContentComponent, RouterLink,
+		RelationshipCardContentComponent, RouterLink, RowComponent,
 	],
 	templateUrl: './relationships-list.component.html',
 	styleUrl: './relationships-list.component.scss',

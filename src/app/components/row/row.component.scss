@@ -1,0 +1,64 @@
+@import '../../../styles/icons.scss';
+@import '../../../styles/mixins.scss';
+
+:host {
+	display: block;
+	padding: 8px 16px;
+
+	&:nth-child(even) {
+		background: var(--table-row-evens-background-color);
+	}
+	&:nth-child(odd) {
+		background: var(--table-row-odds-background-color);
+	}
+	border: none;
+	border-radius: var(--primary-border-radius);
+
+	font-size: 1rem;
+
+	&.highlight {
+		animation: 0.25s 1.25s 4 highlight alternate;
+	}
+	@keyframes highlight {
+		from {
+			background: var(--header-background-color);
+			color: var(--primary-title-color);
+		}
+		to {
+			background: var(--primary-title-color);
+			color: var(--header-background-color);
+		}
+	}
+}
+
+:host.relationship {
+	.notes {
+		width: 100%;
+		white-space: nowrap;
+		@include limit-lines(1);
+	}
+
+	@include relationship-grid();
+
+	.interaction-count {
+		justify-self: center;
+	}
+
+	.buttons {
+		justify-self: end;
+	}
+}
+
+:host.interaction {
+	@include interaction-grid();
+	.type {
+		@include limit-lines(1);
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		white-space: nowrap;
+		mat-icon {
+			@include icon-size(1.2rem);
+		}
+	}
+}

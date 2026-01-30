@@ -61,21 +61,31 @@
 	@for (group of groupedInteractions(); track group.timeUnitsAgo) {
 		<app-card-group
 			(header-click)="onCardGroupHeaderClick()"
+			group-of="interactions"
 			[header]="group.timeAgoText"
 			[card-count]="group.interactions.length"
 			header-color="var(--primary-button-color)"
 			[is-card-in-group-highlighted]="group.timeAgoText === highlightedCard().groupKey"
 		>
 			@for (interaction of group.interactions; track interaction._id; let index = $index) {
-				<app-card
-					[interaction]="interaction"
-					[collapsible]="isSmallViewport()"
-					(edit-interaction)="onEditInteractionClick($event)"
-					(delete-interaction)="onDeleteInteractionClick($event)"
-					[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
-				>
-					<app-interaction-card-content [interaction]="interaction" />
-				</app-card>
+				@if (isSmallViewport()) {
+					<app-card
+						[interaction]="interaction"
+						[collapsible]="isSmallViewport()"
+						(edit-interaction)="onEditInteractionClick($event)"
+						(delete-interaction)="onDeleteInteractionClick($event)"
+						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
+					>
+						<app-interaction-card-content [interaction]="interaction" />
+					</app-card>
+				} @else {
+					<app-row
+						[interaction]="interaction"
+						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
+						(edit-interaction)="onEditInteractionClick($event)"
+						(delete-interaction)="onDeleteInteractionClick($event)"
+					></app-row>
+				}
 			}
 		</app-card-group>
 	}

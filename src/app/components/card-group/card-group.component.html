@@ -1,4 +1,4 @@
-<h2 [id]="'card-group-title-' + instanceNumber()" [style.color]="headerColor()" [class.offset-top]="scrollingUp()">
+<h2 [id]="'card-group-title-' + instanceNumber()" [style.color]="headerColor()" [class.offset-top]="scrollingUp() || !isSmallViewport()">
 	<button (click)="onGroupHeaderClick()" [attr.aria-label]="(open() ? 'Collapse' : 'Expand') + ' card'">
 		<span>{{header()}}</span>
 		<span>({{cardCount()}})</span>
@@ -14,11 +14,24 @@
 				<button (click)="onExpandOrCollapseCardsClick(false)" mat-button>Collapse All</button>
 			}
 		</div>
+	} @else if (groupOf() === 'relationships') {
+		<div class="relationships table-header" [class.show]="open()">
+			<span class="name">Name</span>
+			<span class="notes">Notes</span>
+			<span class="interaction-goal">Interaction Goal</span>
+			<span class="last-contact">Last Contact</span>
+			<span class="interaction-count">Interactions</span>
+		</div>
+	} @else if (groupOf() === 'interactions') {
+		<div class="interactions table-header" [class.show]="open()">
+			<span class="name">Name</span>
+			<span class="type">Type</span>
+			<span class="date">Date</span>
+			<span class="topics">Topics</span>
+		</div>
 	}
 </h2>
 
-<div class="cards custom-scrollbar" #cards [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
+<div class="entries custom-scrollbar" #entries [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
 	<ng-content />
 </div>
-
-<app-horizontal-scroll-buttons [scrollableElement]="cards" [hide-buttons]="isSmallViewport() || !open()" />

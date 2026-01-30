@@ -1,3 +1,4 @@
+@import '../../../styles/icons.scss';
 @import '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
@@ -153,9 +154,7 @@
 			margin-right: 0.5rem;
 		}
 		.collapsed-right-icon {
-			font-size: 1.2rem;
-			width: 1.2rem;
-			height: 1.2rem;
+			@include icon-size(1.2rem);
 			overflow: visible;
 			margin-right: 8px;
 			transition: opacity 0.5s;

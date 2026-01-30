@@ -23,15 +23,16 @@ import { InteractionsService } from '../../services/interactions.service'
 import { MaterialConfigService } from '../../services/material-config.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
+import { RowComponent } from '../../components/row/row.component'
 import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-interactions-list',
 	standalone: true,
 	imports: [
-		CardComponent, CardGroupComponent, InteractionCardContentComponent, MatButtonModule,
-		MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,
-		PageHeaderBarComponent, RouterLink,
+		/* angular */ RouterLink,
+		/* material: */ MatButtonModule, MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,
+		/* app */ CardComponent, CardGroupComponent, InteractionCardContentComponent, PageHeaderBarComponent, RowComponent,
 	],
 	templateUrl: './interactions-list.component.html',
 	styleUrl: './interactions-list.component.scss'

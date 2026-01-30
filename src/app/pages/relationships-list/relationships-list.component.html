@@ -50,22 +50,32 @@
 		@if (group.relationships.length) {
 			<app-card-group
 				(header-click)="onCardGroupHeaderClick()"
+				group-of="relationships"
 				[header]="group.status"
 				[card-count]="group.relationships.length"
 				[header-color]="group.statusColor"
 				[is-card-in-group-highlighted]="group.status === highlightedCard().groupStatus"
 			>
 				@for (relationship of group.relationships; track relationship._id; let index = $index) {
-					<app-card
-						[relationship]="relationship"
-						(edit-relationship)="onEditRelationshipClick($event)"
-						(delete-relationship)="onDeleteRelationshipClick($event)"
-						[scroll-to-and-highlight]="group.status === highlightedCard().groupStatus && index === highlightedCard().indexInGroup"
-						always-show-left-text
-						[collapsible]="isSmallViewport()"
-					>
-						<app-relationship-card-content [relationship]="relationship" />
-					</app-card>
+					@if (isSmallViewport()) {
+						<app-card
+							[relationship]="relationship"
+							(edit-relationship)="onEditRelationshipClick($event)"
+							(delete-relationship)="onDeleteRelationshipClick($event)"
+							[scroll-to-and-highlight]="group.status === highlightedCard().groupStatus && index === highlightedCard().indexInGroup"
+							always-show-left-text
+							[collapsible]="isSmallViewport()"
+						>
+							<app-relationship-card-content [relationship]="relationship" />
+						</app-card>
+					} @else {
+						<app-row
+							[relationship]="relationship"
+							[scroll-to-and-highlight]="group.status === highlightedCard().groupStatus && index === highlightedCard().indexInGroup"
+							(edit-relationship)="onEditRelationshipClick($event)"
+							(delete-relationship)="onDeleteRelationshipClick($event)"
+						></app-row>
+					}
 				}
 			</app-card-group>
 		}

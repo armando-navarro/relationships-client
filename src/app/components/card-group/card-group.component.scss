@@ -1,3 +1,4 @@
+@import '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
 :host {
@@ -9,7 +10,7 @@
 	h2 {
 		position: sticky;
 		top: 0;
-		z-index: 2;
+		z-index: 3;
 		border-top-left-radius: var(--primary-border-radius);
 		border-top-right-radius: var(--primary-border-radius);
 		font-size: 1.35rem;
@@ -18,6 +19,9 @@
 		// offset top value to accomodate page header bar when it's visible
 		&.offset-top {
 			top: var(--page-small-header-bar-height);
+			@media screen and (min-width: $small-breakpoint) {
+				top: calc(var(--page-large-header-bar-height) + 4px);
+			}
 		}
 		> button {
 			display: flex;
@@ -47,6 +51,7 @@
 				}
 			}
 		}
+
 		.group-actions {
 			position: relative;
 			top: -31px;
@@ -72,15 +77,54 @@
 				font-size: 0.9rem;
 			}
 		}
+
+		.table-header {
+			&.relationships {
+				@include relationship-grid();
+			}
+			&.interactions {
+				@include interaction-grid();
+			}
+			position: relative;
+			top: -30px;
+			z-index: -1;
+			height: 0;
+			margin-top: 4px;
+
+			border: none;
+			border-radius: var(--primary-border-radius);
+			background: var(--page-background-color);
+			color: var(--primary-title-color);
+
+			font-size: 1rem;
+			font-weight: bold;
+			padding: 0 16px;
+
+			transition:
+				top 0.5s,
+				height 0.5s,
+				border 0.5s,
+				padding 0.5s;
+
+			&.show {
+				top: 0;
+				height: 29px;
+				border: 1px solid var(--large-card-border-color);
+				padding: 4px 16px 4px;
+			}
+		}
 	}
-	.cards {
+
+	.entries {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
 		gap: 32px;
-		overflow-x: hidden;
-		overflow-y: hidden;
+
+		overflow: hidden;
 		padding: 12px 4px 0;
+
 		transition:
 			max-height 0.5s, // set in template
 			padding-top 0.5s,
@@ -90,13 +134,10 @@
 		&.hidden {
 			padding-top: 0;
 			padding-bottom: 0;
-			overflow-x: hidden;
 		}
 
 		@media screen and (min-width: $small-breakpoint) {
-			flex-direction: row;
-			overflow-x: auto;
-			padding: 16px 12px 16px;
+			gap: 20px;
 		}
 	}
 

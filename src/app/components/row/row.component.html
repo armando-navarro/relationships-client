@@ -1,0 +1,21 @@
+@if (relationship()) {
+	<span class="name">{{relationship()!.fullName}}</span>
+	<span class="notes">{{relationship()!.notes || 'No notes'}}</span>
+	<span class="interaction-goal">{{relationship()!.interactionRateGoal || 'No goal set'}}</span>
+	<span class="last-contact">{{relationship()!.lastInteractionRelativeTime || 'N/A'}}</span>
+	<span class="interaction-count">{{relationship()!.interactions.length}}</span>
+} @else if (interaction()) {
+	<span class="name">{{interaction()!.nameOfPerson}}</span>
+	<span class="type"><mat-icon>{{ interaction()!.typeIcon }}</mat-icon> {{interaction()!.type}}</span>
+	<span class="date">{{interaction()!.date! | simpleDate}}</span>
+	<app-topic-buttons [topics]="interaction()!.topics" />
+}
+
+<div class="buttons">
+	<button class="edit" (click)="onEditClick()" [matTooltip]="'Edit ' + modelName()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()" type="button">
+		<mat-icon>edit</mat-icon>
+	</button>
+	<button class="delete" (click)="onDeleteClick()" [matTooltip]="'Delete ' + modelName()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()" type="button">
+		<mat-icon>delete</mat-icon>
+	</button>
+</div>

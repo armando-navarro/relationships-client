@@ -6,14 +6,13 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 
 import { CardComponent } from '../card/card.component'
-import { HorizontalScrollButtonsComponent } from '../horizontal-scroll-buttons/horizontal-scroll-buttons.component'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
 import { ScrollService } from '../../services/scroll.service'
 
 @Component({
 	selector: 'app-card-group',
 	standalone: true,
-	imports: [HorizontalScrollButtonsComponent, MatButtonModule, MatIconModule],
+	imports: [MatButtonModule, MatIconModule],
 	templateUrl: './card-group.component.html',
 	styleUrl: './card-group.component.scss',
 	host: {
@@ -30,6 +29,7 @@ export class CardGroupComponent implements OnInit {
 	readonly headerColor = input('white', { alias: 'header-color' })
 	readonly cardCount = input<number>(0, { alias: 'card-count' })
 	readonly isCardInGroupHighlighted = input(false, { alias: 'is-card-in-group-highlighted', transform: booleanAttribute })
+	readonly groupOf = input<'relationships'|'interactions'>('interactions', { alias: 'group-of' })
 	readonly headerClick = output<void>({ alias: 'header-click' })
 
 	readonly cards = contentChildren(CardComponent)
@@ -41,9 +41,8 @@ export class CardGroupComponent implements OnInit {
 	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
 	readonly isSmallViewport$ = toObservable(this.responsiveUiService.isSmallViewport).pipe(takeUntilDestroyed())
 	readonly maxGroupHeight = computed(() => {
-		// small viewport: take max card height into account so group expands tall enough
-		// large viewport: fixed height since cards scroll horizontally
-		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : 300
+		// take max card/row height into account so group expands tall enough
+		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : this.cardCount() * 92 + 59
 		else return 0
 	})
 	readonly scrollingUp = toSignal(this.scrollService.scrollDirection$.pipe(map(scrollDir => scrollDir === 'up')))
