@@ -9,7 +9,7 @@ import {
 	InteractionPayload,
 	InteractionResponse,
 	InteractionTopicFormGroup,
-	interactionTypeToIcon,
+	InteractionType,
 	Topic
 } from '../../interfaces/interaction.interface'
 
@@ -21,6 +21,19 @@ interface InteractionPayloadWithRelationshipId {
 @Injectable({ providedIn: 'root' })
 export class InteractionMapperService {
 	private readonly fb = inject(FormBuilder)
+
+	private readonly interactionTypeToIcon = new Map<InteractionType, string>([
+		[InteractionType.Email, 'mail'],
+		[InteractionType.InPerson, 'emoji_people'],
+		[InteractionType.GameChat, 'sports_esports'],
+		[InteractionType.PhoneCall, 'call'],
+		[InteractionType.SocialMedia, 'share'],
+		[InteractionType.PostalMail, 'local_post_office'],
+		[InteractionType.Text, 'chat_bubble'],
+		[InteractionType.VideoCall, 'videocam'],
+		[InteractionType.VoiceMail, 'voicemail'],
+		[InteractionType.Other, 'help']
+	])
 
 	mapResponseToModel(response: InteractionResponse): Interaction
 	mapResponseToModel(responses: InteractionResponse[]): Interaction[]
@@ -35,7 +48,7 @@ export class InteractionMapperService {
 		return {
 			...response,
 			date: new Date(response.date),
-			typeIcon: interactionTypeToIcon.get(response.type)!,
+			typeIcon: this.interactionTypeToIcon.get(response.type)!,
 			topics: response.topics
 		}
 	}
@@ -91,7 +104,7 @@ export class InteractionMapperService {
 		const interaction: Interaction = {
 			_id: formValue._id ?? null,
 			type: formValue.type ?? null,
-			typeIcon: interactionTypeToIcon.get(formValue.type!) ?? '',
+			typeIcon: this.interactionTypeToIcon.get(formValue.type!) ?? '',
 			date: formValue.date ?? null,
 			topics: (formValue.topics ?? []).map(topic => ({
 				name: topic.name ?? '',
@@ -107,7 +120,7 @@ export class InteractionMapperService {
 		const interaction: Interaction = {
 			_id: form.value._id ?? null,
 			type: form.value.type ?? null,
-			typeIcon: interactionTypeToIcon.get(form.value.type!) ?? '',
+			typeIcon: this.interactionTypeToIcon.get(form.value.type!) ?? '',
 			date: form.value.date ?? null,
 			topics: (form.value.topics ?? []).map(topic => ({
 				name: topic.name ?? '',

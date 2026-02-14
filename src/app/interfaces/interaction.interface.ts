@@ -57,25 +57,13 @@ export type AddInteractionResponse = InsertedId&InteractionWriteResponse
 export enum InteractionType {
 	Email = 'E-mail',
 	InPerson = 'In person',
-	OnlineGaming = 'Online gaming',
+	GameChat = 'Game chat',
 	PhoneCall = 'Phone call',
 	SocialMedia = 'Social media',
-	SnailMail = 'Snail mail',
-	Texting = 'Text messaging',
+	PostalMail = 'Postal mail',
+	Text = 'Text',
 	VideoCall = 'Video call',
 	VoiceMail = 'Voice mail',
 	Other = 'Other'
 }
-export const interactionTypeToIcon = new Map<InteractionType, string>([
-	[InteractionType.Email, 'mail'],
-	[InteractionType.InPerson, 'emoji_people'],
-	[InteractionType.OnlineGaming, 'sports_esports'],
-	[InteractionType.PhoneCall, 'call'],
-	[InteractionType.SocialMedia, 'share'],
-	[InteractionType.SnailMail, 'local_post_office'],
-	[InteractionType.Texting, 'chat_bubble'],
-	[InteractionType.VideoCall, 'videocam'],
-	[InteractionType.VoiceMail, 'voicemail'],
-	[InteractionType.Other, 'help']
-])
 //#endregion
