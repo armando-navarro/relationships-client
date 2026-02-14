@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, OnInit, output, signal } from '@angular/core'
+import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, output, signal } from '@angular/core'
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
@@ -20,7 +20,7 @@ import { ScrollService } from '../../services/scroll.service'
 		role: 'region'
 	}
 })
-export class CardGroupComponent implements OnInit {
+export class CardGroupComponent {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
 	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly scrollService = inject(ScrollService)
@@ -64,20 +64,13 @@ export class CardGroupComponent implements OnInit {
 			})
 		}, { allowSignalWrites: true })
 
-		// start group closed on small viewports
+		// start group closed on small viewports and open on large viewports
 		// observable used instead of effect to prevent other signal updates from interfering
 		this.isSmallViewport$.subscribe(isSmallViewport => {
-			if (isSmallViewport) {
-				this.open.set(false)
-				this.setCardsCollapsedState()
-				this.headerClick.emit()
-			}
+			this.open.set(!isSmallViewport)
+			this.setCardsCollapsedState()
+			this.headerClick.emit()
 		})
-	}
-
-	ngOnInit(): void {
-		// card groups should start off closed on small viewports
-		this.open.set(!this.responsiveUiService.isSmallViewport())
 	}
 
 	onGroupHeaderClick(): void {
