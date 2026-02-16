@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
+import { Cancelable } from '../../interfaces/misc.interface'
 import { CardComponent } from '../card/card.component'
 import { Interaction } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../interaction-card-content/interaction-card-content.component'
@@ -28,6 +29,8 @@ export interface RelationshipDialogData {
 	isEditingRelationship?: true
 }
 
+export type RelationshipDialogResult = Cancelable<{ relationship: Relationship }>
+
 @Component({
 	selector: 'app-relationship-dialog',
 	standalone: true,
@@ -43,7 +46,7 @@ export interface RelationshipDialogData {
 export class RelationshipDialogComponent implements OnInit, OnDestroy {
 	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)
 	private readonly dialog = inject(MatDialog)
-	private readonly dialogRef = inject(MatDialogRef)
+	private readonly dialogRef: MatDialogRef<RelationshipDialogComponent, RelationshipDialogResult> = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly interactionsService = inject(InteractionsService)
 	private readonly materialConfig = inject(MaterialConfigService)
@@ -152,11 +155,15 @@ export class RelationshipDialogComponent implements OnInit, OnDestroy {
 	}
 
 	onDoneClick(): void {
-		this.dialogRef.close(this.relationshipFormService.getRelationship())
+		this.dialogRef.close({
+			wasCancelled: false,
+			relationship: this.relationshipFormService.getRelationship()
+		})
 	}
 
 	ngOnDestroy(): void {
 		this.destroy$.next()
+		this.destroy$.complete()
 	}
 
 }

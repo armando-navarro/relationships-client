@@ -95,7 +95,7 @@
 			<button (click)="onDoneClick()" mat-button>Done</button>
 		}
 		@else {
-			<button [mat-dialog-close]="false" mat-button>Cancel</button>
+			<button [mat-dialog-close]="{ wasCancelled: true }" mat-button>Cancel</button>
 			<button (click)="onSaveClick()" mat-button>Save</button>
 		}
 </mat-dialog-actions>

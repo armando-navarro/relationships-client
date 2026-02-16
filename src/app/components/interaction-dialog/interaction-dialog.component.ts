@@ -20,7 +20,7 @@ import { MaterialConfigService } from '../../services/material-config.service'
 import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { Relationship, UpdatedRelationshipProperties } from '../../interfaces/relationship.interface'
-import { RelationshipsService } from '../../services/relationships.service'
+import { RelationshipUtilitiesService } from '../../services/relationship-utilities.service'
 import { TopicDialogComponent, TopicDialogData } from '../topic-dialog/topic-dialog.component'
 import { TopicFormToModelPipe } from "../../pipes/topic-form-to-model.pipe"
 import { REQUIRED_ERROR } from '../../constants/misc-constants'
@@ -58,7 +58,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 	private readonly dialogRef = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly materialConfig = inject(MaterialConfigService)
-	private readonly relationshipsService = inject(RelationshipsService)
+	private readonly relationshipUtils = inject(RelationshipUtilitiesService)
 	private readonly snackBar = inject(MatSnackBar)
 
 	form = this.interactionMapper.mapModelToForm()
@@ -100,7 +100,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
 				const relationships = Object.values(groupedRelationships).flatMap(({ relationships }) => relationships)
-				const sortedRels = this.relationshipsService.sortByFirstName(relationships)
+				const sortedRels = this.relationshipUtils.sortByFirstName(relationships)
 				this.relationships.set(sortedRels)
 			},
 			error: error => this.snackBar.open(this.RELATIONSHIP_ERROR, undefined)

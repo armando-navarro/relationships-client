@@ -10,9 +10,9 @@ import {
 	Relationship,
 	RelationshipAddResponse,
 	RelationshipDerivedProperties,
+	RelationshipGroup,
 	RelationshipPayload,
 	RelationshipResponse,
-	RelationshipsGroupedByStatus,
 	RelationshipsGroupedByStatusResponse,
 	RelationshipUpdateResponse,
 	UpdatedRelationshipProperties,
@@ -28,7 +28,7 @@ export class ApiService {
 
 	//#region Relationship endpoints
 
-	getRelationshipsGroupedByStatus(): Observable<RelationshipsGroupedByStatus> {
+	getRelationshipsGroupedByStatus(): Observable<RelationshipGroup[]> {
 		return this.http.get<RelationshipsGroupedByStatusResponse>(`${this.baseUrl}/relationships`).pipe(
 			map(groupedRelationships => this.relationshipMapper.mapGroupedByStatusResponseToModel(groupedRelationships))
 		)

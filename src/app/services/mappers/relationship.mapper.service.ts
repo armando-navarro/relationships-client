@@ -11,14 +11,16 @@ import { AttentionNeededStatus,
 	RelationshipFormGroup,
 	RelationshipPayload,
 	RelationshipResponse,
-	RelationshipsGroupedByStatus,
 	RelationshipsGroupedByStatusResponse,
+	RelationshipGroup,
 } from '../../interfaces/relationship.interface'
+import { RelationshipUtilitiesService } from '../relationship-utilities.service'
 
 @Injectable({ providedIn: 'root' })
 export class RelationshipMapperService {
 	private readonly fb = inject(FormBuilder)
 	private readonly interactionMapper = inject(InteractionMapperService)
+	private readonly relationshipUtils = inject(RelationshipUtilitiesService)
 
 	mapResponseToModel(response: RelationshipResponse): Relationship
 	mapResponseToModel(responses: RelationshipResponse[]): Relationship[]
@@ -62,17 +64,23 @@ export class RelationshipMapperService {
 		}
 	}
 
-	mapGroupedByStatusResponseToModel(response: RelationshipsGroupedByStatusResponse): RelationshipsGroupedByStatus {
-		const result: RelationshipsGroupedByStatus = {} as RelationshipsGroupedByStatus
+	/** Maps a relationships grouping API response to a RelationshipGroup array ordered by attention needed status. */
+	mapGroupedByStatusResponseToModel(response: RelationshipsGroupedByStatusResponse): RelationshipGroup[] {
+		const statusToGroupMap = new Map<AttentionNeededStatus, RelationshipGroup>()
+
 		Object.entries(response).forEach(([status, groupResponse]) => {
-			result[status as AttentionNeededStatus] = {
+			const group = statusToGroupMap.get(status as AttentionNeededStatus) ?? {
 				...groupResponse,
 				relationships: this.mapResponseToModel(groupResponse.relationships)
 			}
+			statusToGroupMap.set(status as AttentionNeededStatus, group)
 		})
-		return result
+
+		return this.relationshipUtils.orderRelationshipGroups(statusToGroupMap)
 	}
 
+	/** Takes a Relationship model and maps it to a RelationshipFormGroup,
+	 * or creates an empty RelationshipFormGroup if no relationship is provided. */
 	mapModelToForm(relationship?: Relationship) {
 		const form = this.fb.group({
 			_id: [relationship?._id ?? null],
@@ -81,6 +89,7 @@ export class RelationshipMapperService {
 			interactionRateGoal: [relationship?.interactionRateGoal ?? null],
 			notes: [relationship?.notes ?? null, AppValidators.notes],
 			interactions: this.fb.array([
+				// empty interaction added for typing purposes - it's removed on the next line
 				this.interactionMapper.mapModelToForm(undefined, relationship?._id ?? undefined, relationship?.fullName)
 			])
 		})

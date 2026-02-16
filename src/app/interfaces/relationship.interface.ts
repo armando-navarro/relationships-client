@@ -24,7 +24,6 @@ export interface RelationshipGroup {
 	statusColor: string,
 	relationships: Relationship[],
 }
-export type RelationshipsGroupedByStatus = Record<AttentionNeededStatus, RelationshipGroup>
 export type RelationshipFormGroup = ReturnType<typeof RelationshipMapperService.prototype.mapModelToForm>
 export type RelationshipFormGroupValue = RelationshipFormGroup['value']
 export interface UpdatedRelationshipProperties {

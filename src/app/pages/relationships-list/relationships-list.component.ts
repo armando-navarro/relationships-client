@@ -6,7 +6,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs'
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatButtonModule } from '@angular/material/button'
-import { MatDialog } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatIconModule } from '@angular/material/icon'
@@ -18,12 +17,11 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { ApiService } from '../../services/api.service'
 import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
-import { AttentionNeededStatus, Relationship, RelationshipGroup, RelationshipsGroupedByStatus } from '../../interfaces/relationship.interface'
-import { MaterialConfigService } from '../../services/material-config.service'
+import { AttentionNeededStatus, Relationship, RelationshipGroup } from '../../interfaces/relationship.interface'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
 import { RelationshipsService } from '../../services/relationships.service'
 import { RelationshipCardContentComponent } from '../../components/relationship-card-content/relationship-card-content.component'
-import { RelationshipDialogComponent, RelationshipDialogData } from '../../components/relationship-dialog/relationship-dialog.component'
+import { RelationshipUtilitiesService } from '../../services/relationship-utilities.service'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
 import { RowComponent } from '../../components/row/row.component'
 
@@ -44,9 +42,8 @@ import { RowComponent } from '../../components/row/row.component'
 export class RelationshipsListComponent implements OnInit {
 	// services
 	private readonly api = inject(ApiService)
-	private readonly dialog = inject(MatDialog)
-	private readonly materialConfig = inject(MaterialConfigService)
 	private readonly relationshipsService = inject(RelationshipsService)
+	private readonly relationshipUtils = inject(RelationshipUtilitiesService)
 	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly snackBar = inject(MatSnackBar)
 
@@ -56,7 +53,7 @@ export class RelationshipsListComponent implements OnInit {
 	readonly groupedRelationships = signal<RelationshipGroup[]>([])
 	readonly ungroupedRelationships = computed(() => this.groupedRelationships().flatMap(({ relationships }) => relationships))
 	readonly relationshipNames = computed(() =>
-		this.relationshipsService.sortByFirstName(this.ungroupedRelationships()).map(({ fullName }) => fullName!) || []
+		this.relationshipUtils.sortByFirstName(this.ungroupedRelationships()).map(({ fullName }) => fullName!) || []
 	)
 	readonly hasRelationships = computed(() => this.groupedRelationships().some(group => group.relationships.length))
 
@@ -81,24 +78,14 @@ export class RelationshipsListComponent implements OnInit {
 	ngOnInit(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
-				this.initGroups(groupedRelationships)
+				this.groupedRelationships.set(groupedRelationships)
+				this.filteredGroupedRelationships.set(this.groupedRelationships())
 				this.isLoadingRelationships.set(false)
 				// wait a tick for the groups to collapse themselves on small viewports
 				setTimeout(() => this.setGroupsCollapsedState())
 			},
 			error: error => this.snackBar.open('Failed to load relationships.', undefined)
 		})
-	}
-
-	private initGroups(groupedRelationships: RelationshipsGroupedByStatus): void {
-		this.groupedRelationships.set([
-			groupedRelationships[AttentionNeededStatus.Today],
-			groupedRelationships[AttentionNeededStatus.Overdue],
-			groupedRelationships[AttentionNeededStatus.Soon],
-			groupedRelationships[AttentionNeededStatus.Good],
-			groupedRelationships[AttentionNeededStatus.NotAvailable],
-		])
-		this.filteredGroupedRelationships.set(this.groupedRelationships())
 	}
 
 	onSearchClick(showSearch = !this.showSearchBar()): void {
@@ -141,31 +128,23 @@ export class RelationshipsListComponent implements OnInit {
 	}
 
 	onAddRelationshipClick(): void {
-		const data: RelationshipDialogData = {
-			relationship: null,
-			isAddingRelationship: true,
-		}
-		const config = this.materialConfig.getResponsiveDialogConfig(data)
-		this.dialog.open(RelationshipDialogComponent, config).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
-			if (!relationshipOrCancel) return
-			const { groupStatus, indexInGroup } = this.relationshipsService.addRelationshipToGroups(relationshipOrCancel, this.groupedRelationships)
-			this.highlightedCard.set({ groupStatus, indexInGroup })
-		})
+		this.relationshipsService.addRelationship(this.groupedRelationships())
+			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
+				if (wasCancelled) return
+				this.groupedRelationships.set(groups)
+				this.highlightedCard.set({ groupStatus: targetGroupStatus, indexInGroup: targetRelationshipIndex })
+			})
 	}
 
 	onEditRelationshipClick(editTarget: Relationship): void {
-		const data: RelationshipDialogData = {
-			relationship: editTarget,
-			isEditingRelationship: true,
-		}
-		const config = this.materialConfig.getResponsiveDialogConfig(data)
-		this.dialog.open(RelationshipDialogComponent, config).afterClosed().subscribe((relationshipOrCancel: Relationship|false) => {
-			if (!relationshipOrCancel) return
-			const { groups, groupStatus, indexInGroup } = this.relationshipsService.updateRelationshipInGroups(relationshipOrCancel, this.groupedRelationships())
-			this.initGroups(groups)
-			this.applySearchFilter(this.searchValue())
-			this.highlightedCard.set({ groupStatus, indexInGroup })
-		})
+		this.relationshipsService.editRelationship(editTarget, this.groupedRelationships())
+			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
+				if (wasCancelled) return
+				this.groupedRelationships.set(groups)
+				this.filteredGroupedRelationships.set(this.groupedRelationships())
+				this.applySearchFilter(this.searchValue())
+				this.highlightedCard.set({ groupStatus: targetGroupStatus, indexInGroup: targetRelationshipIndex })
+			})
 	}
 
 	onDeleteRelationshipClick(deleteTarget: Relationship): void {

@@ -1,110 +1,74 @@
-import { inject, Injectable, WritableSignal } from '@angular/core'
-import { Observable } from 'rxjs'
+import { inject, Injectable } from '@angular/core'
+import { map, Observable, of, switchMap } from 'rxjs'
+
+import { MatDialog } from '@angular/material/dialog'
 
 import { ApiService } from './api.service'
+import { Cancelable } from '../interfaces/misc.interface'
 import { DeletionService } from './deletion.service'
-import { AttentionNeededStatus, RelationshipDerivedProperties, Relationship, RelationshipGroup, RelationshipsGroupedByStatus } from '../interfaces/relationship.interface'
+import { MaterialConfigService } from './material-config.service'
+import { AttentionNeededStatus, RelationshipDerivedProperties, Relationship, RelationshipGroup } from '../interfaces/relationship.interface'
+import { RelationshipDialogComponent, RelationshipDialogData, RelationshipDialogResult } from '../components/relationship-dialog/relationship-dialog.component'
+import { RelationshipUtilitiesService } from './relationship-utilities.service'
 
-interface RelationshipLocationInGroup {
-	groupStatus: AttentionNeededStatus
-	indexInGroup: number
-}
-
-interface RelationshipGroupingResult extends RelationshipLocationInGroup {
-	groups: RelationshipsGroupedByStatus
+type RelationshipGroupingResult = {
+	groups: RelationshipGroup[]
+	targetGroupStatus: AttentionNeededStatus
+	targetRelationshipIndex: number
 }
 
 @Injectable({ providedIn: 'root' })
 export class RelationshipsService {
 	private readonly api = inject(ApiService)
 	private readonly deletionService = inject(DeletionService)
+	private readonly dialog = inject(MatDialog)
+	private readonly materialConfig = inject(MaterialConfigService)
+	private readonly relationshipUtils = inject(RelationshipUtilitiesService)
 
-	/** @returns false if user clicked Cancel, true if relationship was deleted */
-	deleteRelationship({ _id, firstName }: Relationship): Observable<RelationshipDerivedProperties|boolean> {
-		return this.deletionService.deleteWithConfirmation(this.api.deleteRelationship(_id!), firstName)
-	}
+	/** Prompts the user to add a new relationship.
+	 * @returns `wasCancelled: true` if the user clicks Cancel, or the updated relationship groups and the new relationship's location */
+	addRelationship(groupedRelationships: RelationshipGroup[]): Observable<Cancelable<RelationshipGroupingResult>> {
+		const data: RelationshipDialogData = { relationship: null, isAddingRelationship: true }
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
 
-	sortRelationshipsByAttentionNeededAscending(a: Relationship, b: Relationship): number {
-		if (a.daysUntilAttentionNeeded === undefined) return 1
-		if (b.daysUntilAttentionNeeded === undefined) return -1
-		if (a.daysUntilAttentionNeeded!.valueOf() > b.daysUntilAttentionNeeded!.valueOf()) return 1
-		if (a.daysUntilAttentionNeeded!.valueOf() < b.daysUntilAttentionNeeded!.valueOf()) return -1
-		else return 0
-	}
+		return this.dialog.open(RelationshipDialogComponent, config).afterClosed().pipe(
+			map(({ wasCancelled, relationship }: RelationshipDialogResult) => {
+				if (wasCancelled) return { wasCancelled }
+				else {
+					// add new relationship to a group based on the relationship's `attentionNeededStatus` property.
+					const targetGroup = groupedRelationships.find(({ status }) => status === relationship.attentionNeededStatus)!
+					const { relationships, insertIndex } = this.insertRelationshipInOrder(targetGroup.relationships, relationship)
+					targetGroup.relationships = relationships
 
-	groupRelationshipsByAttentionNeededStatus(relationships: Relationship[], targetRelationship: Relationship): RelationshipGroupingResult {
-		let targetGroupStatus = AttentionNeededStatus.NotAvailable
-		let targetIndexInGroup = -1
-		const groups: RelationshipsGroupedByStatus = {
-			[AttentionNeededStatus.Overdue]: {
-				status: AttentionNeededStatus.Overdue,
-				statusColor: '#FF0205',
-				relationships: [],
-			},
-			[AttentionNeededStatus.Today]: {
-				status: AttentionNeededStatus.Today,
-				statusColor: '#1280FD',
-				relationships: [],
-			},
-			[AttentionNeededStatus.Soon]: {
-				status: AttentionNeededStatus.Soon,
-				statusColor: '#FBBF24',
-				relationships: [],
-			},
-			[AttentionNeededStatus.Good]: {
-				status: AttentionNeededStatus.Good,
-				statusColor: '#65C800',
-				relationships: [],
-			},
-			[AttentionNeededStatus.NotAvailable]: {
-				status: AttentionNeededStatus.NotAvailable,
-				statusColor: 'inherit',
-				relationships: [],
-			},
-		}
-		relationships.forEach(relationship => {
-			groups[relationship.attentionNeededStatus!].relationships.push(relationship)
-			if (relationship._id === targetRelationship._id) {
-				targetGroupStatus = relationship.attentionNeededStatus!
-				targetIndexInGroup = groups[relationship.attentionNeededStatus!].relationships.length - 1
-			}
-		})
-		return { groups, groupStatus: targetGroupStatus, indexInGroup: targetIndexInGroup }
-	}
-
-	addRelationshipToGroups(newRelationship: Relationship, groups: WritableSignal<RelationshipGroup[]>): RelationshipLocationInGroup {
-		let insertIndex = -1
-		groups.update(groups => {
-			return groups.map(group => {
-				if (group.status === newRelationship.attentionNeededStatus) {
-					const result = this.insertRelationshipInOrder(group.relationships, newRelationship)
-					group.relationships = result.relationships
-					insertIndex = result.insertIndex
+					return {
+						wasCancelled: false,
+						groups: groupedRelationships,
+						targetGroupStatus: targetGroup.status,
+						targetRelationshipIndex: insertIndex,
+					}
 				}
-				return group
 			})
-		})
-		return {
-			groupStatus: newRelationship.attentionNeededStatus!,
-			indexInGroup: insertIndex,
-		}
+		)
 	}
 
-	/** Inserts a relationship into the proper spot in an array of relationships sorted ascending by `daysUntilAttentionNeeded`. */
+	/** Inserts a relationship into the properly ordered spot in an array of relationships sorted ascending by `daysUntilAttentionNeeded`. */
 	private insertRelationshipInOrder(sortedRelationships: Relationship[], newRelationship: Relationship): { relationships: Relationship[], insertIndex: number } {
+		// place relationships with no interactions or no interaction goal at the end
 		if (newRelationship.daysUntilAttentionNeeded === undefined) {
 			const updatedrelationships = [ ...sortedRelationships, newRelationship ]
 			return { relationships: updatedrelationships, insertIndex: updatedrelationships.length - 1 }
 		}
 
+		// use binary search to identify insertion point
 		let low = 0
 		let high = sortedRelationships.length
-
 		while (low < high) {
 			const mid = Math.floor((low + high) / 2)
 			if (sortedRelationships[mid].daysUntilAttentionNeeded! < newRelationship.daysUntilAttentionNeeded!) low = mid + 1
 			else high = mid
 		}
+
+		// insert new relationship into sorted array
 		const updatedrelationships = [
 			...sortedRelationships.slice(0, low),
 			newRelationship,
@@ -113,22 +77,73 @@ export class RelationshipsService {
 		return { relationships: updatedrelationships, insertIndex: low}
 	}
 
-	// TODO: I THINK THIS FUNCTION IS BEING CALLED TOO MANY TIMES
-	updateRelationshipInGroups(updatedRelationship: Relationship, groups: RelationshipGroup[]): RelationshipGroupingResult {
-		const relationships = Object.values(groups).flatMap(({ relationships }) =>
-			relationships.map(relationship => relationship._id === updatedRelationship._id ? updatedRelationship : relationship)
+	/** Prompts the user to edit a relationship.
+	 * @returns The updated relationship groups and the relationship's new location (given by the group's status and the relationship's index
+	 * in the group) if the user clicks Save, or `wasCancelled: true` if the user clicks Cancel. */
+	editRelationship(relationship: string|Relationship, currentGroups: RelationshipGroup[]): Observable<Cancelable<RelationshipGroupingResult>> {
+		const relationship$ = typeof relationship === 'string'
+			? this.api.getRelationship(relationship)
+			: of(relationship)
+
+		return relationship$.pipe(
+			switchMap(relationship => this.openEditDialog(relationship)),
+			map(({ wasCancelled, relationship: updatedRelationship }) => {
+				if (wasCancelled) return { wasCancelled: true }
+				else {
+					// extract relationships from groups and replace old relationship with updated relationship
+					const allRelationships = currentGroups.flatMap(({ relationships }) =>
+						relationships.map(relationship => relationship._id === updatedRelationship?._id ? updatedRelationship : relationship)
+					)
+					return {
+						wasCancelled: false,
+						...this.groupRelationshipsByAttentionNeededStatus(allRelationships, updatedRelationship._id!)
+					}
+				}
+			})
 		)
-		relationships.sort(this.sortRelationshipsByAttentionNeededAscending)
-		return this.groupRelationshipsByAttentionNeededStatus(relationships, updatedRelationship)
 	}
 
-	/** Note this uses Array.sort which modifies the original array. */
-	sortByFirstName(relationships: Relationship[]): Relationship[] {
-		return relationships.sort((a, b) => {
-			if (a.firstName! > b.firstName!) return 1
-			if (a.firstName! < b.firstName!) return -1
-			return 0
+	/** Opens the edit relationship dialog and returns an observable that emits the result. */
+	private openEditDialog(relationship: Relationship): Observable<RelationshipDialogResult> {
+		const data: RelationshipDialogData = { relationship, isEditingRelationship: true }
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+		return this.dialog.open(RelationshipDialogComponent, config).afterClosed()
+	}
+
+	/** Groups relationships by their attention needed status and locates a specific relationship within the groups. */
+	private groupRelationshipsByAttentionNeededStatus(relationships: Relationship[], relationshipIdToLocate?: string): RelationshipGroupingResult {
+		const statusToGroupMap = new Map<AttentionNeededStatus, RelationshipGroup>()
+		let targetGroupStatus = AttentionNeededStatus.NotAvailable
+		let targetRelationshipIndex = -1
+
+		const sortedRelationships = this.relationshipUtils.sortByAttentionNeededAscending(relationships)
+		sortedRelationships.forEach(relationship => {
+			// add relationship to existing group or create a new one if needed
+			const group = statusToGroupMap.get(relationship.attentionNeededStatus!) ?? {
+				status: relationship.attentionNeededStatus!,
+				statusColor: relationship.attentionStatusColor!,
+				relationships: [],
+			}
+			group.relationships.push(relationship)
+			statusToGroupMap.set(relationship.attentionNeededStatus!, group)
+
+			// identify the target relationship's new location
+			if (relationship._id === relationshipIdToLocate) {
+				targetGroupStatus = relationship.attentionNeededStatus!
+				targetRelationshipIndex = group.relationships.length - 1
+			}
 		})
+
+		return {
+			groups: this.relationshipUtils.orderRelationshipGroups(statusToGroupMap),
+			targetGroupStatus,
+			targetRelationshipIndex
+		}
+	}
+
+	/** @returns `false` if user clicked Cancel, `true` if relationship was deleted */
+	deleteRelationship({ _id, firstName }: Relationship): Observable<RelationshipDerivedProperties|boolean> {
+		return this.deletionService.deleteWithConfirmation(this.api.deleteRelationship(_id!), firstName)
 	}
 
 }
