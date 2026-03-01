@@ -5,7 +5,6 @@ import { filter } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
-import { MatDialog } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
@@ -17,11 +16,9 @@ import { CardComponent } from '../../components/card/card.component'
 import { CardGroupComponent } from '../../components/card-group/card-group.component'
 import { Interaction, InteractionGroup, TimeUnit } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../../components/interaction-card-content/interaction-card-content.component'
-import { InteractionDialogComponent, InteractionDialogData, InteractionDialogSaveResult } from '../../components/interaction-dialog/interaction-dialog.component'
-import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionsService } from '../../services/interactions.service'
-import { MaterialConfigService } from '../../services/material-config.service'
 import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
+import { RelationshipsService } from '../../services/relationships.service'
 import { ResponsiveUiService } from '../../services/responsive-ui.service'
 import { RowComponent } from '../../components/row/row.component'
 import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
@@ -38,11 +35,10 @@ import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 	styleUrl: './interactions-list.component.scss'
 })
 export class InteractionsListComponent implements OnInit, AfterViewInit {
+	// services
 	private readonly api = inject(ApiService)
-	private readonly dialog = inject(MatDialog)
-	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly interactionsService = inject(InteractionsService)
-	private readonly materialConfig = inject(MaterialConfigService)
+	private readonly relationshipsService = inject(RelationshipsService)
 	private readonly responsiveUiService = inject(ResponsiveUiService)
 	private readonly snackBar = inject(MatSnackBar)
 
@@ -54,6 +50,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		filter(value => value.length > 0)
 	)
 
+	// interaction grouping state
 	readonly groupBy = signal<TimeUnit>('month')
 	readonly groupedInteractions = signal([] as InteractionGroup[])
 	private readonly groupInteractions = effect(() => {
@@ -68,6 +65,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		else this.onCollapseOrExpandAllClick(true)
 	})
 
+	// misc state
 	readonly allGroupsCollapsed = signal(false)
 	readonly allGroupsExpanded = signal(false)
 	readonly isLoadingInteractions = signal(true)
@@ -77,6 +75,11 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
 
 	ngOnInit(): void {
+		this.loadInteractions()
+	}
+
+	private loadInteractions(): void {
+		this.isLoadingInteractions.set(true)
 		this.api.getInteractions().subscribe({
 			next: interactions => {
 				this.interactions.set(interactions)
@@ -106,62 +109,42 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
-	onAddInteractionclick(): void {
-		const data: InteractionDialogData = {
-			relationshipId: null,
-			relationshipName: null,
-			interaction: null,
-			isAddingInteraction: true,
-			showRelationshipPicker: true,
-		}
-		const config = this.materialConfig.getResponsiveDialogConfig(data)
-		this.dialog.open(InteractionDialogComponent, config).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
-			if (!dataOrCancel) return
-			const { form } = dataOrCancel
-			const newInteraction = this.interactionMapper.mapFormToModel(form)
-			const updatedInteractions = this.interactionsService.insertInteractionInOrder(this.interactions(), newInteraction)
-			this.highlightInteraction = newInteraction
-			this.interactions.set(updatedInteractions)
-		})
+	async onAddInteractionclick(): Promise<void> {
+		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.addInteraction(this.interactions())
+		if (wasCancelled) return
+
+		this.highlightInteraction = interaction
+		this.interactions.set(updatedInteractions)
 	}
 
-	onEditInteractionClick(editTarget: Interaction): void {
-		const data: InteractionDialogData = {
-			relationshipId: editTarget.idOfRelationship!,
-			relationshipName: editTarget.nameOfPerson!,
-			interaction: editTarget,
-			isEditingInteraction: true,
-		}
-		const config = this.materialConfig.getResponsiveDialogConfig(data)
-		this.dialog.open(InteractionDialogComponent, config).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
-			if (!dataOrCancel) return
-			const { form } = dataOrCancel
-			const newInteraction = this.interactionMapper.mapFormToModel(form, editTarget.idOfRelationship, editTarget.nameOfPerson)
-			this.highlightInteraction = newInteraction
-			if (editTarget.date === newInteraction.date) {
-				// date is unchanged, so interaction stays in same position
-				this.interactions.update(interactions =>
-					interactions.map(interaction => interaction._id === newInteraction._id ? newInteraction : interaction)
-				)
-			} else {
-				// date changed, so interaction may need to move to a new position
-				const interactionsWithoutEdited = this.interactions().filter(interaction => interaction._id !== newInteraction._id)
-				const updatedInteractions = this.interactionsService.insertInteractionInOrder(interactionsWithoutEdited, newInteraction)
-				this.interactions.set(updatedInteractions)
-			}
-		})
+	async onEditInteractionClick(editTarget: Interaction): Promise<void> {
+		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.editInteraction(editTarget, this.interactions())
+		if (wasCancelled) return
+
+		this.highlightInteraction = interaction
+		this.interactions.set(updatedInteractions)
 	}
 
 	onDeleteInteractionClick(deleteTarget: Interaction): void {
-		this.interactionsService.deleteInteraction(deleteTarget, deleteTarget.idOfRelationship!, deleteTarget.nameOfPerson!).subscribe(targetDeleted => {
-			if (targetDeleted) {
-				const deleteIndex = this.interactions().findIndex(({ _id }) => _id === deleteTarget._id)
-				this.interactions.set([
-					...this.interactions().slice(0, deleteIndex),
-					...this.interactions().slice(deleteIndex + 1)
-				])
-			}
+		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
+			if (!targetDeleted) return
+
+			const deleteIndex = this.interactions().findIndex(({ _id }) => _id === deleteTarget._id)
+			this.interactions.set([
+				...this.interactions().slice(0, deleteIndex),
+				...this.interactions().slice(deleteIndex + 1)
+			])
 		})
+	}
+
+	onEditRelationshipClick(interaction: Interaction): void {
+		this.relationshipsService.editRelationship(interaction.idOfRelationship!)
+			.subscribe(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
+				if (wasCancelled) return
+				if (wasNameModified) interaction.nameOfPerson = relationship.fullName
+				// TODO: optimize by just updating the relevant interactions in the list based on what was changed in the relationship edit flow
+				if (wereInteractionsModified) this.loadInteractions()
+			})
 	}
 
 }

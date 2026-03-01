@@ -86,8 +86,8 @@ export class ApiService {
 		)
 	}
 
-	deleteInteraction(interactionId: string, relationshipId: string): Observable<RelationshipDerivedProperties> {
-		return this.http.delete<InteractionWriteResponse>(`${this.baseUrl}/relationships/${relationshipId}/interactions/${interactionId}`).pipe(
+	deleteInteraction(interaction: Interaction): Observable<RelationshipDerivedProperties> {
+		return this.http.delete<InteractionWriteResponse>(`${this.baseUrl}/relationships/${interaction.idOfRelationship}/interactions/${interaction._id}`).pipe(
 			map(response => this.relationshipMapper.mapPartialResponseToModel(response.updatedRelationshipProperties))
 		)
 	}

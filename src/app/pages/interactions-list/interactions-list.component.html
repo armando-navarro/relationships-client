@@ -84,6 +84,7 @@
 						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
 						(edit-interaction)="onEditInteractionClick($event)"
 						(delete-interaction)="onDeleteInteractionClick($event)"
+						(relationship-name-click)="onEditRelationshipClick($event)"
 					></app-row>
 				}
 			}

@@ -87,7 +87,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-	<button [mat-dialog-close]="false" mat-button>Cancel</button>
+	<button [mat-dialog-close]="{ wasCancelled: true }" mat-button>Cancel</button>
 	@if (wasInteractionModified()) {
 		<button (click)="onSaveInteractionClick()" mat-button>Save</button>
 	}

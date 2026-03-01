@@ -5,17 +5,23 @@ import { MatDialog } from '@angular/material/dialog'
 
 import { ApiService } from './api.service'
 import { Cancelable } from '../interfaces/misc.interface'
-import { DeletionService } from './deletion.service'
+import { DeletionResult, DeletionService } from './deletion.service'
 import { MaterialConfigService } from './material-config.service'
-import { AttentionNeededStatus, RelationshipDerivedProperties, Relationship, RelationshipGroup } from '../interfaces/relationship.interface'
+import { AttentionNeededStatus, Relationship, RelationshipGroup } from '../interfaces/relationship.interface'
 import { RelationshipDialogComponent, RelationshipDialogData, RelationshipDialogResult } from '../components/relationship-dialog/relationship-dialog.component'
 import { RelationshipUtilitiesService } from './relationship-utilities.service'
 
-type RelationshipGroupingResult = {
+type RelationshipGroupingResult = Cancelable<{
 	groups: RelationshipGroup[]
 	targetGroupStatus: AttentionNeededStatus
 	targetRelationshipIndex: number
-}
+}>
+
+type RelationshipEditResult = Cancelable<{
+	relationship: Relationship
+	wasNameModified: boolean
+	wereInteractionsModified: boolean
+}>
 
 @Injectable({ providedIn: 'root' })
 export class RelationshipsService {
@@ -27,7 +33,7 @@ export class RelationshipsService {
 
 	/** Prompts the user to add a new relationship.
 	 * @returns `wasCancelled: true` if the user clicks Cancel, or the updated relationship groups and the new relationship's location */
-	addRelationship(groupedRelationships: RelationshipGroup[]): Observable<Cancelable<RelationshipGroupingResult>> {
+	addRelationship(groupedRelationships: RelationshipGroup[]): Observable<RelationshipGroupingResult> {
 		const data: RelationshipDialogData = { relationship: null, isAddingRelationship: true }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 
@@ -78,27 +84,23 @@ export class RelationshipsService {
 	}
 
 	/** Prompts the user to edit a relationship.
+	 * @param relationship The relationship to edit, or the ID of the relationship.
+	 * @param currentGroups Optional. If provided, returns updated relationship groups and the relationship's new location.
 	 * @returns The updated relationship groups and the relationship's new location (given by the group's status and the relationship's index
-	 * in the group) if the user clicks Save, or `wasCancelled: true` if the user clicks Cancel. */
-	editRelationship(relationship: string|Relationship, currentGroups: RelationshipGroup[]): Observable<Cancelable<RelationshipGroupingResult>> {
+	 * in the group) if `currentGroups` is provided, or just the updated relationship if not. Returns `{wasCancelled: true}` if the user clicks Cancel. */
+	editRelationship(relationship: string|Relationship, currentGroups: RelationshipGroup[]): Observable<RelationshipGroupingResult>
+	editRelationship(relationship: string|Relationship, currentGroups?: undefined): Observable<RelationshipEditResult>
+	editRelationship(relationship: string|Relationship, currentGroups?: RelationshipGroup[]): Observable<RelationshipGroupingResult|RelationshipEditResult> {
 		const relationship$ = typeof relationship === 'string'
 			? this.api.getRelationship(relationship)
 			: of(relationship)
 
 		return relationship$.pipe(
 			switchMap(relationship => this.openEditDialog(relationship)),
-			map(({ wasCancelled, relationship: updatedRelationship }) => {
-				if (wasCancelled) return { wasCancelled: true }
-				else {
-					// extract relationships from groups and replace old relationship with updated relationship
-					const allRelationships = currentGroups.flatMap(({ relationships }) =>
-						relationships.map(relationship => relationship._id === updatedRelationship?._id ? updatedRelationship : relationship)
-					)
-					return {
-						wasCancelled: false,
-						...this.groupRelationshipsByAttentionNeededStatus(allRelationships, updatedRelationship._id!)
-					}
-				}
+			map(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
+				if (wasCancelled) return { wasCancelled }
+				if (currentGroups) return this.updateRelationshipGroups(relationship, currentGroups)
+				return { wasCancelled, relationship, wasNameModified, wereInteractionsModified }
 			})
 		)
 	}
@@ -108,6 +110,15 @@ export class RelationshipsService {
 		const data: RelationshipDialogData = { relationship, isEditingRelationship: true }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		return this.dialog.open(RelationshipDialogComponent, config).afterClosed()
+	}
+
+	/** Updates the relationship groups with the provided updated relationship. */
+	private updateRelationshipGroups(updatedRelationship: Relationship, groups: RelationshipGroup[]): RelationshipGroupingResult {
+		// extract relationships from groups and replace old relationship with updated relationship
+		const allRelationships = groups.flatMap(({ relationships }) =>
+			relationships.map(relationship => relationship._id === updatedRelationship?._id ? updatedRelationship : relationship)
+		)
+		return this.groupRelationshipsByAttentionNeededStatus(allRelationships, updatedRelationship._id!)
 	}
 
 	/** Groups relationships by their attention needed status and locates a specific relationship within the groups. */
@@ -135,6 +146,7 @@ export class RelationshipsService {
 		})
 
 		return {
+			wasCancelled: false,
 			groups: this.relationshipUtils.orderRelationshipGroups(statusToGroupMap),
 			targetGroupStatus,
 			targetRelationshipIndex
@@ -142,8 +154,10 @@ export class RelationshipsService {
 	}
 
 	/** @returns `false` if user clicked Cancel, `true` if relationship was deleted */
-	deleteRelationship({ _id, firstName }: Relationship): Observable<RelationshipDerivedProperties|boolean> {
-		return this.deletionService.deleteWithConfirmation(this.api.deleteRelationship(_id!), firstName)
+	deleteRelationship({ _id, firstName }: Relationship): Observable<boolean> {
+		return this.deletionService.deleteWithConfirmation(this.api.deleteRelationship(_id!), firstName).pipe(
+			map(({ wasCancelled }) => !wasCancelled)
+		)
 	}
 
 }

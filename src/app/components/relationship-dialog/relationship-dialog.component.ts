@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { pairwise, startWith, Subject, takeUntil } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
-import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
@@ -13,11 +13,9 @@ import { Cancelable } from '../../interfaces/misc.interface'
 import { CardComponent } from '../card/card.component'
 import { Interaction } from "../../interfaces/interaction.interface"
 import { InteractionCardContentComponent } from '../interaction-card-content/interaction-card-content.component'
-import { InteractionDialogComponent, InteractionDialogSaveResult } from '../interaction-dialog/interaction-dialog.component'
 import { InteractionMapperService } from '../../services/mappers/interaction.mapper.service'
 import { InteractionRate, Relationship } from "../../interfaces/relationship.interface"
 import { InteractionsService } from '../../services/interactions.service'
-import { MaterialConfigService } from '../../services/material-config.service'
 import { PageHeaderBarComponent } from '../page-header-bar/page-header-bar.component'
 import { RelationshipFormService } from '../../services/relationship-form.service'
 import { RelationshipMapperService } from '../../services/mappers/relationship.mapper.service'
@@ -29,7 +27,11 @@ export interface RelationshipDialogData {
 	isEditingRelationship?: true
 }
 
-export type RelationshipDialogResult = Cancelable<{ relationship: Relationship }>
+export type RelationshipDialogResult = Cancelable<{
+	relationship: Relationship
+	wasNameModified: boolean
+	wereInteractionsModified: boolean
+}>
 
 @Component({
 	selector: 'app-relationship-dialog',
@@ -45,12 +47,10 @@ export type RelationshipDialogResult = Cancelable<{ relationship: Relationship }
 })
 export class RelationshipDialogComponent implements OnInit, OnDestroy {
 	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)
-	private readonly dialog = inject(MatDialog)
 	private readonly dialogRef: MatDialogRef<RelationshipDialogComponent, RelationshipDialogResult> = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly interactionsService = inject(InteractionsService)
-	private readonly materialConfig = inject(MaterialConfigService)
-	private readonly relationshipFormService = inject(RelationshipFormService)
+	private readonly formService = inject(RelationshipFormService)
 	private readonly relationshipMapper = inject(RelationshipMapperService)
 	private readonly snackBar = inject(MatSnackBar)
 
@@ -82,11 +82,11 @@ export class RelationshipDialogComponent implements OnInit, OnDestroy {
 	}
 
 	private initAddRelationship(): void {
-		this.form = this.relationshipFormService.initForm()
+		this.form = this.formService.initForm()
 	}
 
 	private initEditRelationship(): void {
-		this.form = this.relationshipFormService.initForm(this.data.relationship!)
+		this.form = this.formService.initForm(this.data.relationship!)
 		this.interactions = this.data.relationship!.interactions
 		this.isFormSaved.set(true)
 	}
@@ -115,32 +115,23 @@ export class RelationshipDialogComponent implements OnInit, OnDestroy {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
 		}
-		const data = await this.relationshipFormService.getAddInteractionData()
-		const config = this.materialConfig.getResponsiveDialogConfig(data)
-		this.dialog.open(InteractionDialogComponent, config).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
-			if (!dataOrCancel) return
-			this.relationshipFormService.processAddInteractionResult(dataOrCancel)
-		})
+		const { wasCancelled, form, interaction, updatedRelationshipProperties } = await this.interactionsService.addInteraction(this.formService)
+		if (wasCancelled) return
+
+		// update relationship form and model with derived properties returned from the API
+		this.formService.processAddInteractionDialogResult({ form, interaction, updatedRelationshipProperties })
 	}
 
-	onEditInteractionClick(editTarget: Interaction): void {
-		const data = this.relationshipFormService.getEditInteractionData(editTarget)
-		const config = this.materialConfig.getResponsiveDialogConfig(data)
-		this.dialog.open(InteractionDialogComponent, config).afterClosed().subscribe((dataOrCancel: InteractionDialogSaveResult|false) => {
-			if (!dataOrCancel) return
-			this.relationshipFormService.processEditInteractionResult(dataOrCancel)
-		})
+	async onEditInteractionClick(editTarget: Interaction): Promise<void> {
+		const { wasCancelled, form, interaction, updatedRelationshipProperties } = await this.interactionsService.editInteraction(editTarget, this.formService)
+		if (wasCancelled) return
+
+		// update the relationship form and model with the modified interaction and the derived properties returned from the API
+		this.formService.processEditInteractionResult({ form, interaction, updatedRelationshipProperties })
 	}
 
 	onDeleteInteractionClick(deleteTarget: Interaction): void {
-		this.interactionsService.deleteInteraction(
-			deleteTarget,
-			this.data.relationship!._id!,
-			this.form.controls.firstName.value!
-		).subscribe(updatedPropertiesOrCancel => {
-			if (typeof updatedPropertiesOrCancel === 'boolean') return
-			this.relationshipFormService.proccessDeleteInteractionResult(deleteTarget, updatedPropertiesOrCancel)
-		})
+		this.interactionsService.deleteInteraction(deleteTarget, this.formService).subscribe()
 	}
 
 	onSaveClick(): void {
@@ -148,16 +139,21 @@ export class RelationshipDialogComponent implements OnInit, OnDestroy {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
 		}
-		this.relationshipFormService.saveRelationship().subscribe({
-			next: () => this.onDoneClick(),
+		this.formService.saveRelationship().subscribe({
+			next: ({ wasNameModified, wereInteractionsModified }) => this.closeDialog(wasNameModified, wereInteractionsModified),
 			error: error => this.snackBar.open(this.SAVE_RELATIONSHIP_ERROR, undefined)
 		})
 	}
 
-	onDoneClick(): void {
+	closeDialog(
+		wasNameModified = this.formService.wasNameModified,
+		wereInteractionsModified = this.formService.wereInteractionsModified
+	): void {
 		this.dialogRef.close({
 			wasCancelled: false,
-			relationship: this.relationshipFormService.getRelationship()
+			relationship: this.formService.getRelationship(),
+			wasNameModified,
+			wereInteractionsModified,
 		})
 	}
 

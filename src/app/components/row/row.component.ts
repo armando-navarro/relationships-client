@@ -32,6 +32,7 @@ export class RowComponent {
 
 	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
 	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
+	readonly relationshipNameClick = output<Interaction>({ alias: 'relationship-name-click' })
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
 	readonly deleteInteraction = output<Interaction>({ alias: 'delete-interaction'})
 
@@ -48,6 +49,10 @@ export class RowComponent {
 				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
 			}
 		})
+	}
+
+	onRelationshipNameClick() {
+		this.relationshipNameClick.emit(this.interaction()!)
 	}
 
 	onEditClick() {

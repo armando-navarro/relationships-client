@@ -92,7 +92,7 @@
 
 <mat-dialog-actions>
 		@if (isFormSaved()) {
-			<button (click)="onDoneClick()" mat-button>Done</button>
+			<button (click)="closeDialog()" mat-button>Done</button>
 		}
 		@else {
 			<button [mat-dialog-close]="{ wasCancelled: true }" mat-button>Cancel</button>

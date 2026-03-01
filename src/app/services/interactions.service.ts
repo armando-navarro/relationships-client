@@ -1,12 +1,17 @@
 import { inject, Injectable } from '@angular/core'
-import { FormArray } from '@angular/forms'
-import { Observable } from 'rxjs'
+import { lastValueFrom, map, Observable } from 'rxjs'
 import { DateTime } from 'luxon'
 
+import { MatDialog } from '@angular/material/dialog'
+
 import { ApiService } from './api.service'
+import { Cancelable } from '../interfaces/misc.interface'
 import { DeletionService } from './deletion.service'
-import { Interaction, InteractionFormGroup, InteractionGroup, TimeUnit } from "../interfaces/interaction.interface"
-import { RelationshipDerivedProperties } from '../interfaces/relationship.interface'
+import { Interaction, InteractionGroup, TimeUnit } from "../interfaces/interaction.interface"
+import { InteractionDialogComponent, InteractionDialogData, InteractionDialogResult } from '../components/interaction-dialog/interaction-dialog.component'
+import { InteractionUtilitiesService } from './interaction-utilities.service'
+import { MaterialConfigService } from './material-config.service'
+import { RelationshipFormService } from './relationship-form.service'
 
 interface InteractionLocationInGroup {
 	groupKey: string
@@ -17,53 +22,103 @@ interface InteractionGroupingResult extends InteractionLocationInGroup {
 	groups: InteractionGroup[]
 }
 
+type AddInteractionResult = Cancelable<{
+	interaction: Interaction
+	updatedInteractions: Interaction[]
+}>
+
 @Injectable({ providedIn: 'root' })
 export class InteractionsService {
 	private readonly api = inject(ApiService)
+	private readonly dialog = inject(MatDialog)
 	private readonly deletionService = inject(DeletionService)
+	private readonly interactionUtils = inject(InteractionUtilitiesService)
+	private readonly materialConfig = inject(MaterialConfigService)
 
-	/** Inserts an interaction into the proper spot in an array of interactions sorted descending by date. */
-	insertInteractionInOrder(sortedInteractions: FormArray<InteractionFormGroup>, newInteraction: InteractionFormGroup): void
-	insertInteractionInOrder(sortedInteractions: Interaction[], newInteraction: Interaction): Interaction[]
-	insertInteractionInOrder(sortedInteractions: Interaction[]|FormArray<InteractionFormGroup>, newInteraction: Interaction|InteractionFormGroup): Interaction[]|void {
-		if (sortedInteractions instanceof FormArray && 'controls' in newInteraction) {
-			return this.insertInteractionFormInOrder(sortedInteractions, newInteraction)
+	/** Prompts the user to add a new interaction.
+	 * @returns The new interaction and the updated interactions array with the new interaction inserted in order, or `{wasCancelled: true}` if the user clicks Cancel */
+	async addInteraction(existingInteractions: Interaction[]): Promise<AddInteractionResult>
+	/** Prompts the user to add a new interaction.
+	 * @returns The new interaction and the updated relationship form with the new interaction added, or `{wasCancelled: true}` if the user clicks Cancel */
+	async addInteraction(formService: RelationshipFormService): Promise<InteractionDialogResult>
+	async addInteraction(arg: Interaction[] | RelationshipFormService): Promise<AddInteractionResult | InteractionDialogResult> {
+		const customConfig: Partial<InteractionDialogData> = { isAddingInteraction: true }
+		const isFormService = arg instanceof RelationshipFormService
+
+		if (!isFormService) customConfig.showRelationshipPicker = true
+
+		const result: InteractionDialogResult = await this.openInteractionDialog(customConfig, isFormService ? arg : undefined)
+		const { wasCancelled, interaction } = result
+		if (wasCancelled) return { wasCancelled }
+
+		if (isFormService) return result
+		else return {
+			wasCancelled,
+			interaction,
+			updatedInteractions: this.interactionUtils.insertInteractionInOrder(arg, interaction)
 		}
-		if (!Array.isArray(sortedInteractions) || 'controls' in newInteraction) return
-
-		let low = 0
-		let high = sortedInteractions.length
-
-		while (low < high) {
-			const mid = Math.floor((low + high) / 2)
-			if (sortedInteractions[mid].date! > newInteraction.date!) low = mid + 1
-			else high = mid
-		}
-
-		return [
-			...sortedInteractions.slice(0, low),
-			newInteraction,
-			...sortedInteractions.slice(low)
-		]
 	}
 
-	private insertInteractionFormInOrder(sortedInteractions: FormArray, newInteraction: InteractionFormGroup): void {
-		let low = 0
-		let high = sortedInteractions.length
+	/** Promts the user to edit an interaction.
+	 * @returns The updated interaction and the updated interactions array, or `{wasCancelled: true}` if the user clicks Cancel. */
+	async editInteraction(interaction: Interaction, existingInteractions: Interaction[]): Promise<AddInteractionResult>
+	/** Promts the user to edit an interaction.
+	 * @returns The updated interaction and the updated relationship form, or `{wasCancelled: true}` if the user clicks Cancel. */
+	async editInteraction(interaction: Interaction, formService: RelationshipFormService): Promise<InteractionDialogResult>
+	async editInteraction(interaction: Interaction, arg: Interaction[] | RelationshipFormService): Promise<InteractionDialogResult | AddInteractionResult> {
+		if (arg instanceof RelationshipFormService) return this.openInteractionDialog({ interaction, isEditingInteraction: true }, arg)
+		const existingInteractions = arg
 
-		while (low < high) {
-			const mid = Math.floor((low + high) / 2)
-			if (sortedInteractions.at(mid).value.date! > newInteraction.value.date!) low = mid + 1
-			else high = mid
+		const { wasCancelled, interaction: updatedInteraction } = await this.openInteractionDialog({
+			relationshipId: interaction.idOfRelationship,
+			relationshipName: interaction.nameOfPerson,
+			interaction,
+			isEditingInteraction: true,
+		})
+		if (wasCancelled) return { wasCancelled }
+
+		// update the interactions array
+		let updatedInteractions: Interaction[]
+		if (interaction.date === updatedInteraction.date) {
+			// date is unchanged, so interaction stays in same position
+			updatedInteractions = existingInteractions.map( interaction => interaction._id === updatedInteraction._id ? updatedInteraction : interaction )
+		} else {
+			// date changed, so interaction may need to move to a new position
+			const interactionsWithoutEdited = existingInteractions.filter(interaction => interaction._id !== updatedInteraction._id)
+			updatedInteractions = this.interactionUtils.insertInteractionInOrder(interactionsWithoutEdited, updatedInteraction)
 		}
-		sortedInteractions.insert(low, newInteraction)
+
+		return { wasCancelled, interaction: updatedInteraction, updatedInteractions }
 	}
 
-	/** @returns false if user clicked Cancel, true if interaction was deleted */
-	deleteInteraction(deleteTarget: Interaction, relationshipId: string, personName: string): Observable<RelationshipDerivedProperties|boolean> {
+	private async openInteractionDialog(customDialogConfig: Partial<InteractionDialogData>, formService?: RelationshipFormService): Promise<InteractionDialogResult> {
+		// save relationship changes before opening the interaction dialog
+		if (formService?.wasRelationshipModified) await lastValueFrom(formService.saveRelationship())
+
+		// prepare data for the interaction dialog
+		const relationship = formService?.getRelationship()
+		const data: Partial<InteractionDialogData> = {
+			relationshipId: relationship?._id ?? null,
+			relationshipName: relationship?.fullName ?? null,
+			...customDialogConfig,
+		}
+		const config = this.materialConfig.getResponsiveDialogConfig(data)
+
+		// open the interaction dialog and return the result
+		return lastValueFrom(this.dialog.open(InteractionDialogComponent, config).afterClosed())
+	}
+
+	/** @returns `false` if user clicked Cancel, `true` if interaction was deleted */
+	deleteInteraction(interaction: Interaction, formService?: RelationshipFormService): Observable<boolean> {
 		return this.deletionService.deleteWithConfirmation(
-			this.api.deleteInteraction(deleteTarget._id!, relationshipId),
-			`an interaction with ${personName}`
+			this.api.deleteInteraction(interaction),
+			`an interaction with ${interaction.nameOfPerson}`
+		).pipe(
+			map(result => {
+				if (result.wasCancelled) return false
+				if (formService) formService.processDeleteInteractionResult(interaction, result)
+				return true
+			})
 		)
 	}
 

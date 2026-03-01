@@ -11,6 +11,7 @@ import { MatInputModule } from "@angular/material/input"
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { ApiService } from '../../services/api.service'
+import { Cancelable } from '../../interfaces/misc.interface'
 import { CardComponent } from '../card/card.component'
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirmation-dialog/confirmation-dialog.component'
 import { Interaction, InteractionFormGroup, InteractionPayload } from "../../interfaces/interaction.interface"
@@ -35,8 +36,11 @@ export interface InteractionDialogData {
 }
 
 export interface InteractionDialogSaveResult extends UpdatedRelationshipProperties {
-	form: InteractionFormGroup,
+	form: InteractionFormGroup
+	interaction: Interaction
 }
+
+export type InteractionDialogResult = Cancelable<InteractionDialogSaveResult>
 
 @Component({
 	selector: 'app-interaction-dialog',
@@ -55,7 +59,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 	private readonly api = inject(ApiService)
 	readonly data = inject<InteractionDialogData>(MAT_DIALOG_DATA)
 	private readonly dialog = inject(MatDialog)
-	private readonly dialogRef = inject(MatDialogRef)
+	private readonly dialogRef: MatDialogRef<InteractionDialogComponent, InteractionDialogResult> = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapperService)
 	private readonly materialConfig = inject(MaterialConfigService)
 	private readonly relationshipUtils = inject(RelationshipUtilitiesService)
@@ -162,7 +166,10 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 			: this.saveEditedInteraction(payload, relationshipId!)
 
 		saveInteraction$.subscribe({
-			next: saveResult => this.dialogRef.close(saveResult),
+			next: saveResult => this.dialogRef.close({
+				wasCancelled: false,
+				...saveResult
+			}),
 			error: error => this.snackBar.open(this.SAVE_INTERACTION_ERROR, undefined)
 		})
 	}
@@ -173,6 +180,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 				this.form.controls._id.setValue(insertedId)
 				return {
 					form: this.form,
+					interaction: this.interactionMapper.mapFormToModel(this.form),
 					updatedRelationshipProperties,
 				}
 			}),
@@ -183,6 +191,7 @@ export class InteractionDialogComponent implements OnInit, OnDestroy {
 		return this.api.updateInteraction(payload, relationshipId!).pipe(
 			map(updatedRelationshipProperties => ({
 				form: this.form,
+				interaction: this.interactionMapper.mapFormToModel(this.form),
 				updatedRelationshipProperties,
 			}))
 		)
