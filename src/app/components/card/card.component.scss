@@ -162,6 +162,15 @@
 				opacity: 0;
 			}
 		}
+
+		&.expand-left-text {
+			.collapsed-left-text {
+				width: 8rem;
+			}
+			.collapsed-right-icon {
+				margin-left: auto;
+			}
+		}
 	}
 }
 

@@ -33,6 +33,7 @@ export class CardComponent implements OnInit {
 	readonly collapsible = input(false, { transform: booleanAttribute })
 	readonly scrollableBody = input(false, { alias: 'scrollable-body', transform: booleanAttribute })
 	readonly alwaysShowLeftText = input(false, { alias: 'always-show-left-text', transform: booleanAttribute })
+	readonly alwaysShowInteractionOwner = input(false, { alias: 'always-show-interaction-owner', transform: booleanAttribute })
 	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
 
 	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
@@ -41,6 +42,7 @@ export class CardComponent implements OnInit {
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
 	readonly deleteInteraction = output<Interaction>({ alias: 'delete-interaction'})
 	readonly deleteTopic = output({ alias: 'delete-topic'})
+	readonly relationshipNameClick = output<Interaction>({ alias: 'relationship-name-click' })
 
 	readonly open = model(true)
 
@@ -80,15 +82,26 @@ export class CardComponent implements OnInit {
 	}
 
 	private initInteractionCard(interaction: Interaction): void {
-		const date = new Date(interaction.date!)
-		this.collapsedLeftText.set(date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }))
-		this.collapsedRightText.set(this.newlinesToBr.transform(interaction.topics[0]?.notes) || 'No notes')
+		const date = new Date(interaction.date!).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+		if (this.alwaysShowInteractionOwner()) {
+			this.collapsedLeftText.set(interaction.nameOfPerson!)
+			this.collapsedRightText.set(date)
+		}
+		else {
+			this.collapsedLeftText.set(date)
+			this.collapsedRightText.set(this.newlinesToBr.transform(interaction.topics[0]?.notes) || 'No notes')
+		}
 		this.collapsedRightIcon.set(interaction.typeIcon || '')
 	}
 
 	private initTopicCard(topic: Topic): void {
 		this.collapsedLeftText.set(topic.name)
 		this.collapsedRightText.set(this.newlinesToBr.transform(topic.notes))
+	}
+
+	onRelationshipNameClick() {
+		if (this.relationship()) this.editRelationship.emit(this.relationship()!)
+		else this.relationshipNameClick.emit(this.interaction()!)
 	}
 
 	onEditClick(): void {

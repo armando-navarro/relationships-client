@@ -72,8 +72,11 @@
 					<app-card
 						[interaction]="interaction"
 						[collapsible]="isSmallViewport()"
+						always-show-interaction-owner
+						always-show-left-text
 						(edit-interaction)="onEditInteractionClick($event)"
 						(delete-interaction)="onDeleteInteractionClick($event)"
+						(relationship-name-click)="onEditRelationshipClick($event)"
 						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
 					>
 						<app-interaction-card-content [interaction]="interaction" />

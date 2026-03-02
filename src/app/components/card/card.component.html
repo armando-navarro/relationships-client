@@ -1,14 +1,15 @@
+<!-- TODO: This template has become too complex. Look into refactoring it. -->
 <div class="header">
 	@if (relationshipName() && !alwaysShowLeftText()) {
-		<button class="name" (click)="onEditClick()" [class.hidden]="!open()" [matTooltip]="'Edit ' + modelName()" mat-button>{{relationshipName()}}</button>
+		<button class="name" (click)="onRelationshipNameClick()" [class.hidden]="!open()" [matTooltip]="'Edit ' + modelName()" mat-button>{{relationshipName()}}</button>
 	}
 	@if (alwaysShowLeftText()) {
 		<span class="spacer" [class.hidden]="!open()"></span>
 	}
 	@if (collapsedLeftText() || collapsedRightText()) {
-		<div class="collapsed-header">
-			@if (relationship()) {
-				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}" mat-button (click)="onEditClick()" [attr.aria-label]="'Edit ' + collapsedLeftText()">{{collapsedLeftText()}}</button>
+		<div class="collapsed-header" [class.expand-left-text]="alwaysShowInteractionOwner()">
+			@if (relationship() || alwaysShowInteractionOwner()) {
+				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}" mat-button (click)="onRelationshipNameClick()" [attr.aria-label]="'Edit ' + collapsedLeftText()">{{collapsedLeftText()}}</button>
 			} @else {
 				<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
 			}
