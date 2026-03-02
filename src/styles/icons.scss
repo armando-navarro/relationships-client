@@ -1,4 +1,4 @@
-@import './mixins.scss';
+@use 'mixins.scss';
 
 .material-symbols-outlined {
 	font-variation-settings:
@@ -11,7 +11,7 @@
 // for custom icon sizes
 // note that icon buttons need to have their size set separately,
 // allowing for ~8-12px visual padding per side
-@mixin icon-size($size) {
+@mixin size($size) {
 	width: $size;
 	height: $size;
 	font-size: $size;
@@ -22,7 +22,7 @@
 .mdc-icon-button.icon-sm {
 	width: 32px;
 	height: 32px;
-	&:has(img) { @include flex-center() }
+	&:has(img) { @include mixins.flex-center() }
 }
 .mdc-icon-button.icon-sm mat-icon {
 	width: 16px;
@@ -44,7 +44,7 @@
 .mdc-icon-button.icon-lg {
 	width: 56px;
 	height: 56px;
-	&:has(img) { @include flex-center() }
+	&:has(img) { @include mixins.flex-center() }
 }
 .mdc-icon-button.icon-lg mat-icon,
 .mdc-icon-button.icon-lg img {
@@ -64,7 +64,7 @@
 .mdc-icon-button.icon-xl {
 	width: 72px;
 	height: 72px;
-	&:has(img) { @include flex-center() }
+	&:has(img) { @include mixins.flex-center() }
 }
 .mdc-icon-button.icon-xl mat-icon {
 	width: 48px;

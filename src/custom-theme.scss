@@ -3,7 +3,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
-@import './styles/variables.scss';
+@use './styles/breakpoints';
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
@@ -36,25 +36,27 @@ $relationships-client-theme: mat.define-theme((
 	// @include mat.system-level-colors($relationships-client-theme);
 	// @include mat.system-level-typography($relationships-client-theme);
 
-	--mat-app-background-color: var(--page-background-color);
-	--mat-datepicker-calendar-container-background-color: var(--card-background);
-	--mat-option-focus-state-layer-color: var(--header-background-color);
-	--mdc-outlined-text-field-container-shape: var(--primary-border-radius);
-	--mdc-dialog-container-color: var(--card-background);
-	--mdc-dialog-subhead-size: 1.5rem;
-	--mat-form-field-subscript-text-size: 0.8rem;
-	--mat-bottom-sheet-container-background-color: var(--card-background);
-	--mdc-protected-button-container-color: var(--card-background);
-	--mdc-snackbar-container-color: var(--card-background);
-	--mdc-snackbar-supporting-text-color: var(--secondary-title-color);
-	--mat-snack-bar-button-color: var(--primary-accent-color);
-	--mdc-plain-tooltip-container-color: var(--header-hover-color);
-	--mdc-plain-tooltip-supporting-text-color: var(--secondary-title-color);
-	--mdc-plain-tooltip-container-shape: var(--primary-border-radius);
+	& {
+		--mat-app-background-color: var(--page-background-color);
+		--mat-datepicker-calendar-container-background-color: var(--card-background);
+		--mat-option-focus-state-layer-color: var(--header-background-color);
+		--mdc-outlined-text-field-container-shape: var(--primary-border-radius);
+		--mdc-dialog-container-color: var(--card-background);
+		--mdc-dialog-subhead-size: 1.5rem;
+		--mat-form-field-subscript-text-size: 0.8rem;
+		--mat-bottom-sheet-container-background-color: var(--card-background);
+		--mdc-protected-button-container-color: var(--card-background);
+		--mdc-snackbar-container-color: var(--card-background);
+		--mdc-snackbar-supporting-text-color: var(--secondary-title-color);
+		--mat-snack-bar-button-color: var(--primary-accent-color);
+		--mdc-plain-tooltip-container-color: var(--header-hover-color);
+		--mdc-plain-tooltip-supporting-text-color: var(--secondary-title-color);
+		--mdc-plain-tooltip-container-shape: var(--primary-border-radius);
 
-	@media screen and (max-width: $small-breakpoint) {
-		--mat-dialog-with-actions-content-padding: var(--small-dialog-content-padding);
-		--mat-dialog-actions-padding: var(--small-dialog-actions-padding);
+		@media screen and (max-width: breakpoints.$small) {
+			--mat-dialog-with-actions-content-padding: var(--small-dialog-content-padding);
+			--mat-dialog-actions-padding: var(--small-dialog-actions-padding);
+		}
 	}
 }
 

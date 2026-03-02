@@ -1,11 +1,11 @@
-@import '../../../styles/variables.scss';
+@use '../../../styles/breakpoints';
 
 :host {
 	display: block;
 	padding: var(--page-small-header-bar-height) 8px;
 	margin: 0 auto;
 	transition: padding 0.5s;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		padding: calc(var(--page-large-header-bar-height) + 12px) 12px 0;
 		button.toggle-search {
 			display: none;
@@ -13,7 +13,7 @@
 	}
 	&.two-header-rows {
 		padding-top: calc(var(--page-small-header-bar-height-with-search));
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			padding-top: calc(var(--page-large-header-bar-height-with-search) + 12px);
 		}
 	}
@@ -26,11 +26,11 @@ app-page-header-bar {
 	}
 	button.close-search {
 		flex: none;
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			display: none;
 		}
 	}
-	@media screen and (max-width: $small-breakpoint) {
+	@media screen and (max-width: breakpoints.$small) {
 		mat-form-field.search {
 			flex: 1;
 			height: 100%;

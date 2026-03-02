@@ -38,7 +38,7 @@
 						],
 						"styles": [
 							"src/custom-theme.scss",
-							"src/styles/variables.scss",
+							"src/styles/breakpoints.scss",
 							"src/styles.scss",
 							"src/styles/icons.scss",
 							"src/styles/root.css"
