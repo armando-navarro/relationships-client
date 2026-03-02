@@ -2,11 +2,9 @@ import { Component } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { MatButtonModule } from '@angular/material/button'
 
-import { PageHeaderBarComponent } from '../../components/page-header-bar/page-header-bar.component'
-
 @Component({
 	selector: 'app-page-not-found',
-	imports: [MatButtonModule, PageHeaderBarComponent, RouterLink],
+	imports: [MatButtonModule, RouterLink],
 	templateUrl: './page-not-found.component.html',
 	styleUrl: './page-not-found.component.scss'
 })
