@@ -27,7 +27,6 @@ import { RowComponent } from '../../components/row/row.component'
 
 @Component({
 	selector: 'app-relationships-list',
-	standalone: true,
 	imports: [
 		CardComponent, CardGroupComponent, FormsModule, MatAutocompleteModule, MatButtonModule, MatFormFieldModule,
 		MatMenuModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatTooltipModule, PageHeaderBarComponent,

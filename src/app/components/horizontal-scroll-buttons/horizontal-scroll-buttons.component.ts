@@ -8,7 +8,6 @@ import { ScrollService } from '../../services/scroll.service'
 
 @Component({
 	selector: 'app-horizontal-scroll-buttons',
-	standalone: true,
 	imports: [MatIconModule, MatTooltipModule],
 	templateUrl: './horizontal-scroll-buttons.component.html',
 	styleUrl: './horizontal-scroll-buttons.component.scss'

@@ -12,7 +12,6 @@ import { Relationship } from '../../interfaces/relationship.interface'
 
 @Component({
 	selector: 'app-card',
-	standalone: true,
 	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule, NgStyle],
 	providers: [NewlinesToBrPipe],
 	templateUrl: './card.component.html',

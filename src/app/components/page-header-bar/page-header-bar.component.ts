@@ -11,7 +11,6 @@ import { RouterLink } from "@angular/router";
 
 @Component({
 	selector: 'app-page-header-bar',
-	standalone: true,
 	imports: [MatButtonModule, MatIconModule, RouterLink],
 	templateUrl: './page-header-bar.component.html',
 	styleUrl: './page-header-bar.component.scss',

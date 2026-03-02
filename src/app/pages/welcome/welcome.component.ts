@@ -10,7 +10,6 @@ import { ResponsiveUiService } from '../../services/responsive-ui.service'
 
 @Component({
 	selector: 'app-welcome',
-	standalone: true,
 	imports: [MatButtonModule, MatIconModule, MatTooltipModule, PageHeaderBarComponent, RouterLink],
 	templateUrl: './welcome.component.html',
 	styleUrl: './welcome.component.scss'

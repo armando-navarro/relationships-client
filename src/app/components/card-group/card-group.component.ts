@@ -11,7 +11,6 @@ import { ScrollService } from '../../services/scroll.service'
 
 @Component({
 	selector: 'app-card-group',
-	standalone: true,
 	imports: [MatButtonModule, MatIconModule],
 	templateUrl: './card-group.component.html',
 	styleUrl: './card-group.component.scss',

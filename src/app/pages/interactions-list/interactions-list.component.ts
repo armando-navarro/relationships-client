@@ -25,7 +25,6 @@ import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-interactions-list',
-	standalone: true,
 	imports: [
 		/* angular */ RouterLink,
 		/* material: */ MatButtonModule, MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,

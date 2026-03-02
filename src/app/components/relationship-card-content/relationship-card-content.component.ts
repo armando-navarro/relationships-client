@@ -5,7 +5,6 @@ import { Relationship } from '../../interfaces/relationship.interface'
 
 @Component({
 	selector: 'app-relationship-card-content',
-	standalone: true,
 	imports: [NewlinesToBrPipe],
 	templateUrl: './relationship-card-content.component.html',
 	styleUrl: './relationship-card-content.component.scss'

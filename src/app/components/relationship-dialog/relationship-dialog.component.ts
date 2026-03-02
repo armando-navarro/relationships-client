@@ -35,12 +35,11 @@ export type RelationshipDialogResult = Cancelable<{
 
 @Component({
 	selector: 'app-relationship-dialog',
-	standalone: true,
 	imports: [
-    CardComponent, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
-    MatDialogClose, MatDialogContent, MatIconModule, MatFormFieldModule, MatInputModule,
-    PageHeaderBarComponent, ReactiveFormsModule,
-],
+		CardComponent, InteractionCardContentComponent, MatButtonModule, MatDialogActions,
+		MatDialogClose, MatDialogContent, MatIconModule, MatFormFieldModule, MatInputModule,
+		PageHeaderBarComponent, ReactiveFormsModule,
+	],
 	providers: [RelationshipFormService],
 	templateUrl: './relationship-dialog.component.html',
 	styleUrl: './relationship-dialog.component.scss'
