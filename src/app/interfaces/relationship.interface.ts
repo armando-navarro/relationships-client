@@ -13,7 +13,6 @@ export interface Relationship {
 	notes: string
 
 	lastInteractionDate?: Date|null
-	lastInteractionRelativeTime?: string|null
 	daysUntilAttentionNeeded?: number|null
 	attentionNeededText?: string
 	attentionNeededStatus?: AttentionNeededStatus
@@ -31,7 +30,6 @@ export interface UpdatedRelationshipProperties {
 }
 export interface RelationshipDerivedProperties {
 	lastInteractionDate: Date|null
-	lastInteractionRelativeTime?: string|null
 	daysUntilAttentionNeeded?: number|null
 	attentionNeededText?: string
 	attentionNeededStatus?: AttentionNeededStatus
@@ -75,7 +73,6 @@ export interface RelationshipGroupResponse {
 export type RelationshipsGroupedByStatusResponse = Record<AttentionNeededStatus, RelationshipGroupResponse>
 export interface RelationshipDerivedPropertiesResponse {
 	lastInteractionDate: string|null
-	lastInteractionRelativeTime?: string|null
 	daysUntilAttentionNeeded?: number|null
 	attentionNeededText?: string
 	attentionNeededStatus?: AttentionNeededStatus

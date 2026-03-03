@@ -48,15 +48,12 @@ export class RelationshipMapperService {
 
 	mapPartialResponseToModel(response: RelationshipDerivedPropertiesResponse): RelationshipDerivedProperties {
 		let lastInteractionDate: Date|null = null
-		let lastInteractionRelativeTime: string|null = null
 
 		if (response.lastInteractionDate) {
 			lastInteractionDate = new Date(response.lastInteractionDate)
-			lastInteractionRelativeTime = DateTime.fromISO(response.lastInteractionDate).toRelativeCalendar()
 		}
 		return  {
 			lastInteractionDate,
-			lastInteractionRelativeTime,
 			daysUntilAttentionNeeded: response.daysUntilAttentionNeeded,
 			attentionNeededText: response.attentionNeededText,
 			attentionNeededStatus: response.attentionNeededStatus,

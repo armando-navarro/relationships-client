@@ -7,7 +7,9 @@ import { DateTime } from 'luxon'
 })
 export class SimpleDatePipe implements PipeTransform {
 
-	transform(value: Date, ...args: unknown[]): string {
+	transform(value: Date|null|undefined, ...args: unknown[]): string {
+		if (!value) return 'N/A'
+
 		const date = DateTime.fromJSDate(value)
 
 		// use relative wording for dates within the last week

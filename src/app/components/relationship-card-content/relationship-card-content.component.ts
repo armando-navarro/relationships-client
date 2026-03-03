@@ -2,11 +2,12 @@ import { AfterViewInit, Component, inject, input, TemplateRef, viewChild, ViewCo
 
 import { NewlinesToBrPipe } from "../../pipes/newlines-to-br.pipe"
 import { Relationship } from '../../interfaces/relationship.interface'
+import { SimpleDatePipe } from '../../pipes/simple-date.pipe'
 
 @Component({
 	selector: 'app-relationship-card-content',
 	standalone: true,
-	imports: [NewlinesToBrPipe],
+	imports: [NewlinesToBrPipe, SimpleDatePipe],
 	templateUrl: './relationship-card-content.component.html',
 	styleUrl: './relationship-card-content.component.scss'
 })

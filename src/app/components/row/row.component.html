@@ -2,7 +2,7 @@
 	<button class="name" (click)="onEditClick()" mat-button>{{relationship()!.fullName}}</button>
 	<span class="notes">{{relationship()!.notes || 'No notes'}}</span>
 	<span class="interaction-goal">{{relationship()!.interactionRateGoal || 'No goal set'}}</span>
-	<span class="last-contact">{{relationship()!.lastInteractionRelativeTime || 'N/A'}}</span>
+	<span class="last-contact">{{relationship()!.lastInteractionDate | simpleDate}}</span>
 	<span class="interaction-count">{{relationship()!.interactions.length}}</span>
 } @else if (interaction()) {
 	<button class="name" (click)="onRelationshipNameClick()" mat-button>{{interaction()!.nameOfPerson}}</button>
