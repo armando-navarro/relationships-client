@@ -66,7 +66,7 @@ export class CardComponent implements OnInit {
 			}
 		})
 		// close card if collapsible, open if not
-		effect(() => { this.open.set(!this.collapsible()) }, { allowSignalWrites: true })
+		effect(() => { this.open.set(!this.collapsible()) })
 	}
 
 	ngOnInit(): void {

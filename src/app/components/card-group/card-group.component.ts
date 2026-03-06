@@ -53,7 +53,7 @@ export class CardGroupComponent {
 		this.instanceNumber.set(CardGroupComponent.instanceCount++)
 		effect(() => {
 			if (this.isCardInGroupHighlighted()) this.open.set(true)
-		}, { allowSignalWrites: true })
+		})
 
 		// track cards collapsed/expanded states when cards added/removed or when card collapsed/expanded
 		effect(() => {
@@ -61,7 +61,7 @@ export class CardGroupComponent {
 				card.open() // causes effect to rerun when any card's open state changes
 				this.setCardsCollapsedState()
 			})
-		}, { allowSignalWrites: true })
+		})
 
 		// start group closed on small viewports and open on large viewports
 		// observable used instead of effect to prevent other signal updates from interfering

@@ -56,7 +56,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
 		this.groupedInteractions.set(groups)
 		this.highlightedCard.set({ groupKey, indexInGroup })
-	}, { allowSignalWrites: true })
+	})
 	private readonly groupByChange$ = toObservable(this.groupBy).pipe(
 		takeUntilDestroyed(),
 	).subscribe(() => {

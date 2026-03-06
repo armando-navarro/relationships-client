@@ -43,7 +43,7 @@ export class PageHeaderBarComponent {
 	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
 
 	constructor() {
-		effect(() => this.setSearchView(), { allowSignalWrites: true})
+		effect(() => this.setSearchView())
 	}
 
 	/** Sets the search view in the appropriate row based on the viewport size. */
