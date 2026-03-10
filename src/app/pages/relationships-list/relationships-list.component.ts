@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { Component, computed, inject, linkedSignal, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
@@ -64,7 +64,7 @@ export class RelationshipsListComponent implements OnInit {
 		distinctUntilChanged(),
 	).subscribe(searchValue => this.applySearchFilter(searchValue))
 	readonly filteredNames = signal<string[]>(this.relationshipNames())
-	readonly filteredGroupedRelationships = signal<RelationshipGroup[]>(this.groupedRelationships() || [])
+	readonly filteredGroupedRelationships = linkedSignal(() => this.groupedRelationships() || [])
 	readonly showSearchBar = signal(false)
 
 	// misc
@@ -78,7 +78,6 @@ export class RelationshipsListComponent implements OnInit {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
 				this.groupedRelationships.set(groupedRelationships)
-				this.filteredGroupedRelationships.set(this.groupedRelationships())
 				this.isLoadingRelationships.set(false)
 				// wait a tick for the groups to collapse themselves on small viewports
 				setTimeout(() => this.setGroupsCollapsedState())
@@ -140,7 +139,6 @@ export class RelationshipsListComponent implements OnInit {
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
 				if (wasCancelled) return
 				this.groupedRelationships.set(groups)
-				this.filteredGroupedRelationships.set(this.groupedRelationships())
 				this.applySearchFilter(this.searchValue())
 				this.highlightedCard.set({ groupStatus: targetGroupStatus, indexInGroup: targetRelationshipIndex })
 			})
