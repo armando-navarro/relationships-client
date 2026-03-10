@@ -1,7 +1,7 @@
 <!-- TODO: This template has become too complex. Look into refactoring it. -->
 <div class="header">
 	@if (relationshipName() && !alwaysShowLeftText()) {
-		<button class="name" (click)="onRelationshipNameClick()" [class.hidden]="!open()" [matTooltip]="'Edit ' + modelName()" mat-button>{{relationshipName()}}</button>
+		<button class="name" (click)="onRelationshipNameClick()" [class.hidden]="!open()" [matTooltip]="`Edit ${modelName()}`" mat-button>{{relationshipName()}}</button>
 	}
 	@if (alwaysShowLeftText()) {
 		<span class="spacer" [class.hidden]="!open()"></span>
@@ -9,7 +9,7 @@
 	@if (collapsedLeftText() || collapsedRightText()) {
 		<div class="collapsed-header" [class.expand-left-text]="alwaysShowInteractionOwner()">
 			@if (relationship() || alwaysShowInteractionOwner()) {
-				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}" mat-button (click)="onRelationshipNameClick()" [attr.aria-label]="'Edit ' + collapsedLeftText()">{{collapsedLeftText()}}</button>
+				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}" mat-button (click)="onRelationshipNameClick()" [attr.aria-label]="`Edit ${collapsedLeftText()}`">{{collapsedLeftText()}}</button>
 			} @else {
 				<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
 			}
@@ -23,14 +23,14 @@
 		</div>
 	}
 
-	<button class="edit" (click)="onEditClick()" [class.hidden]="!open()" [matTooltip]="'Edit ' + modelName()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()" type="button">
+	<button class="edit" (click)="onEditClick()" [class.hidden]="!open()" [matTooltip]="`Edit ${modelName()}`" mat-icon-button [attr.aria-label]="`Edit ${modelName()}`" type="button">
 		<mat-icon>edit</mat-icon>
 	</button>
-	<button class="delete" (click)="onDeleteClick()" [class.hidden]="!open()" [matTooltip]="'Delete ' + modelName()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()" type="button">
+	<button class="delete" (click)="onDeleteClick()" [class.hidden]="!open()" [matTooltip]="`Delete ${modelName()}`" mat-icon-button [attr.aria-label]="`Delete ${modelName()}`" type="button">
 		<mat-icon>delete</mat-icon>
 	</button>
 	@if (collapsible()) {
-		<button class="collapse-expand" (click)="onCollapseExpandClick()" [matTooltip]="open() ? 'Collapse ' + modelName() : 'Expand ' + modelName()" mat-icon-button [attr.aria-label]="(open() ? 'Collapse' : 'Expand') + ' card'" type="button">
+		<button class="collapse-expand" (click)="onCollapseExpandClick()" [matTooltip]="open() ? `Collapse ${modelName()}` : `Expand ${modelName()}`" mat-icon-button [attr.aria-label]="`${open() ? 'Collapse' : 'Expand'} card`" type="button">
 			<mat-icon [class.open]="open()">chevron_right</mat-icon>
 		</button>
 	}

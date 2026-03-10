@@ -69,7 +69,7 @@
 
 			<p>
 				@if (form.controls.interactions.value.length) {
-					Here you can view all of your most recent interactions{{(form.controls.firstName.value) ? ' with ' + form.controls.firstName.value : ''}}.<br />
+					Here you can view all of your most recent interactions{{(form.controls.firstName.value) ? ` with ${form.controls.firstName.value}` : ''}}.<br />
 				} @else {
 					Once you add interactions, they will appear here.
 				}
