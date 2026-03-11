@@ -9,11 +9,12 @@ import { DynamicScrollableComponent } from "../dynamic-scrollable/dynamic-scroll
 import { Interaction, Topic } from '../../interfaces/interaction.interface'
 import { NewlinesToBrPipe } from '../../pipes/newlines-to-br.pipe'
 import { Relationship } from '../../interfaces/relationship.interface'
+import { SimpleDatePipe } from '../../pipes/simple-date.pipe'
 
 @Component({
 	selector: 'app-card',
 	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule, NgStyle],
-	providers: [NewlinesToBrPipe],
+	providers: [NewlinesToBrPipe, SimpleDatePipe],
 	templateUrl: './card.component.html',
 	styleUrl: './card.component.scss',
 	host: {
@@ -24,6 +25,7 @@ import { Relationship } from '../../interfaces/relationship.interface'
 export class CardComponent implements OnInit {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
 	private readonly newlinesToBr = inject(NewlinesToBrPipe)
+	private readonly simpleDate = inject(SimpleDatePipe)
 
 	readonly relationship = input<Relationship>()
 	readonly interaction = input<Interaction>()
@@ -77,7 +79,7 @@ export class CardComponent implements OnInit {
 
 	private initRelationshipCard(relationship: Relationship): void {
 		this.collapsedLeftText.set(relationship.fullName)
-		this.collapsedRightText.set(`${(relationship.lastInteractionRelativeTime || 'N/A')}`)
+		this.collapsedRightText.set(`${(this.simpleDate.transform(relationship.lastInteractionDate))}`)
 	}
 
 	private initInteractionCard(interaction: Interaction): void {

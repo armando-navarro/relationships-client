@@ -136,7 +136,7 @@ export class InteractionsService {
 			// number of days/weeks/months/years between interaction date and now
 			const timeUnitsAgo = DateTime.now().diff(interactionDate, `${groupBy}s`).as(`${groupBy}s`)
 			// text like "Today", "Last week", "3 months ago"
-			const timeAgoText = this.getTimeAgoText(interactionDate, groupBy)
+			const timeAgoText = this.getGroupTimeAgoText(interactionDate, groupBy)
 			// since interactions are sorted, we only need to check the last group added to see if this interaction belongs there
 			let lastGroup = groupedInteractions[groupedInteractions.length - 1]
 
@@ -159,7 +159,7 @@ export class InteractionsService {
 
 	/** @returns A string describing the time elapsed since the given date in the specified time unit.
 	 * E.g. "Today", "Yesterday", "Wednesday", "Last week", "2 months ago", "March 2020", "2021", etc. */
-	private getTimeAgoText(pastDate: DateTime, timeUnit: TimeUnit): string {
+	private getGroupTimeAgoText(pastDate: DateTime, timeUnit: TimeUnit): string {
 		const now = DateTime.now()
 		const isBeforeCurrentTimeUnit = !pastDate.hasSame(now, timeUnit)
 		const isBeforeLastTimeUnit = isBeforeCurrentTimeUnit && !pastDate.hasSame(now.minus({ [`${timeUnit}s`]: 1 }), timeUnit)

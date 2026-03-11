@@ -5,5 +5,5 @@
 	<span class="interaction-goal-value">{{relationship().interactionRateGoal || 'No goal set'}}</span>
 
 	<span>Last contact:</span>
-	<span class="last-contact-value">{{(relationship().lastInteractionRelativeTime) || 'N/A'}}</span>
+	<span class="last-contact-value">{{(relationship().lastInteractionDate | simpleDate) || 'N/A'}}</span>
 </ng-template>
