@@ -4,6 +4,7 @@ import { MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angula
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
+import { MatTooltipModule } from "@angular/material/tooltip"
 
 import { HorizontalScrollButtonsComponent } from "../horizontal-scroll-buttons/horizontal-scroll-buttons.component"
 import { NewlinesToBrPipe } from '../../pipes/newlines-to-br.pipe'
@@ -13,9 +14,9 @@ import { Topic } from '../../interfaces/interaction.interface'
 @Component({
 	selector: 'app-topic-buttons',
 	imports: [
-		MatBottomSheetModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatIconModule,
-		HorizontalScrollButtonsComponent, NewlinesToBrPipe,
-	],
+    MatBottomSheetModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatIconModule, MatTooltipModule,
+    HorizontalScrollButtonsComponent, NewlinesToBrPipe,
+],
 	templateUrl: './topic-buttons.component.html',
 	styleUrl: './topic-buttons.component.scss'
 })

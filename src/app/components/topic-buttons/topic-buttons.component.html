@@ -8,7 +8,9 @@
 <ng-template #topicNotesSheet>
 	<h3>{{selectedTopic()?.name}}</h3>
 	<p [innerHTML]="selectedTopic()?.notes | newlinesToBr"></p>
-	<button (click)="onCloseTopicClick()" class="close-topic" mat-icon-button><mat-icon>close</mat-icon></button>
+	<button (click)="onCloseTopicClick()" class="close-topic" aria-label="Close topic" matTooltip="Close topic" mat-icon-button>
+		<mat-icon>close</mat-icon>
+	</button>
 </ng-template>
 
 <ng-template #topicNotesDialog>

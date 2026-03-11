@@ -1,11 +1,11 @@
 @if (relationship()) {
-	<button class="name" (click)="onEditClick()" mat-button>{{relationship()!.fullName}}</button>
+	<button class="name" (click)="onEditClick()" matTooltip="Edit relationship" mat-button>{{relationship()!.fullName}}</button>
 	<span class="notes">{{relationship()!.notes || 'No notes'}}</span>
 	<span class="interaction-goal">{{relationship()!.interactionRateGoal || 'No goal set'}}</span>
 	<span class="last-contact">{{relationship()!.lastInteractionDate | simpleDate}}</span>
 	<span class="interaction-count">{{relationship()!.interactions.length}}</span>
 } @else if (interaction()) {
-	<button class="name" (click)="onRelationshipNameClick()" mat-button>{{interaction()!.nameOfPerson}}</button>
+	<button class="name" (click)="onRelationshipNameClick()" matTooltip="Edit relationship" mat-button>{{interaction()!.nameOfPerson}}</button>
 	<span class="type"><mat-icon>{{ interaction()!.typeIcon }}</mat-icon> {{interaction()!.type}}</span>
 	<span class="date">{{interaction()!.date! | simpleDate}}</span>
 	<app-topic-buttons [topics]="interaction()!.topics" />
