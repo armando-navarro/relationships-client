@@ -9,7 +9,7 @@
 		<mat-form-field class="topic-name" hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
 			<mat-label>Topic</mat-label>
 			<input #topicNameInput matInput formControlName="name" required>
-			@if (form.hasError('required')) {
+			@if (name.hasError('required')) {
 				<mat-error>Topic is required</mat-error>
 			} @else if (name.hasError('maxlength')) {
 				<mat-error>
