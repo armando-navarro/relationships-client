@@ -17,11 +17,11 @@ $relationships-client-theme: mat.define-theme((
 		primary: mat.$azure-palette,
 		tertiary: mat.$blue-palette,
 		use-system-variables: true,
-    system-variables-prefix: sys,
+		system-variables-prefix: sys,
 	),
 	typography: (
 		use-system-variables: true,
-    system-variables-prefix: sys,
+		system-variables-prefix: sys,
 	),
 	density: (
 		scale: 0,
