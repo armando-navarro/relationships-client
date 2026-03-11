@@ -11,12 +11,12 @@
 
 button.topic {
 	flex: none;
-	--mdc-outlined-button-container-height: 1.5rem;
-	--mdc-outlined-button-label-text-size: 1rem;
-	--mat-outlined-button-horizontal-padding: 8px;
-	--mdc-outlined-button-container-shape: 24px;
-	--mdc-outlined-button-outline-color: var(--mdc-outlined-button-label-text-color);
-	--mat-outlined-button-hover-state-layer-opacity: 0.25;
+	--mat-button-outlined-container-height: 1.5rem;
+	--mat-button-outlined-label-text-size: 1rem;
+	--mat-button-outlined-horizontal-padding: 8px;
+	--mat-button-outlined-container-shape: 24px;
+	--mat-button-outlined-outline-color: var(--mat-button-outlined-label-text-color);
+	--mat-button-outlined-hover-state-layer-opacity: 0.25;
 	&:not(:nth-child(1)):not(:nth-child(2)) {
 		margin-left: 12px;
 	}

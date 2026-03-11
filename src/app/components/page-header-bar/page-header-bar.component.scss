@@ -108,7 +108,7 @@ h1 {
 }
 :host.dialog {
 	position: relative;
-	font-size: var(--mdc-dialog-subhead-size);
+	font-size: var(--mat-dialog-subhead-size);
 	@media screen and (max-width: breakpoints.$small) {
 		height: var(--small-dialog-header-bar-height);
 	}
