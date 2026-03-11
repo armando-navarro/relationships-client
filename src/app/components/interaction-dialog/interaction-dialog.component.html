@@ -50,9 +50,10 @@
 				<input matInput [matDatepicker]="datePicker" formControlName="date" [max]="dateMax" required>
 				<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
 				<mat-datepicker #datePicker></mat-datepicker>
-				@if (form.controls.date.hasError('required')) {
+				@let date = form.controls.date;
+				@if (date.hasError('required')) {
 					<mat-error>Date is required</mat-error>
-				} @else if (form.controls.date.hasError('matDatepickerMax')) {
+				} @else if (date.hasError('matDatepickerMax')) {
 					<mat-error>Date cannot be in the future</mat-error>
 				}
 			</mat-form-field>
@@ -63,8 +64,9 @@
 
 			<button class="add-topic" (click)="onAddTopicClick()" mat-button type="button">Add Topic</button>
 
-			@if (form.controls.topics.length) {
-				@for (topic of form.controls.topics.controls; track topic; let index = $index) {
+			@let topics = form.controls.topics;
+			@if (topics.length) {
+				@for (topic of topics.controls; track topic; let index = $index) {
 					<app-card
 						[topic]="topic | topicFormToModel"
 						always-show-left-text

@@ -30,7 +30,8 @@
 		<mat-icon>delete</mat-icon>
 	</button>
 	@if (collapsible()) {
-		<button class="collapse-expand" (click)="onCollapseExpandClick()" [matTooltip]="open() ? `Collapse ${modelName()}` : `Expand ${modelName()}`" mat-icon-button [attr.aria-label]="`${open() ? 'Collapse' : 'Expand'} card`" type="button">
+		@let collapseExpandText = `${(open() ? 'Collapse' : 'Expand')} ${modelName()}`;
+		<button class="collapse-expand" (click)="onCollapseExpandClick()" [matTooltip]="collapseExpandText" mat-icon-button [attr.aria-label]="collapseExpandText" type="button">
 			<mat-icon [class.open]="open()">chevron_right</mat-icon>
 		</button>
 	}
