@@ -12,11 +12,10 @@ import { Topic } from '../../interfaces/interaction.interface'
 
 @Component({
 	selector: 'app-topic-buttons',
-	standalone: true,
 	imports: [
-    MatBottomSheetModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatIconModule,
-    HorizontalScrollButtonsComponent, NewlinesToBrPipe,
-],
+		MatBottomSheetModule, MatButtonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatIconModule,
+		HorizontalScrollButtonsComponent, NewlinesToBrPipe,
+	],
 	templateUrl: './topic-buttons.component.html',
 	styleUrl: './topic-buttons.component.scss'
 })

@@ -1,10 +1,10 @@
-@import '../../../styles/mixins.scss';
+@use '../../../styles/mixins';
 
 .notes {
 	grid-column-start: 1;
 	grid-column-end: -1;
 	line-height: 1.5;
-	@include limit-lines(2);
+	@include mixins.limit-lines(2);
 }
 .interaction-goal-label,
 .interaction-goal-value {

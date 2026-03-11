@@ -44,13 +44,12 @@ export type InteractionDialogResult = Cancelable<InteractionDialogSaveResult>
 
 @Component({
 	selector: 'app-interaction-dialog',
-	standalone: true,
 	imports: [
-    CardComponent, MatButtonModule, MatDatepickerModule, MatDialogContent,
-    MatDialogActions, MatDialogClose, MatFormFieldModule, MatIconModule,
-    MatInputModule, NewlinesToBrPipe, PageHeaderBarComponent, ReactiveFormsModule,
-    TopicFormToModelPipe
-],
+		CardComponent, MatButtonModule, MatDatepickerModule, MatDialogContent,
+		MatDialogActions, MatDialogClose, MatFormFieldModule, MatIconModule,
+		MatInputModule, NewlinesToBrPipe, PageHeaderBarComponent, ReactiveFormsModule,
+		TopicFormToModelPipe
+	],
 	templateUrl: './interaction-dialog.component.html',
 	styleUrl: './interaction-dialog.component.scss'
 })

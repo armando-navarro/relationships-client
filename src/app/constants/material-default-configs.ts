@@ -9,5 +9,5 @@ export const tooltipDefaults: MatTooltipDefaultOptions = {
 	position: 'below',
 }
 
-export const dialogConfigDefaults: MatDialogConfig = { disableClose: true, maxWidth: 496 }
+export const dialogConfigDefaults: MatDialogConfig = { disableClose: true, maxWidth: 496 } // must match $dialog-max-width in breakpoints.scss
 export const snackbarConfigDefaults: MatSnackBarConfig = { duration: 5000, verticalPosition: 'bottom' }

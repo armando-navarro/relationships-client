@@ -12,7 +12,6 @@ import { TopicButtonsComponent } from "../topic-buttons/topic-buttons.component"
 /** This component represents a relationship or an interaction in a table-like structure. */
 @Component({
 	selector: 'app-row',
-	standalone: true,
 	imports: [MatButtonModule, MatIconModule, MatTooltipModule, TopicButtonsComponent, SimpleDatePipe],
 	templateUrl: './row.component.html',
 	styleUrl: './row.component.scss',

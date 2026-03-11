@@ -1,10 +1,10 @@
-@import '../../../styles/variables.scss';
+@use '../../../styles/breakpoints';
 
 :host {
 	display: block;
 	padding: var(--page-small-header-bar-height) 8px;
 	margin: 0 auto;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		padding: calc(var(--page-large-header-bar-height) + 12px) 12px 0;
 	}
 }
@@ -14,7 +14,7 @@ app-page-header-bar {
 		display: flex;
 		min-height: auto;
 	}
-	@media screen and (max-width: $small-breakpoint) {
+	@media screen and (max-width: breakpoints.$small) {
 		mat-form-field {
 			height: 100%;
 			::ng-deep .mat-mdc-text-field-wrapper {

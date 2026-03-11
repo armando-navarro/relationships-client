@@ -11,7 +11,6 @@ import { RouterLink } from "@angular/router";
 
 @Component({
 	selector: 'app-page-header-bar',
-	standalone: true,
 	imports: [MatButtonModule, MatIconModule, RouterLink],
 	templateUrl: './page-header-bar.component.html',
 	styleUrl: './page-header-bar.component.scss',
@@ -44,7 +43,7 @@ export class PageHeaderBarComponent {
 	readonly isSmallViewport = this.responsiveUiService.isSmallViewport
 
 	constructor() {
-		effect(() => this.setSearchView(), { allowSignalWrites: true})
+		effect(() => this.setSearchView())
 	}
 
 	/** Sets the search view in the appropriate row based on the viewport size. */

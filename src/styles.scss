@@ -1,4 +1,4 @@
-@import './styles/variables.scss';
+@use 'styles/breakpoints';
 
 // normalization
 *,
@@ -68,7 +68,7 @@ button[mat-icon-button] {
 
 h1.page-title {
 	margin: 16px auto 12px;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		margin-bottom: 16px;
 	}
 }

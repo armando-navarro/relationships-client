@@ -8,28 +8,31 @@
 		<h2 id="relationship-details-title">Relationship Details</h2>
 
 		<form id="relationship-details" (ngSubmit)="onSaveClick()" [formGroup]="form">
+
+			@let firstName = form.controls.firstName;
 			<mat-form-field appearance="outline" floatLabel="auto">
 				<mat-label>First Name</mat-label>
 				<input matInput formControlName="firstName" required>
-				@if (form.controls.firstName.hasError('required')) {
+				@if (firstName.hasError('required')) {
 					<mat-error>First name is required</mat-error>
-				} @else if (form.controls.firstName.hasError('maxlength')) {
+				} @else if (firstName.hasError('maxlength')) {
 					<mat-error>
-						Over {{form.controls.firstName.getError('maxlength').requiredLength}}
+						Over {{firstName.getError('maxlength').requiredLength}}
 						character limit
-						({{form.controls.firstName.getError('maxlength').actualLength - form.controls.firstName.getError('maxlength').requiredLength}})
+						({{firstName.getError('maxlength').actualLength - firstName.getError('maxlength').requiredLength}})
 					</mat-error>
 				}
 			</mat-form-field>
 
+			@let lastName = form.controls.lastName;
 			<mat-form-field appearance="outline" floatLabel="auto">
 				<mat-label>Last Name</mat-label>
 				<input matInput formControlName="lastName">
-				 @if (form.controls.lastName.hasError('maxlength')) {
+				 @if (lastName.hasError('maxlength')) {
 					<mat-error>
-						Over {{form.controls.lastName.getError('maxlength').requiredLength}}
+						Over {{lastName.getError('maxlength').requiredLength}}
 						character limit
-						({{form.controls.lastName.getError('maxlength').actualLength - form.controls.lastName.getError('maxlength').requiredLength}})
+						({{lastName.getError('maxlength').actualLength - lastName.getError('maxlength').requiredLength}})
 					</mat-error>
 				}
 			</mat-form-field>
@@ -47,14 +50,15 @@
 				</select>
 			</mat-form-field>
 
+			@let notes = form.controls.notes;
 			<mat-form-field class="notes" appearance="outline" floatLabel="auto">
 				<mat-label>Notes</mat-label>
 				<textarea matInput formControlName="notes" rows="3"></textarea>
-				@if (form.controls.notes.hasError('maxlength')) {
+				@if (notes.hasError('maxlength')) {
 					<mat-error>
-						Over {{form.controls.notes.getError('maxlength').requiredLength}}
+						Over {{notes.getError('maxlength').requiredLength}}
 						character limit (by
-						{{form.controls.notes.getError('maxlength').actualLength - form.controls.notes.getError('maxlength').requiredLength}})
+						{{notes.getError('maxlength').actualLength - notes.getError('maxlength').requiredLength}})
 					</mat-error>
 				}
 			</mat-form-field>
@@ -69,7 +73,7 @@
 
 			<p>
 				@if (form.controls.interactions.value.length) {
-					Here you can view all of your most recent interactions{{(form.controls.firstName.value) ? ' with ' + form.controls.firstName.value : ''}}.<br />
+					Here you can view all of your most recent interactions{{(firstName.value) ? ` with ${firstName.value}` : ''}}.<br />
 				} @else {
 					Once you add interactions, they will appear here.
 				}

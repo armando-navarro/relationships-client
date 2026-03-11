@@ -25,7 +25,6 @@ import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 
 @Component({
 	selector: 'app-interactions-list',
-	standalone: true,
 	imports: [
 		/* angular */ RouterLink,
 		/* material: */ MatButtonModule, MatChipsModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatTooltipModule,
@@ -57,7 +56,7 @@ export class InteractionsListComponent implements OnInit, AfterViewInit {
 		const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
 		this.groupedInteractions.set(groups)
 		this.highlightedCard.set({ groupKey, indexInGroup })
-	}, { allowSignalWrites: true })
+	})
 	private readonly groupByChange$ = toObservable(this.groupBy).pipe(
 		takeUntilDestroyed(),
 	).subscribe(() => {

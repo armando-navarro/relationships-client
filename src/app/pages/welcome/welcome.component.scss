@@ -1,11 +1,11 @@
-@import '../../../styles/variables.scss';
+@use '../../../styles/breakpoints';
 
 :host {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap : 24px;
 	padding: calc(var(--page-small-header-bar-height) + 12px) 8px;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		grid-template-columns: 300px 1fr;
 		padding: calc(var(--page-large-header-bar-height) + 24px) 12px 0;
 	}
@@ -13,12 +13,12 @@
 
 app-page-header-bar {
 	a.go-to-app {
-		@media screen and (max-width: $small-breakpoint) {
+		@media screen and (max-width: breakpoints.$small) {
 			display: none;
 		}
 	}
 	button.toc {
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			display: none;
 		}
 	}
@@ -41,7 +41,7 @@ nav {
 	background: var(--card-background);
 	z-index: 9;
 	transition: top 0.5s;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		position: sticky;
 		top: calc(var(--page-large-header-bar-height) + 24px);
 		height: fit-content;
@@ -49,7 +49,7 @@ nav {
 
 	&.open {
 		top: var(--page-small-header-bar-height);
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			top: calc(var(--page-large-header-bar-height) + 24px);
 		}
 	}
@@ -57,7 +57,7 @@ nav {
 	a.go-to-app {
 		height: 1.35rem;
 		font-size: 1rem;
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			display: none;
 		}
 	}
@@ -66,7 +66,7 @@ nav {
 		position: absolute;
 		top: 0;
 		right: 0;
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			display: none;
 		}
 	}
@@ -75,7 +75,7 @@ nav {
 		list-style: none;
 		padding-left: 16px;
 		margin-top: 0;
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			padding-left: 24px;
 		}
 		li {
@@ -106,7 +106,7 @@ main {
 		&:not(:first-of-type) {
 			margin-top: 32px;
 		}
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			top: calc(var(--page-large-header-bar-height));
 			scroll-margin-top: var(--page-large-header-bar-height);
 		}

@@ -1,6 +1,6 @@
-@import '../../../styles/icons.scss';
-@import '../../../styles/mixins.scss';
-@import '../../../styles/variables.scss';
+@use '../../../styles/icons';
+@use '../../../styles/mixins';
+@use '../../../styles/breakpoints';
 
 :host {
 	display: flex;
@@ -15,7 +15,7 @@
 		max-height 0.5s,
 		padding 0.5s;
 
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		min-width: 315px;
 		width: 315px;
 	}
@@ -141,7 +141,7 @@
 		.collapsed-right-text-prefix,
 		.collapsed-right-text {
 			white-space: nowrap;
-			@include limit-lines(1);
+			@include mixins.limit-lines(1);
 			transition: opacity 0.5s;
 			&.hidden {
 				opacity: 0;
@@ -154,7 +154,7 @@
 			margin-right: 0.5rem;
 		}
 		.collapsed-right-icon {
-			@include icon-size(1.2rem);
+			@include icons.size(1.2rem);
 			overflow: visible;
 			margin-right: 8px;
 			transition: opacity 0.5s;

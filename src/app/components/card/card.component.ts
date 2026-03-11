@@ -13,7 +13,6 @@ import { SimpleDatePipe } from '../../pipes/simple-date.pipe'
 
 @Component({
 	selector: 'app-card',
-	standalone: true,
 	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule, NgStyle],
 	providers: [NewlinesToBrPipe, SimpleDatePipe],
 	templateUrl: './card.component.html',
@@ -69,7 +68,7 @@ export class CardComponent implements OnInit {
 			}
 		})
 		// close card if collapsible, open if not
-		effect(() => { this.open.set(!this.collapsible()) }, { allowSignalWrites: true })
+		effect(() => { this.open.set(!this.collapsible()) })
 	}
 
 	ngOnInit(): void {

@@ -1,5 +1,5 @@
-@import '../../../styles/icons.scss';
-@import '../../../styles/mixins.scss';
+@use '../../../styles/icons';
+@use '../../../styles/mixins';
 
 :host {
 	display: block;
@@ -35,10 +35,10 @@
 	.notes {
 		width: 100%;
 		white-space: nowrap;
-		@include limit-lines(1);
+		@include mixins.limit-lines(1);
 	}
 
-	@include relationship-grid();
+	@include mixins.relationship-grid();
 
 	.interaction-count {
 		justify-self: center;
@@ -50,15 +50,15 @@
 }
 
 :host.interaction {
-	@include interaction-grid();
+	@include mixins.interaction-grid();
 	.type {
-		@include limit-lines(1);
+		@include mixins.limit-lines(1);
 		display: flex;
 		align-items: center;
 		gap: 8px;
 		white-space: nowrap;
 		mat-icon {
-			@include icon-size(1.2rem);
+			@include icons.size(1.2rem);
 		}
 	}
 }

@@ -57,7 +57,7 @@ export class InteractionMapperService {
 		const form = this.fb.group({
 			_id: [interaction?._id ?? null],
 			type: [interaction?.type ?? null, { validators: [Validators.required] }],
-			date: [interaction?.date ?? null],
+			date: [interaction?.date ?? null, { validators: [Validators.required] }],
 			topics: this.fb.array([
 				this.mapTopicModelToForm()
 			]),

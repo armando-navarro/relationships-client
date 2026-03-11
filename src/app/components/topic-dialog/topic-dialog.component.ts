@@ -20,7 +20,6 @@ export interface TopicDialogData {
 
 @Component({
 	selector: 'app-topic-dialog',
-	standalone: true,
 	imports: [
 		MatButtonModule, MatDialogContent, MatDialogActions, MatDialogClose, MatFormFieldModule,
 		MatInputModule, PageHeaderBarComponent, ReactiveFormsModule,

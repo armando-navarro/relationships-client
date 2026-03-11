@@ -1,5 +1,5 @@
-@import '../../../styles/variables.scss';
-@import '../../../styles/icons.scss';
+@use '../../../styles/breakpoints';
+@use '../../../styles/icons';
 
 :host {
 	--header-row-height: var(--page-small-header-bar-height);
@@ -16,7 +16,7 @@
 	transition:
 		top 0.5s,
 		height 0.5s;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		--header-row-height: var(--page-large-header-bar-height);
 	}
 }
@@ -34,7 +34,7 @@
 	white-space: nowrap;
 	margin: 0 auto;
 	transition: top 0.5s;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		gap: 24px;
 	}
 }
@@ -43,13 +43,13 @@ a.home {
 	position: relative;
 	top: -1px;
 	margin-right: 2px;
-	@media screen and (min-width: $small-breakpoint) {
+	@media screen and (min-width: breakpoints.$small) {
 		top: 4px;
 		width: 64px;
 		height: 64px;
 		margin-right: -18px;
 		.logo {
-			@include icon-size(38px);
+			@include icons.size(38px);
 		}
 	}
 }
@@ -101,7 +101,7 @@ h1 {
 	margin-bottom: 48px;
 	h1 {
 		font-size: var(--page-title-font-size-small);
-		@media screen and (min-width: $small-breakpoint) {
+		@media screen and (min-width: breakpoints.$small) {
 			font-size: var(--page-title-font-size-large);
 		}
 	}
@@ -109,7 +109,7 @@ h1 {
 :host.dialog {
 	position: relative;
 	font-size: var(--mdc-dialog-subhead-size);
-	@media screen and (max-width: $small-breakpoint) {
+	@media screen and (max-width: breakpoints.$small) {
 		height: var(--small-dialog-header-bar-height);
 	}
 }

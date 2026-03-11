@@ -6,7 +6,6 @@ import { SimpleDatePipe } from '../../pipes/simple-date.pipe'
 
 @Component({
 	selector: 'app-relationship-card-content',
-	standalone: true,
 	imports: [NewlinesToBrPipe, SimpleDatePipe],
 	templateUrl: './relationship-card-content.component.html',
 	styleUrl: './relationship-card-content.component.scss'

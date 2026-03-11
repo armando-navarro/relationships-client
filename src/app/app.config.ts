@@ -1,7 +1,6 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core'
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router'
 import { provideHttpClient } from '@angular/common/http'
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
 
 import { MatNativeDateModule } from '@angular/material/core'
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog'
@@ -21,7 +20,6 @@ export const appConfig: ApplicationConfig = {
 			withInMemoryScrolling({ anchorScrolling: 'enabled' }),
 		),
 		provideHttpClient(),
-		provideAnimationsAsync(),
 		importProvidersFrom(MatNativeDateModule),
 
 		{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: dialogConfigDefaults },

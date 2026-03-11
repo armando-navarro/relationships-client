@@ -12,10 +12,10 @@
 }
 
 <div class="buttons">
-	<button class="edit" (click)="onEditClick()" [matTooltip]="'Edit ' + modelName()" mat-icon-button [attr.aria-label]="'Edit ' + modelName()" type="button">
+	<button class="edit" (click)="onEditClick()" [matTooltip]="`Edit ${modelName()}`" mat-icon-button [attr.aria-label]="`Edit ${modelName()}`" type="button">
 		<mat-icon>edit</mat-icon>
 	</button>
-	<button class="delete" (click)="onDeleteClick()" [matTooltip]="'Delete ' + modelName()" mat-icon-button [attr.aria-label]="'Delete ' + modelName()" type="button">
+	<button class="delete" (click)="onDeleteClick()" [matTooltip]="`Delete ${modelName()}`" mat-icon-button [attr.aria-label]="`Delete ${modelName()}`" type="button">
 		<mat-icon>delete</mat-icon>
 	</button>
 </div>

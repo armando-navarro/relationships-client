@@ -8,7 +8,6 @@ import { TopicButtonsComponent } from "../topic-buttons/topic-buttons.component"
 
 @Component({
 	selector: 'app-interaction-card-content',
-	standalone: true,
 	imports: [DatePipe, MatIconModule, TopicButtonsComponent],
 	templateUrl: './interaction-card-content.component.html',
 	styleUrl: './interaction-card-content.component.scss'

@@ -4,7 +4,6 @@ import { fromEvent, take } from 'rxjs'
 
 @Component({
 	selector: 'app-dynamic-scrollable',
-	standalone: true,
 	imports: [NgStyle],
 	templateUrl: './dynamic-scrollable.component.html',
 	styleUrl: './dynamic-scrollable.component.scss'

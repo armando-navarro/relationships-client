@@ -1,5 +1,5 @@
 <app-page-header-bar page-title="Relationships" [second-row-template]="search" [show-second-row]="showSearchBar()">
-	<ng-container #firstRow></ng-container>
+	<ng-container #firstRow />
 	<a routerLink="/interactions" mat-button>Interactions</a>
 
 	<button class="toggle-search" (click)="onSearchClick()" mat-icon-button aria-label="Search relationships">
@@ -74,7 +74,7 @@
 							[scroll-to-and-highlight]="group.status === highlightedCard().groupStatus && index === highlightedCard().indexInGroup"
 							(edit-relationship)="onEditRelationshipClick($event)"
 							(delete-relationship)="onDeleteRelationshipClick($event)"
-						></app-row>
+						 />
 					}
 				}
 			</app-card-group>

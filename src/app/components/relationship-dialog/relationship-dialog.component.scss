@@ -1,4 +1,4 @@
-@import '../../../styles/variables.scss';
+@use '../../../styles/breakpoints';
 
 :host {
 	display: block;
@@ -16,7 +16,7 @@ section.relationship-details form {
 	h2 {
 		margin: 0 0 20px;
 	}
-	@media screen and (min-width: $dialog-max-width) {
+	@media screen and (min-width: breakpoints.$dialog-max-width) {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		column-gap: 24px;
