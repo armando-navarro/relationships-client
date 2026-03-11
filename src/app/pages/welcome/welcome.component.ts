@@ -20,8 +20,9 @@ export class WelcomeComponent {
 	readonly isSmallViewport = this.responsivUiService.isSmallViewport
 	isTableOfContentsOpen = signal(false)
 
-	onTableOfContentsClick(): void {
-		this.isTableOfContentsOpen.set(!this.isTableOfContentsOpen())
+	onTableOfContentsLinkClick({ target }: Event): void {
+		if (target instanceof HTMLUListElement || target instanceof HTMLLIElement) return
+		this.isTableOfContentsOpen.set(false)
 	}
 
 }

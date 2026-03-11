@@ -15,17 +15,13 @@
 		<mat-icon>close</mat-icon>
 	</button>
 
-	<ul>
-		<li><a [routerLink]="['/welcome']" fragment="overview" (click)="isTableOfContentsOpen.set(false)" mat-button>Overview</a></li>
-		<li><a [routerLink]="['/welcome']" fragment="demo-video" (click)="isTableOfContentsOpen.set(false)" mat-button>Demo Video</a></li>
-		<li>
-			<a [routerLink]="['/welcome']" fragment="tech-stack" (click)="isTableOfContentsOpen.set(false)" mat-button>Tech Stack</a>
-		</li>
-		<li><a [routerLink]="['/welcome']" fragment="room-for-growth" (click)="isTableOfContentsOpen.set(false)" mat-button>Room for Growth</a></li>
-		<li>
-			<a [routerLink]="['/welcome']" fragment="additional-technical-details" (click)="isTableOfContentsOpen.set(false)" mat-button>Additional Technical Details</a>
-		</li>
-		<li><a [routerLink]="['/welcome']" fragment="possible-future-features" (click)="isTableOfContentsOpen.set(false)" mat-button>Possible Future Features</a></li>
+	<ul (click)="onTableOfContentsLinkClick($event)">
+		<li><a [routerLink]="['/welcome']" fragment="overview" mat-button>Overview</a></li>
+		<li><a [routerLink]="['/welcome']" fragment="demo-video" mat-button>Demo Video</a></li>
+		<li><a [routerLink]="['/welcome']" fragment="tech-stack" mat-button>Tech Stack</a></li>
+		<li><a [routerLink]="['/welcome']" fragment="room-for-growth" mat-button>Room for Growth</a></li>
+		<li><a [routerLink]="['/welcome']" fragment="additional-technical-details" mat-button>Additional Technical Details</a></li>
+		<li><a [routerLink]="['/welcome']" fragment="possible-future-features" mat-button>Possible Future Features</a></li>
 	</ul>
 </nav>
 
