@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core'
+import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core'
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router'
 import { provideHttpClient } from '@angular/common/http'
 
@@ -13,6 +13,7 @@ import { dialogConfigDefaults, snackbarConfigDefaults, tooltipDefaults } from '.
 
 export const appConfig: ApplicationConfig = {
 	providers: [
+		provideBrowserGlobalErrorListeners(),
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(
 			routes,
