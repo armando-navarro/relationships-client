@@ -1,10 +1,9 @@
 import { AfterContentInit, booleanAttribute, Component, computed, effect, ElementRef, inject, input, signal, viewChild } from '@angular/core'
-import { NgStyle } from '@angular/common'
 import { fromEvent, take } from 'rxjs'
 
 @Component({
 	selector: 'app-dynamic-scrollable',
-	imports: [NgStyle],
+	imports: [],
 	templateUrl: './dynamic-scrollable.component.html',
 	styleUrl: './dynamic-scrollable.component.scss'
 })

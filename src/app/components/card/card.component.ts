@@ -1,5 +1,4 @@
 import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
-import { NgStyle } from '@angular/common'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
@@ -13,7 +12,7 @@ import { SimpleDatePipe } from '../../pipes/simple-date.pipe'
 
 @Component({
 	selector: 'app-card',
-	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule, NgStyle],
+	imports: [DynamicScrollableComponent, MatButtonModule, MatIconModule, MatTooltipModule],
 	providers: [NewlinesToBrPipe, SimpleDatePipe],
 	templateUrl: './card.component.html',
 	styleUrl: './card.component.scss',
