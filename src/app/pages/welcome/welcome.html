@@ -15,7 +15,7 @@
 		<mat-icon>close</mat-icon>
 	</button>
 
-	<ul (click)="onTableOfContentsLinkClick($event)">
+	<ul (click)="closeTableOfContents($event)">
 		<li><a [routerLink]="['/welcome']" fragment="overview" mat-button>Overview</a></li>
 		<li><a [routerLink]="['/welcome']" fragment="demo-video" mat-button>Demo Video</a></li>
 		<li><a [routerLink]="['/welcome']" fragment="tech-stack" mat-button>Tech Stack</a></li>

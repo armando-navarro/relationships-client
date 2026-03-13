@@ -1,6 +1,6 @@
 <ng-template #leftButton>
 	<button
-		(click)="onScrollButtonClick('left')"
+		(click)="scrollHorizontally('left')"
 		class="scroll left"
 		[class.hidden]="!canScrollLeft()"
 		[class.no-opacity]="noOpacity()"
@@ -14,7 +14,7 @@
 
 <ng-template #rightButton>
 	<button
-		(click)="onScrollButtonClick('right')"
+		(click)="scrollHorizontally('right')"
 		class="scroll right"
 		[class.hidden]="!canScrollRight()"
 		[class.no-opacity]="noOpacity()"

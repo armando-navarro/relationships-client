@@ -6,7 +6,7 @@
 	</button>
 
 	<mat-menu #menu="matMenu" class="custom-mat-panel">
-		<button (click)="onAddInteractionclick()" mat-menu-item>
+		<button (click)="addInteraction()" mat-menu-item>
 			<mat-icon>add</mat-icon>
 			<span>Add Interaction</span>
 		</button>
@@ -35,13 +35,13 @@
 			</button>
 		}
 		@if (!allGroupsExpanded()) {
-			<button (click)="onCollapseOrExpandAllClick(true)" mat-menu-item>
+			<button (click)="collapseOrExpandAllGroups(true)" mat-menu-item>
 				<mat-icon>unfold_more</mat-icon>
 				<span>Expand All Groups</span>
 			</button>
 		}
 		@if (!allGroupsCollapsed()) {
-			<button (click)="onCollapseOrExpandAllClick(false)" mat-menu-item>
+			<button (click)="collapseOrExpandAllGroups(false)" mat-menu-item>
 				<mat-icon>unfold_less</mat-icon>
 				<span>Collapse All Groups</span>
 			</button>
@@ -60,7 +60,7 @@
 @else {
 	@for (group of groupedInteractions(); track group.timeUnitsAgo) {
 		<app-card-group
-			(header-click)="onCardGroupHeaderClick()"
+			(header-click)="setGroupsCollapsedState()"
 			group-of="interactions"
 			[header]="group.timeAgoText"
 			[card-count]="group.interactions.length"
@@ -74,9 +74,9 @@
 						[collapsible]="isSmallViewport()"
 						always-show-interaction-owner
 						always-show-left-text
-						(edit-interaction)="onEditInteractionClick($event)"
-						(delete-interaction)="onDeleteInteractionClick($event)"
-						(relationship-name-click)="onEditRelationshipClick($event)"
+						(edit-interaction)="editInteraction($event)"
+						(delete-interaction)="deleteInteraction($event)"
+						(relationship-name-click)="editRelationship($event)"
 						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
 					>
 						<app-interaction-card-content [interaction]="interaction" />
@@ -85,9 +85,9 @@
 					<app-row
 						[interaction]="interaction"
 						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
-						(edit-interaction)="onEditInteractionClick($event)"
-						(delete-interaction)="onDeleteInteractionClick($event)"
-						(relationship-name-click)="onEditRelationshipClick($event)"
+						(edit-interaction)="editInteraction($event)"
+						(delete-interaction)="deleteInteraction($event)"
+						(relationship-name-click)="editRelationship($event)"
 					 />
 				}
 			}

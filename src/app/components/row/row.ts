@@ -29,7 +29,7 @@ export class Row {
 
 	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
 
-	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
+	readonly editRelationshipEmitter = output<Relationship>({ alias: 'edit-relationship'})
 	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
 	readonly relationshipNameClick = output<Interaction>({ alias: 'relationship-name-click' })
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
@@ -50,16 +50,16 @@ export class Row {
 		})
 	}
 
-	protected onRelationshipNameClick() {
+	protected editRelationship() {
 		this.relationshipNameClick.emit(this.interaction()!)
 	}
 
-	protected onEditClick() {
+	protected edit() {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
-		else if (this.relationship()) this.editRelationship.emit(this.relationship()!)
+		else if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 	}
 
-	protected onDeleteClick() {
+	protected delete() {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
 	}

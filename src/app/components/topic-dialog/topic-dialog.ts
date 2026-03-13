@@ -63,12 +63,12 @@ export class TopicDialog implements OnInit, OnDestroy {
 		).subscribe(() => this.wasTopicModified.set(true))
 	}
 
-	protected onCancelTopicClick(): void {
+	protected clearTopicName(): void {
 		this.form.reset()
 		this.topicNameInput()?.nativeElement.focus()
 	}
 
-	protected onSaveTopicClick(): void {
+	protected saveTopic(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return

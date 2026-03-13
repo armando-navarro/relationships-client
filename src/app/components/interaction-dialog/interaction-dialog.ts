@@ -126,19 +126,19 @@ export class InteractionDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	protected onAddTopicClick(): void {
+	protected addTopic(): void {
 		const data: TopicDialogData = { interactionForm: this.form }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		this.dialog.open(TopicDialog, config)
 	}
 
-	protected onEditTopicClick(index: number): void {
+	protected editTopic(index: number): void {
 		const data: TopicDialogData = { interactionForm: this.form, editTopicIndex: index }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		this.dialog.open(TopicDialog, config)
 	}
 
-	protected onDeleteTopicClick(topicName: string, index: number): void {
+	protected deleteTopic(topicName: string, index: number): void {
 		const data: ConfirmationDialogData = {
 			dialogText: `Are you sure you want to delete the topic: ${topicName}?`
 		}
@@ -153,7 +153,7 @@ export class InteractionDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	protected onSaveInteractionClick(): void {
+	protected saveInteraction(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return

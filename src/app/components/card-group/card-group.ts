@@ -72,7 +72,7 @@ export class CardGroup {
 		})
 	}
 
-	protected onGroupHeaderClick(): void {
+	protected toggleGroupCollapseExpand(): void {
 		this.open.set(!this.open())
 		this.headerClick.emit()
 		setTimeout(() => {
@@ -82,7 +82,7 @@ export class CardGroup {
 		}, 500) // wait for the CSS transition to complete
 	}
 
-	protected onExpandOrCollapseCardsClick(cardsOpen: boolean): void {
+	protected expandOrCollapseAllCards(cardsOpen: boolean): void {
 		this.cards().forEach(card => card.open.set(cardsOpen))
 		this.setCardsCollapsedState()
 	}

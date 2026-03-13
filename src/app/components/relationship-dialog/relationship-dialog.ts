@@ -109,7 +109,7 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	protected async onAddInteractionClick(): Promise<void> {
+	protected async addInteraction(): Promise<void> {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
@@ -121,7 +121,7 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		this.formService.processAddInteractionDialogResult({ form, interaction, updatedRelationshipProperties })
 	}
 
-	protected async onEditInteractionClick(editTarget: Interaction): Promise<void> {
+	protected async editInteraction(editTarget: Interaction): Promise<void> {
 		const { wasCancelled, form, interaction, updatedRelationshipProperties } = await this.interactionsService.editInteraction(editTarget, this.formService)
 		if (wasCancelled) return
 
@@ -129,11 +129,11 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		this.formService.processEditInteractionResult({ form, interaction, updatedRelationshipProperties })
 	}
 
-	protected onDeleteInteractionClick(deleteTarget: Interaction): void {
+	protected deleteInteraction(deleteTarget: Interaction): void {
 		this.interactionsService.deleteInteraction(deleteTarget, this.formService).subscribe()
 	}
 
-	protected onSaveClick(): void {
+	protected saveRelationship(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return

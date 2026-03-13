@@ -1,5 +1,5 @@
 @for (topic of topics(); track topic.name) {
-	<button class="topic" (click)="onTopicClick(topic)" mat-stroked-button>{{topic.name}}</button>
+	<button class="topic" (click)="openTopicNotes(topic)" mat-stroked-button>{{topic.name}}</button>
 }
 <app-horizontal-scroll-buttons no-opacity />
 
@@ -8,7 +8,7 @@
 <ng-template #topicNotesSheet>
 	<h3>{{selectedTopic()?.name}}</h3>
 	<p [innerHTML]="selectedTopic()?.notes | newlinesToBr"></p>
-	<button (click)="onCloseTopicClick()" class="close-topic" aria-label="Close topic" matTooltip="Close topic" mat-icon-button>
+	<button (click)="closeTopicNotes()" class="close-topic" aria-label="Close topic" matTooltip="Close topic" mat-icon-button>
 		<mat-icon>close</mat-icon>
 	</button>
 </ng-template>

@@ -3,7 +3,7 @@
 </app-page-header-bar>
 
 <mat-dialog-content>
-	<form [formGroup]="form" (ngSubmit)="onSaveTopicClick()">
+	<form [formGroup]="form" (ngSubmit)="saveTopic()">
 
 		@let name = form.controls.name;
 		<mat-form-field class="topic-name" hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
@@ -21,7 +21,7 @@
 		</mat-form-field>
 
 		@if (form.value.name || form.value.notes) {
-			<button (click)="onCancelTopicClick()" class="clear-form" mat-button aria-label="Clear topic form" type="button">
+			<button (click)="clearTopicName()" class="clear-form" mat-button aria-label="Clear topic form" type="button">
 				Clear
 			</button>
 		}
@@ -45,6 +45,6 @@
 <mat-dialog-actions>
 	<button [mat-dialog-close]="false" mat-button>Cancel</button>
 	@if (wasTopicModified()) {
-		<button (click)="onSaveTopicClick()" mat-button>Save</button>
+		<button (click)="saveTopic()" mat-button>Save</button>
 	}
 </mat-dialog-actions>

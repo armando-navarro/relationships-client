@@ -36,7 +36,7 @@ export class Card implements OnInit {
 	readonly alwaysShowInteractionOwner = input(false, { alias: 'always-show-interaction-owner', transform: booleanAttribute })
 	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
 
-	readonly editRelationship = output<Relationship>({ alias: 'edit-relationship'})
+	readonly editRelationshipEmitter = output<Relationship>({ alias: 'edit-relationship'})
 	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
 	readonly editTopic = output({ alias: 'edit-topic'})
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
@@ -99,24 +99,24 @@ export class Card implements OnInit {
 		this.collapsedRightText.set(this.newlinesToBr.transform(topic.notes))
 	}
 
-	protected onRelationshipNameClick() {
+	protected editRelationship() {
 		if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 		else this.relationshipNameClick.emit(this.interaction()!)
 	}
 
-	protected onEditClick(): void {
+	protected edit(): void {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
-		else if (this.relationship()) this.editRelationship.emit(this.relationship()!)
+		else if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 		else this.editTopic.emit()
 	}
 
-	protected onDeleteClick(): void {
+	protected delete(): void {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
 		else this.deleteTopic.emit()
 	}
 
-	protected onCollapseExpandClick(): void {
+	protected toggleCollapseExpand(): void {
 		this.open.set(!this.open())
 		setTimeout(() => {
 			this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })

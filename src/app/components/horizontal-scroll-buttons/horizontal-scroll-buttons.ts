@@ -62,7 +62,7 @@ export class HorizontalScrollButtons implements AfterViewInit, OnDestroy {
 	}
 
 	/** Scrolls the scrollable element left or right by the amount specified in `this.scrollAmountPx`. */
-	protected onScrollButtonClick(direction: 'left' | 'right'): void {
+	protected scrollHorizontally(direction: 'left' | 'right'): void {
 		let scrollByPx = direction === 'left' ? -this.scrollAmountPx() : this.scrollAmountPx()
 		this.scroll.scrollHorizontally(this.scrollableElement()!, scrollByPx)
 	}

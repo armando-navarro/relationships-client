@@ -86,7 +86,7 @@ export class RelationshipsList implements OnInit {
 		})
 	}
 
-	protected onSearchClick(showSearch = !this.showSearchBar()): void {
+	protected showHideSearchBar(showSearch = !this.showSearchBar()): void {
 		this.showSearchBar.set(showSearch)
 		if (!showSearch) this.searchValue.set('')
 	}
@@ -111,21 +111,17 @@ export class RelationshipsList implements OnInit {
 		this.filteredGroupedRelationships.set(filteredGroups)
 	}
 
-	protected onCollapseOrExpandAllClick(open: boolean): void {
+	protected collapseOrExpandAllGroups(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
 		this.setGroupsCollapsedState()
 	}
 
-	protected onCardGroupHeaderClick(): void {
-		this.setGroupsCollapsedState()
-	}
-
-	private setGroupsCollapsedState(): void {
+	protected setGroupsCollapsedState(): void {
 		this.allGroupsCollapsed.set(!this.cardGroups().some(group => group.open()))
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
-	protected onAddRelationshipClick(): void {
+	protected addRelationship(): void {
 		this.relationshipsService.addRelationship(this.groupedRelationships())
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
 				if (wasCancelled) return
@@ -134,7 +130,7 @@ export class RelationshipsList implements OnInit {
 			})
 	}
 
-	protected onEditRelationshipClick(editTarget: Relationship): void {
+	protected editRelationship(editTarget: Relationship): void {
 		this.relationshipsService.editRelationship(editTarget, this.groupedRelationships())
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
 				if (wasCancelled) return
@@ -144,7 +140,7 @@ export class RelationshipsList implements OnInit {
 			})
 	}
 
-	protected onDeleteRelationshipClick(deleteTarget: Relationship): void {
+	protected deleteRelationship(deleteTarget: Relationship): void {
 		this.relationshipsService.deleteRelationship(deleteTarget).subscribe(targetDeleted => {
 			if (targetDeleted) {
 				this.groupedRelationships().forEach(group => {

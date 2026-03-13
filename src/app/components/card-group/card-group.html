@@ -1,5 +1,5 @@
 <h2 [id]="`card-group-title-${instanceNumber()}`" [style.color]="headerColor()" [class.offset-top]="scrollingUp() || !isSmallViewport()">
-	<button (click)="onGroupHeaderClick()" [attr.aria-label]="`${open() ? 'Collapse' : 'Expand'} group`">
+	<button (click)="toggleGroupCollapseExpand()" [attr.aria-label]="`${open() ? 'Collapse' : 'Expand'} group`">
 		<span>{{header()}}</span>
 		<span>({{cardCount()}})</span>
 		<mat-icon [class.open]="open()">chevron_right</mat-icon>
@@ -8,10 +8,10 @@
 	@if (isSmallViewport()) {
 		<div class="group-actions" [class.show]="open()">
 			@if (!allCardsOpen()) {
-				<button (click)="onExpandOrCollapseCardsClick(true)" mat-button>Expand All</button>
+				<button (click)="expandOrCollapseAllCards(true)" mat-button>Expand All</button>
 			}
 			@if (!allCardsClosed()) {
-				<button (click)="onExpandOrCollapseCardsClick(false)" mat-button>Collapse All</button>
+				<button (click)="expandOrCollapseAllCards(false)" mat-button>Collapse All</button>
 			}
 		</div>
 	} @else if (groupOf() === 'relationships') {

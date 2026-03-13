@@ -20,7 +20,7 @@ export class Welcome {
 	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	protected isTableOfContentsOpen = signal(false)
 
-	protected onTableOfContentsLinkClick({ target }: Event): void {
+	protected closeTableOfContents({ target }: Event): void {
 		if (target instanceof HTMLUListElement || target instanceof HTMLLIElement) return
 		this.isTableOfContentsOpen.set(false)
 	}

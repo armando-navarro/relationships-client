@@ -3,7 +3,7 @@
 </app-page-header-bar>
 
 <mat-dialog-content class="custom-scrollbar">
-	<form (ngSubmit)="onSaveInteractionClick()" [formGroup]="form">
+	<form (ngSubmit)="saveInteraction()" [formGroup]="form">
 
 		@if (data.showRelationshipPicker) {
 			<section class="relationship" aria-labelledby="relationship-details-title">
@@ -62,7 +62,7 @@
 		<section class="topics" aria-labelledby="topics-title">
 			<h2 id="topics-title">Topics Discussed</h2>
 
-			<button class="add-topic" (click)="onAddTopicClick()" mat-button type="button">Add Topic</button>
+			<button class="add-topic" (click)="addTopic()" mat-button type="button">Add Topic</button>
 
 			@let topics = form.controls.topics;
 			@if (topics.length) {
@@ -70,8 +70,8 @@
 					<app-card
 						[topic]="topic | topicFormToModel"
 						always-show-left-text
-						(edit-topic)="onEditTopicClick(index)"
-						(delete-topic)="onDeleteTopicClick(topic.value.name!, index)"
+						(edit-topic)="editTopic(index)"
+						(delete-topic)="deleteTopic(topic.value.name!, index)"
 						[open]="false"
 						collapsible
 						scrollable-body
@@ -91,6 +91,6 @@
 <mat-dialog-actions>
 	<button [mat-dialog-close]="{ wasCancelled: true }" mat-button>Cancel</button>
 	@if (wasInteractionModified()) {
-		<button (click)="onSaveInteractionClick()" mat-button>Save</button>
+		<button (click)="saveInteraction()" mat-button>Save</button>
 	}
 </mat-dialog-actions>

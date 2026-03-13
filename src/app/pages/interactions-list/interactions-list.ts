@@ -60,8 +60,8 @@ export class InteractionsList implements OnInit, AfterViewInit {
 	private readonly groupByChange$ = toObservable(this.groupBy).pipe(
 		takeUntilDestroyed(),
 	).subscribe(() => {
-		if (this.responsiveUi.isSmallViewport()) this.onCollapseOrExpandAllClick(false)
-		else this.onCollapseOrExpandAllClick(true)
+		if (this.responsiveUi.isSmallViewport()) this.collapseOrExpandAllGroups(false)
+		else this.collapseOrExpandAllGroups(true)
 	})
 
 	// misc state
@@ -94,21 +94,17 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		})
 	}
 
-	protected onCollapseOrExpandAllClick(open: boolean): void {
+	protected collapseOrExpandAllGroups(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
 		this.setGroupsCollapsedState()
 	}
 
-	protected onCardGroupHeaderClick(): void {
-		this.setGroupsCollapsedState()
-	}
-
-	private setGroupsCollapsedState(): void {
+	protected setGroupsCollapsedState(): void {
 		this.allGroupsCollapsed.set(!this.cardGroups().some(group => group.open()))
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
-	protected async onAddInteractionclick(): Promise<void> {
+	protected async addInteraction(): Promise<void> {
 		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.addInteraction(this.interactions())
 		if (wasCancelled) return
 
@@ -116,7 +112,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		this.interactions.set(updatedInteractions)
 	}
 
-	protected async onEditInteractionClick(editTarget: Interaction): Promise<void> {
+	protected async editInteraction(editTarget: Interaction): Promise<void> {
 		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.editInteraction(editTarget, this.interactions())
 		if (wasCancelled) return
 
@@ -124,7 +120,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		this.interactions.set(updatedInteractions)
 	}
 
-	protected onDeleteInteractionClick(deleteTarget: Interaction): void {
+	protected deleteInteraction(deleteTarget: Interaction): void {
 		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
 			if (!targetDeleted) return
 
@@ -136,7 +132,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		})
 	}
 
-	protected onEditRelationshipClick(interaction: Interaction): void {
+	protected editRelationship(interaction: Interaction): void {
 		this.relationshipsService.editRelationship(interaction.idOfRelationship!)
 			.subscribe(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
 				if (wasCancelled) return

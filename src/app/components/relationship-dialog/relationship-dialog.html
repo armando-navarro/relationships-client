@@ -7,7 +7,7 @@
 	<section class="relationship-details" aria-labelledby="relationship-details-title">
 		<h2 id="relationship-details-title">Relationship Details</h2>
 
-		<form id="relationship-details" (ngSubmit)="onSaveClick()" [formGroup]="form">
+		<form id="relationship-details" (ngSubmit)="saveRelationship()" [formGroup]="form">
 
 			@let firstName = form.controls.firstName;
 			<mat-form-field appearance="outline" floatLabel="auto">
@@ -68,7 +68,7 @@
 	<section class="interactions" aria-labelledby="interactions-title">
 		<h2 id="interactions-title">
 			Interactions
-			<button (click)="onAddInteractionClick()" mat-button>Add Interaction</button>
+			<button (click)="addInteraction()" mat-button>Add Interaction</button>
 		</h2>
 
 			<p>
@@ -83,8 +83,8 @@
 			@for (interaction of interactions; track interaction._id || interaction.date) {
 				<app-card
 					[interaction]="interaction"
-					(edit-interaction)="onEditInteractionClick($event)"
-					(delete-interaction)="onDeleteInteractionClick($event)"
+					(edit-interaction)="editInteraction($event)"
+					(delete-interaction)="deleteInteraction($event)"
 					collapsible
 				>
 					<app-interaction-card-content [interaction]="interaction" />
@@ -100,6 +100,6 @@
 		}
 		@else {
 			<button [mat-dialog-close]="{ wasCancelled: true }" mat-button>Cancel</button>
-			<button (click)="onSaveClick()" mat-button>Save</button>
+			<button (click)="saveRelationship()" mat-button>Save</button>
 		}
 </mat-dialog-actions>
