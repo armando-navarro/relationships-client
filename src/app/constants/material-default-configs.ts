@@ -1,7 +1,6 @@
-import { MatDialogConfig } from "@angular/material/dialog"
-import { MatSnackBarConfig } from "@angular/material/snack-bar"
-import { MatTooltipDefaultOptions } from "@angular/material/tooltip"
-
+import { MatDialogConfig } from '@angular/material/dialog'
+import { MatSnackBarConfig } from '@angular/material/snack-bar'
+import { MatTooltipDefaultOptions } from '@angular/material/tooltip'
 export const tooltipDefaults: MatTooltipDefaultOptions = {
 	showDelay: 1000,
 	hideDelay: 100,
