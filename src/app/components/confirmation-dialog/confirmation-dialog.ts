@@ -16,5 +16,5 @@ export interface ConfirmationDialogData {
 	styleUrl: './confirmation-dialog.scss'
 })
 export class ConfirmationDialog {
-	readonly data = inject<ConfirmationDialogData>(MAT_DIALOG_DATA)
+	protected readonly data = inject<ConfirmationDialogData>(MAT_DIALOG_DATA)
 }

@@ -17,10 +17,10 @@ import { ResponsiveUi } from '../../services/responsive-ui'
 export class Welcome {
 	private readonly responsiveUi = inject(ResponsiveUi)
 
-	readonly isSmallViewport = this.responsiveUi.isSmallViewport
-	isTableOfContentsOpen = signal(false)
+	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
+	protected isTableOfContentsOpen = signal(false)
 
-	onTableOfContentsLinkClick({ target }: Event): void {
+	protected onTableOfContentsLinkClick({ target }: Event): void {
 		if (target instanceof HTMLUListElement || target instanceof HTMLLIElement) return
 		this.isTableOfContentsOpen.set(false)
 	}

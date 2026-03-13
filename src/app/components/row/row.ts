@@ -35,7 +35,7 @@ export class Row {
 	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
 	readonly deleteInteraction = output<Interaction>({ alias: 'delete-interaction'})
 
-	readonly modelName = computed(() => {
+	protected readonly modelName = computed(() => {
 		if (this.relationship()) return 'relationship'
 		return 'interaction'
 	})
@@ -50,16 +50,16 @@ export class Row {
 		})
 	}
 
-	onRelationshipNameClick() {
+	protected onRelationshipNameClick() {
 		this.relationshipNameClick.emit(this.interaction()!)
 	}
 
-	onEditClick() {
+	protected onEditClick() {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
 		else if (this.relationship()) this.editRelationship.emit(this.relationship()!)
 	}
 
-	onDeleteClick() {
+	protected onDeleteClick() {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
 	}

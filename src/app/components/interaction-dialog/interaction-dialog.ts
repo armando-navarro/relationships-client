@@ -55,7 +55,7 @@ export type InteractionDialogResult = Cancelable<InteractionDialogSaveResult>
 })
 export class InteractionDialog implements OnInit, OnDestroy {
 	private readonly api = inject(Api)
-	readonly data = inject<InteractionDialogData>(MAT_DIALOG_DATA)
+	protected readonly data = inject<InteractionDialogData>(MAT_DIALOG_DATA)
 	private readonly dialog = inject(MatDialog)
 	private readonly dialogRef: MatDialogRef<InteractionDialog, InteractionDialogResult> = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapper)
@@ -63,12 +63,12 @@ export class InteractionDialog implements OnInit, OnDestroy {
 	private readonly relationshipUtils = inject(RelationshipUtilities)
 	private readonly snackBar = inject(MatSnackBar)
 
-	form = this.interactionMapper.mapModelToForm()
-	readonly relationships = signal<Relationship[]|undefined>(undefined)
-	readonly pageHeading = signal('')
-	readonly wasInteractionModified = signal(false)
-	readonly typeOptions = InteractionType
-	readonly dateMax = new Date()
+	protected form = this.interactionMapper.mapModelToForm()
+	protected readonly relationships = signal<Relationship[]|undefined>(undefined)
+	protected readonly pageHeading = signal('')
+	protected readonly wasInteractionModified = signal(false)
+	protected readonly typeOptions = InteractionType
+	protected readonly dateMax = new Date()
 	private readonly destroy$ = new Subject<void>()
 
 	private readonly RELATIONSHIP_ERROR = 'Failed to load relationships. Try again later.'
@@ -126,19 +126,19 @@ export class InteractionDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	onAddTopicClick(): void {
+	protected onAddTopicClick(): void {
 		const data: TopicDialogData = { interactionForm: this.form }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		this.dialog.open(TopicDialog, config)
 	}
 
-	onEditTopicClick(index: number): void {
+	protected onEditTopicClick(index: number): void {
 		const data: TopicDialogData = { interactionForm: this.form, editTopicIndex: index }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		this.dialog.open(TopicDialog, config)
 	}
 
-	onDeleteTopicClick(topicName: string, index: number): void {
+	protected onDeleteTopicClick(topicName: string, index: number): void {
 		const data: ConfirmationDialogData = {
 			dialogText: `Are you sure you want to delete the topic: ${topicName}?`
 		}
@@ -153,7 +153,7 @@ export class InteractionDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	onSaveInteractionClick(): void {
+	protected onSaveInteractionClick(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return

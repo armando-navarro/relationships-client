@@ -46,13 +46,13 @@ export class Card implements OnInit {
 
 	readonly open = model(true)
 
-	readonly collapsedLeftText = signal('')
-	readonly collapsedRightText = signal('')
-	readonly collapsedRightIcon = signal('')
+	protected readonly collapsedLeftText = signal('')
+	protected readonly collapsedRightText = signal('')
+	protected readonly collapsedRightIcon = signal('')
 
 	readonly relationshipId = computed(() => this.relationship()?._id || this.interaction()?.idOfRelationship)
-	readonly relationshipName = computed(() => this.relationship()?.fullName || this.interaction()?.nameOfPerson)
-	readonly modelName = computed(() => {
+	protected readonly relationshipName = computed(() => this.relationship()?.fullName || this.interaction()?.nameOfPerson)
+	protected readonly modelName = computed(() => {
 		if (this.relationship()) return 'relationship'
 		else if (this.interaction()) return 'interaction'
 		else return 'topic'
@@ -99,24 +99,24 @@ export class Card implements OnInit {
 		this.collapsedRightText.set(this.newlinesToBr.transform(topic.notes))
 	}
 
-	onRelationshipNameClick() {
-		if (this.relationship()) this.editRelationship.emit(this.relationship()!)
+	protected onRelationshipNameClick() {
+		if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 		else this.relationshipNameClick.emit(this.interaction()!)
 	}
 
-	onEditClick(): void {
+	protected onEditClick(): void {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
 		else if (this.relationship()) this.editRelationship.emit(this.relationship()!)
 		else this.editTopic.emit()
 	}
 
-	onDeleteClick(): void {
+	protected onDeleteClick(): void {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
 		else this.deleteTopic.emit()
 	}
 
-	onCollapseExpandClick(): void {
+	protected onCollapseExpandClick(): void {
 		this.open.set(!this.open())
 		setTimeout(() => {
 			this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })

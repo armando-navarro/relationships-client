@@ -50,8 +50,8 @@ export class InteractionsList implements OnInit, AfterViewInit {
 	)
 
 	// interaction grouping state
-	readonly groupBy = signal<TimeUnit>('month')
-	readonly groupedInteractions = signal([] as InteractionGroup[])
+	protected readonly groupBy = signal<TimeUnit>('month')
+	protected readonly groupedInteractions = signal([] as InteractionGroup[])
 	private readonly groupInteractions = effect(() => {
 		const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
 		this.groupedInteractions.set(groups)
@@ -65,13 +65,13 @@ export class InteractionsList implements OnInit, AfterViewInit {
 	})
 
 	// misc state
-	readonly allGroupsCollapsed = signal(false)
-	readonly allGroupsExpanded = signal(false)
-	readonly isLoadingInteractions = signal(true)
-	readonly isSmallViewport = this.responsiveUi.isSmallViewport
-	readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
+	protected readonly allGroupsCollapsed = signal(false)
+	protected readonly allGroupsExpanded = signal(false)
+	protected readonly isLoadingInteractions = signal(true)
+	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
+	protected readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
 	private highlightInteraction = {} as Interaction
-	readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
+	protected readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
 
 	ngOnInit(): void {
 		this.loadInteractions()
@@ -94,12 +94,12 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		})
 	}
 
-	onCollapseOrExpandAllClick(open: boolean): void {
+	protected onCollapseOrExpandAllClick(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
 		this.setGroupsCollapsedState()
 	}
 
-	onCardGroupHeaderClick(): void {
+	protected onCardGroupHeaderClick(): void {
 		this.setGroupsCollapsedState()
 	}
 
@@ -108,7 +108,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
-	async onAddInteractionclick(): Promise<void> {
+	protected async onAddInteractionclick(): Promise<void> {
 		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.addInteraction(this.interactions())
 		if (wasCancelled) return
 
@@ -116,7 +116,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		this.interactions.set(updatedInteractions)
 	}
 
-	async onEditInteractionClick(editTarget: Interaction): Promise<void> {
+	protected async onEditInteractionClick(editTarget: Interaction): Promise<void> {
 		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.editInteraction(editTarget, this.interactions())
 		if (wasCancelled) return
 
@@ -124,7 +124,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		this.interactions.set(updatedInteractions)
 	}
 
-	onDeleteInteractionClick(deleteTarget: Interaction): void {
+	protected onDeleteInteractionClick(deleteTarget: Interaction): void {
 		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
 			if (!targetDeleted) return
 
@@ -136,7 +136,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		})
 	}
 
-	onEditRelationshipClick(interaction: Interaction): void {
+	protected onEditRelationshipClick(interaction: Interaction): void {
 		this.relationshipsService.editRelationship(interaction.idOfRelationship!)
 			.subscribe(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
 				if (wasCancelled) return

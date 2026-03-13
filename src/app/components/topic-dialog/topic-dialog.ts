@@ -35,9 +35,9 @@ export class TopicDialog implements OnInit, OnDestroy {
 
 	private readonly topicNameInput = viewChild<ElementRef<HTMLInputElement>>('topicNameInput')
 
-	form = this.interactionMapper.mapTopicModelToForm()
-	readonly pageHeading = signal('')
-	readonly wasTopicModified = signal(false)
+	protected form = this.interactionMapper.mapTopicModelToForm()
+	protected readonly pageHeading = signal('')
+	protected readonly wasTopicModified = signal(false)
 	private readonly destroy$ = new Subject<void>()
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
@@ -63,12 +63,12 @@ export class TopicDialog implements OnInit, OnDestroy {
 		).subscribe(() => this.wasTopicModified.set(true))
 	}
 
-	onCancelTopicClick(): void {
+	protected onCancelTopicClick(): void {
 		this.form.reset()
 		this.topicNameInput()?.nativeElement.focus()
 	}
 
-	onSaveTopicClick(): void {
+	protected onSaveTopicClick(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return

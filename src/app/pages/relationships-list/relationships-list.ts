@@ -49,30 +49,30 @@ export class RelationshipsList implements OnInit {
 	private readonly cardGroups = viewChildren(CardGroup)
 
 	// relationship data processing
-	readonly groupedRelationships = signal<RelationshipGroup[]>([])
+	protected readonly groupedRelationships = signal<RelationshipGroup[]>([])
 	readonly ungroupedRelationships = computed(() => this.groupedRelationships().flatMap(({ relationships }) => relationships))
 	readonly relationshipNames = computed(() =>
 		this.relationshipUtils.sortByFirstName(this.ungroupedRelationships()).map(({ fullName }) => fullName!) || []
 	)
-	readonly hasRelationships = computed(() => this.groupedRelationships().some(group => group.relationships.length))
+	protected readonly hasRelationships = computed(() => this.groupedRelationships().some(group => group.relationships.length))
 
 	// search filter processing
-	readonly searchValue = signal('')
+	protected readonly searchValue = signal('')
 	readonly searchValueSub = toObservable(this.searchValue).pipe(
 		takeUntilDestroyed(),
 		debounceTime(300),
 		distinctUntilChanged(),
 	).subscribe(searchValue => this.applySearchFilter(searchValue))
-	readonly filteredNames = signal<string[]>(this.relationshipNames())
-	readonly filteredGroupedRelationships = linkedSignal(() => this.groupedRelationships() || [])
-	readonly showSearchBar = signal(false)
+	protected readonly filteredNames = signal<string[]>(this.relationshipNames())
+	protected readonly filteredGroupedRelationships = linkedSignal(() => this.groupedRelationships() || [])
+	protected readonly showSearchBar = signal(false)
 
 	// misc
-	readonly allGroupsCollapsed = signal(false)
-	readonly allGroupsExpanded = signal(false)
-	readonly isLoadingRelationships = signal(true)
-	readonly isSmallViewport = this.responsiveUi.isSmallViewport
-	readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
+	protected readonly allGroupsCollapsed = signal(false)
+	protected readonly allGroupsExpanded = signal(false)
+	protected readonly isLoadingRelationships = signal(true)
+	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
+	protected readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
 
 	ngOnInit(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
@@ -86,7 +86,7 @@ export class RelationshipsList implements OnInit {
 		})
 	}
 
-	onSearchClick(showSearch = !this.showSearchBar()): void {
+	protected onSearchClick(showSearch = !this.showSearchBar()): void {
 		this.showSearchBar.set(showSearch)
 		if (!showSearch) this.searchValue.set('')
 	}
@@ -111,12 +111,12 @@ export class RelationshipsList implements OnInit {
 		this.filteredGroupedRelationships.set(filteredGroups)
 	}
 
-	onCollapseOrExpandAllClick(open: boolean): void {
+	protected onCollapseOrExpandAllClick(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
 		this.setGroupsCollapsedState()
 	}
 
-	onCardGroupHeaderClick(): void {
+	protected onCardGroupHeaderClick(): void {
 		this.setGroupsCollapsedState()
 	}
 
@@ -125,7 +125,7 @@ export class RelationshipsList implements OnInit {
 		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
-	onAddRelationshipClick(): void {
+	protected onAddRelationshipClick(): void {
 		this.relationshipsService.addRelationship(this.groupedRelationships())
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
 				if (wasCancelled) return
@@ -134,7 +134,7 @@ export class RelationshipsList implements OnInit {
 			})
 	}
 
-	onEditRelationshipClick(editTarget: Relationship): void {
+	protected onEditRelationshipClick(editTarget: Relationship): void {
 		this.relationshipsService.editRelationship(editTarget, this.groupedRelationships())
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
 				if (wasCancelled) return
@@ -144,7 +144,7 @@ export class RelationshipsList implements OnInit {
 			})
 	}
 
-	onDeleteRelationshipClick(deleteTarget: Relationship): void {
+	protected onDeleteRelationshipClick(deleteTarget: Relationship): void {
 		this.relationshipsService.deleteRelationship(deleteTarget).subscribe(targetDeleted => {
 			if (targetDeleted) {
 				this.groupedRelationships().forEach(group => {

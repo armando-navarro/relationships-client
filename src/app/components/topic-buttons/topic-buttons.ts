@@ -29,10 +29,10 @@ export class TopicButtons {
 	private readonly topicNotesTemplate = viewChild<TemplateRef<HTMLElement>>('topicNotesSheet')
 	private readonly topicNotesDialogTemplate = viewChild<TemplateRef<HTMLElement>>('topicNotesDialog')
 
-	readonly selectedTopic = signal<Topic|null>(null)
+	protected readonly selectedTopic = signal<Topic|null>(null)
 	private bottomSheetRef?: MatBottomSheetRef<HTMLElement>
 
-	onTopicClick(topic: Topic): void {
+	protected onTopicClick(topic: Topic): void {
 		this.selectedTopic.set(topic)
 		if (this.responsiveUi.isSmallViewport()) {
 			this.bottomSheetRef = this.bottomSheet.open(this.topicNotesTemplate()!, { panelClass: 'topic-bottom-sheet' })
@@ -41,7 +41,7 @@ export class TopicButtons {
 		}
 	}
 
-	onCloseTopicClick(): void {
+	protected onCloseTopicClick(): void {
 		this.bottomSheetRef?.dismiss()
 	}
 

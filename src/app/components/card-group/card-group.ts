@@ -34,17 +34,17 @@ export class CardGroup {
 	readonly cards = contentChildren(Card)
 
 	readonly open = signal(true)
-	readonly allCardsOpen = signal(!this.responsiveUi.isSmallViewport())
-	readonly allCardsClosed = signal(this.responsiveUi.isSmallViewport())
-	readonly instanceNumber = signal<number|undefined>(undefined)
-	readonly isSmallViewport = this.responsiveUi.isSmallViewport
+	protected readonly allCardsOpen = signal(!this.responsiveUi.isSmallViewport())
+	protected readonly allCardsClosed = signal(this.responsiveUi.isSmallViewport())
+	protected readonly instanceNumber = signal<number|undefined>(undefined)
+	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	readonly isSmallViewport$ = toObservable(this.responsiveUi.isSmallViewport).pipe(takeUntilDestroyed())
-	readonly maxGroupHeight = computed(() => {
+	protected readonly maxGroupHeight = computed(() => {
 		// take max card/row height into account so group expands tall enough
 		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : this.cardCount() * 92 + 59
 		else return 0
 	})
-	readonly scrollingUp = toSignal(this.scroll.scrollDirection$.pipe(map(scrollDir => scrollDir === 'up')))
+	protected readonly scrollingUp = toSignal(this.scroll.scrollDirection$.pipe(map(scrollDir => scrollDir === 'up')))
 
 	// for assigning a unique ID to elements in each instance of this component
 	static instanceCount = 0
@@ -72,7 +72,7 @@ export class CardGroup {
 		})
 	}
 
-	onGroupHeaderClick(): void {
+	protected onGroupHeaderClick(): void {
 		this.open.set(!this.open())
 		this.headerClick.emit()
 		setTimeout(() => {
@@ -82,7 +82,7 @@ export class CardGroup {
 		}, 500) // wait for the CSS transition to complete
 	}
 
-	onExpandOrCollapseCardsClick(cardsOpen: boolean): void {
+	protected onExpandOrCollapseCardsClick(cardsOpen: boolean): void {
 		this.cards().forEach(card => card.open.set(cardsOpen))
 		this.setCardsCollapsedState()
 	}

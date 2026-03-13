@@ -27,8 +27,8 @@ export class HorizontalScrollButtons implements AfterViewInit, OnDestroy {
 	private readonly leftButtonTemplate = viewChild.required<TemplateRef<HTMLElement>>('leftButton')
 	private readonly rightButtonTemplate = viewChild.required<TemplateRef<HTMLElement>>('rightButton')
 	// state
-	readonly canScrollLeft = signal(false)
-	readonly canScrollRight = signal(false)
+	protected readonly canScrollLeft = signal(false)
+	protected readonly canScrollRight = signal(false)
 
 	private readonly destroy$ = new Subject<void>()
 
@@ -62,7 +62,7 @@ export class HorizontalScrollButtons implements AfterViewInit, OnDestroy {
 	}
 
 	/** Scrolls the scrollable element left or right by the amount specified in `this.scrollAmountPx`. */
-	onScrollButtonClick(direction: 'left' | 'right'): void {
+	protected onScrollButtonClick(direction: 'left' | 'right'): void {
 		let scrollByPx = direction === 'left' ? -this.scrollAmountPx() : this.scrollAmountPx()
 		this.scroll.scrollHorizontally(this.scrollableElement()!, scrollByPx)
 	}

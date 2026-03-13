@@ -13,9 +13,9 @@ export class DynamicScrollable implements AfterContentInit {
 
 	readonly scrollable = input(false, { transform: booleanAttribute })
 	readonly isVisible = input(false, { alias: 'is-visible', transform: booleanAttribute })
-	readonly isOverflowing = signal(false)
-	readonly animateArrow = computed(() => this.isVisible() && this.isOverflowing())
-	readonly animationCompleted = signal(false)
+	protected readonly isOverflowing = signal(false)
+	protected readonly animateArrow = computed(() => this.isVisible() && this.isOverflowing())
+	protected readonly animationCompleted = signal(false)
 	private readonly keepArrowHidden = effect(() => {
 		if (this.animateArrow() && !this.animationCompleted()) {
 			fromEvent(this.svg()!.nativeElement!, 'animationend')

@@ -53,12 +53,12 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 	private readonly relationshipMapper = inject(RelationshipMapper)
 	private readonly snackBar = inject(MatSnackBar)
 
-	interactions: Interaction[] = []
-	form = this.relationshipMapper.mapModelToForm()
-	readonly pageHeading = signal('')
-	readonly isFormSaved = signal(false)
+	protected interactions: Interaction[] = []
+	protected form = this.relationshipMapper.mapModelToForm()
+	protected readonly pageHeading = signal('')
+	protected readonly isFormSaved = signal(false)
 
-	readonly InteractionRates = InteractionRate
+	protected readonly InteractionRates = InteractionRate
 	private readonly destroy$ = new Subject<void>()
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
@@ -109,7 +109,7 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	async onAddInteractionClick(): Promise<void> {
+	protected async onAddInteractionClick(): Promise<void> {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
@@ -121,7 +121,7 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		this.formService.processAddInteractionDialogResult({ form, interaction, updatedRelationshipProperties })
 	}
 
-	async onEditInteractionClick(editTarget: Interaction): Promise<void> {
+	protected async onEditInteractionClick(editTarget: Interaction): Promise<void> {
 		const { wasCancelled, form, interaction, updatedRelationshipProperties } = await this.interactionsService.editInteraction(editTarget, this.formService)
 		if (wasCancelled) return
 
@@ -129,11 +129,11 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		this.formService.processEditInteractionResult({ form, interaction, updatedRelationshipProperties })
 	}
 
-	onDeleteInteractionClick(deleteTarget: Interaction): void {
+	protected onDeleteInteractionClick(deleteTarget: Interaction): void {
 		this.interactionsService.deleteInteraction(deleteTarget, this.formService).subscribe()
 	}
 
-	onSaveClick(): void {
+	protected onSaveClick(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
 			return
@@ -144,7 +144,7 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	closeDialog(
+	protected closeDialog(
 		wasNameModified = this.formService.wasNameModified,
 		wereInteractionsModified = this.formService.wereInteractionsModified
 	): void {
