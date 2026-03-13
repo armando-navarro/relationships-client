@@ -9,9 +9,9 @@
 	@if (collapsedLeftText() || collapsedRightText()) {
 		<div class="collapsed-header" [class.expand-left-text]="alwaysShowInteractionOwner()">
 			@if (relationship() || alwaysShowInteractionOwner()) {
-				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}" mat-button (click)="onRelationshipNameClick()" [attr.aria-label]="`Edit ${collapsedLeftText()}`">{{collapsedLeftText()}}</button>
+				<button class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [style]="open() ? {width: 'auto'} : {}" mat-button (click)="onRelationshipNameClick()" [attr.aria-label]="`Edit ${collapsedLeftText()}`">{{collapsedLeftText()}}</button>
 			} @else {
-				<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [ngStyle]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
+				<span class="collapsed-left-text" [class.hidden]="open() && !alwaysShowLeftText()" [style]="open() ? {width: 'auto'} : {}">{{collapsedLeftText()}}</span>
 			}
 			@if (collapsedRightIcon()) {
 				<mat-icon class="collapsed-right-icon" [class.hidden]="open()">{{collapsedRightIcon()}}</mat-icon>
