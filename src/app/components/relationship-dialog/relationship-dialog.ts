@@ -1,6 +1,6 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, inject, OnInit, signal } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
-import { pairwise, startWith, Subject, takeUntil } from 'rxjs'
+import { pairwise, startWith } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
@@ -44,7 +44,7 @@ export type RelationshipDialogResult = Cancelable<{
 	templateUrl: './relationship-dialog.html',
 	styleUrl: './relationship-dialog.scss'
 })
-export class RelationshipDialog implements OnInit, OnDestroy {
+export class RelationshipDialog implements OnInit {
 	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)
 	private readonly dialogRef: MatDialogRef<RelationshipDialog, RelationshipDialogResult> = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapper)
@@ -56,43 +56,33 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 	protected interactions: Interaction[] = []
 	protected form = this.relationshipMapper.mapModelToForm()
 	protected readonly pageHeading = signal('')
-	protected readonly isFormSaved = signal(false)
+	protected readonly wasRelationshipModified = signal(false)
 
 	protected readonly InteractionRates = InteractionRate
-	private readonly destroy$ = new Subject<void>()
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
 	private readonly SAVE_RELATIONSHIP_ERROR = 'Failed to save relationship. Please try again.'
 
 	ngOnInit(): void {
-		this.form.controls.interactions.clear()
 		this.pageHeading.set(this.data.isAddingRelationship ? 'Add Relationship' : 'Edit Relationship')
-
-		if (this.data.isAddingRelationship) this.initAddRelationship()
-		else this.initEditRelationship()
-
-		// keep track of unsaved edits so the correct buttons are displayed
-		this.trackFormSavedState()
-
-		// keep a model of interactions to pass to card components (in some scenarios, form values don't exist for card components to consume)
-		this.form.controls.interactions.valueChanges.subscribe(interactions => {
-			this.interactions = this.interactionMapper.mapFormValueToModel(interactions)
-		})
+		this.initForm()
+		this.markRelationshipModifiedWhenFormChanges()
+		this.syncInteractionModelsWithFormValues()
 	}
 
-	private initAddRelationship(): void {
-		this.form = this.formService.initForm()
+	private initForm(): void {
+		if (this.data.isAddingRelationship) {
+			this.form = this.formService.initForm()
+			this.wasRelationshipModified.set(true)
+		} else {
+			this.form = this.formService.initForm(this.data.relationship!)
+			this.interactions = this.data.relationship!.interactions
+		}
 	}
 
-	private initEditRelationship(): void {
-		this.form = this.formService.initForm(this.data.relationship!)
-		this.interactions = this.data.relationship!.interactions
-		this.isFormSaved.set(true)
-	}
-
-	private trackFormSavedState(): void {
+	/** Mark the relationship as modified when relevant form fields change. */
+	private markRelationshipModifiedWhenFormChanges(): void {
 		this.form.valueChanges.pipe(
-			takeUntil(this.destroy$),
 			startWith(this.form.value),
 			pairwise(),
 		).subscribe(([ previous, current ]) => {
@@ -104,8 +94,15 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 				previous.interactionRateGoal !==  current.interactionRateGoal ||
 				previous.notes !== current.notes
 			) {
-				this.isFormSaved.set(false)
+				this.wasRelationshipModified.set(true)
 			}
+		})
+	}
+
+	/** Keep a model of interactions to pass to card components (in some scenarios, form values don't exist for card components to consume) */
+	private syncInteractionModelsWithFormValues(): void {
+		this.form.controls.interactions.valueChanges.subscribe(interactions => {
+			this.interactions = this.interactionMapper.mapFormValueToModel(interactions)
 		})
 	}
 
@@ -154,11 +151,6 @@ export class RelationshipDialog implements OnInit, OnDestroy {
 			wasNameModified,
 			wereInteractionsModified,
 		})
-	}
-
-	ngOnDestroy(): void {
-		this.destroy$.next()
-		this.destroy$.complete()
 	}
 
 }

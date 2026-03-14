@@ -1,6 +1,6 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, inject, OnInit, signal } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
-import { map, Observable, pairwise, startWith, Subject, takeUntil } from 'rxjs'
+import { map, Observable, pairwise, startWith } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatDatepickerModule } from '@angular/material/datepicker'
@@ -53,7 +53,7 @@ export type InteractionDialogResult = Cancelable<InteractionDialogSaveResult>
 	templateUrl: './interaction-dialog.html',
 	styleUrl: './interaction-dialog.scss'
 })
-export class InteractionDialog implements OnInit, OnDestroy {
+export class InteractionDialog implements OnInit {
 	private readonly api = inject(Api)
 	protected readonly data = inject<InteractionDialogData>(MAT_DIALOG_DATA)
 	private readonly dialog = inject(MatDialog)
@@ -69,7 +69,6 @@ export class InteractionDialog implements OnInit, OnDestroy {
 	protected readonly wasInteractionModified = signal(false)
 	protected readonly typeOptions = InteractionType
 	protected readonly dateMax = new Date()
-	private readonly destroy$ = new Subject<void>()
 
 	private readonly RELATIONSHIP_ERROR = 'Failed to load relationships. Try again later.'
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
@@ -77,25 +76,25 @@ export class InteractionDialog implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		if (this.data.showRelationshipPicker) this.loadRelationships()
-
-		if (this.data.isAddingInteraction) this.initAddInteraction()
-		else if (this.data.isEditingInteraction) this.initEditInteraction()
-
-		// keep track of unsaved edits so the correct buttons are displayed
-		this.trackFormSavedState()
-
 		this.pageHeading.set(this.data.isAddingInteraction ? 'Add Interaction' : 'Edit Interaction')
+		this.initForm()
+		this.markInteractionModifiedWhenFormChanges()
 	}
 
-	private initAddInteraction(): void {
-		this.form = this.interactionMapper.mapModelToForm(undefined, this.data.relationshipId ?? undefined, this.data.relationshipName ?? undefined)
+	private initForm(): void {
+		if (this.data.isAddingInteraction) {
+			this.form = this.interactionMapper.mapModelToForm(undefined, this.data.relationshipId ?? undefined, this.data.relationshipName ?? undefined)
+			this.syncRelationshipNameWithSelectedRelationship()
+		} else {
+			this.form = this.interactionMapper.mapModelToForm(this.data.interaction!)
+		}
+	}
+
+	/** Keeps track of changes to the selected relationship and updates the name of the person on the `Interaction` object accordingly. */
+	private syncRelationshipNameWithSelectedRelationship(): void {
 		this.form.controls.idOfRelationship.valueChanges.subscribe(relationshipId =>
 			this.form.controls.nameOfPerson.setValue(this.relationships()?.find(({ _id }) => _id === relationshipId)?.fullName!)
 		)
-	}
-
-	private initEditInteraction(): void {
-		this.form = this.interactionMapper.mapModelToForm(this.data.interaction!)
 	}
 
 	private loadRelationships(): void {
@@ -109,9 +108,9 @@ export class InteractionDialog implements OnInit, OnDestroy {
 		})
 	}
 
-	private trackFormSavedState(): void {
+	/** Mark the interaction as modified when relevant form fields change. */
+	private markInteractionModifiedWhenFormChanges(): void {
 		this.form.valueChanges.pipe(
-			takeUntil(this.destroy$),
 			startWith(this.form.value),
 			pairwise(),
 		).subscribe(([ previous, current ]) => {
@@ -193,10 +192,6 @@ export class InteractionDialog implements OnInit, OnDestroy {
 				updatedRelationshipProperties,
 			}))
 		)
-	}
-
-	ngOnDestroy(): void {
-		this.destroy$.next()
 	}
 
 }

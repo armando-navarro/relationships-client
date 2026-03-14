@@ -15,7 +15,11 @@ export class App {
 	private readonly viewportScroller = inject(ViewportScroller)
 
 	constructor() {
-		// viewport scroller offset needed to account for fixed header bar height
+		this.syncViewportScrollerOffsetWithHeaderHeight()
+	}
+
+	/** Keep the viewport scroller offset in sync with the current header height. */
+	private syncViewportScrollerOffsetWithHeaderHeight(): void {
 		effect(() => {
 			const offset = this.responsiveUi.pageHeaderBarHeight()
 			this.viewportScroller.setOffset([0, offset])

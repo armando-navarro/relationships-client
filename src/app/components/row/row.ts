@@ -41,7 +41,11 @@ export class Row {
 	})
 
 	constructor() {
-		// highlight card
+		this.scrollToAndClearHighlightWhenHighlighted()
+	}
+
+	/** When highlighted, scroll to this row and clear the highlight after the animation completes. */
+	private scrollToAndClearHighlightWhenHighlighted(): void {
 		effect(() => {
 			if (this.scrollToAndHighlight()) {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })

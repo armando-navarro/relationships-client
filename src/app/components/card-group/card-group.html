@@ -7,10 +7,10 @@
 
 	@if (isSmallViewport()) {
 		<div class="group-actions" [class.show]="open()">
-			@if (!allCardsOpen()) {
+			@if (showExpandAllCardsButton()) {
 				<button (click)="expandOrCollapseAllCards(true)" mat-button>Expand All</button>
 			}
-			@if (!allCardsClosed()) {
+			@if (showCollapseAllCardsButton()) {
 				<button (click)="expandOrCollapseAllCards(false)" mat-button>Collapse All</button>
 			}
 		</div>

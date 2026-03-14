@@ -95,7 +95,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-		@if (isFormSaved()) {
+		@if (!wasRelationshipModified()) {
 			<button (click)="closeDialog()" mat-button>Done</button>
 		}
 		@else {

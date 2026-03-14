@@ -52,11 +52,6 @@ export class InteractionsList implements OnInit, AfterViewInit {
 	// interaction grouping state
 	protected readonly groupBy = signal<TimeUnit>('month')
 	protected readonly groupedInteractions = signal([] as InteractionGroup[])
-	private readonly groupInteractions = effect(() => {
-		const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
-		this.groupedInteractions.set(groups)
-		this.highlightedCard.set({ groupKey, indexInGroup })
-	})
 	private readonly groupByChange$ = toObservable(this.groupBy).pipe(
 		takeUntilDestroyed(),
 	).subscribe(() => {
@@ -72,6 +67,19 @@ export class InteractionsList implements OnInit, AfterViewInit {
 	protected readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
 	private highlightInteraction = {} as Interaction
 	protected readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE
+
+	constructor() {
+		this.keepInteractionsGrouped()
+	}
+
+	/** Keep interaction groups and highlighted card metadata in sync with the current interactions and grouping mode. */
+	private keepInteractionsGrouped(): void {
+		effect(() => {
+			const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
+			this.groupedInteractions.set(groups)
+			this.highlightedCard.set({ groupKey, indexInGroup })
+		})
+	}
 
 	ngOnInit(): void {
 		this.loadInteractions()

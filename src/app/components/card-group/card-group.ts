@@ -20,10 +20,12 @@ import { Scroll } from '../../services/scroll'
 	}
 })
 export class CardGroup {
+	// services/dependencies
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
 	private readonly responsiveUi = inject(ResponsiveUi)
 	private readonly scroll = inject(Scroll)
 
+	// inputs/outputs
 	readonly header = input.required<string>()
 	readonly headerColor = input('white', { alias: 'header-color' })
 	readonly cardCount = input<number>(0, { alias: 'card-count' })
@@ -31,11 +33,13 @@ export class CardGroup {
 	readonly groupOf = input<'relationships'|'interactions'>('interactions', { alias: 'group-of' })
 	readonly headerClick = output<void>({ alias: 'header-click' })
 
+	// queries
 	readonly cards = contentChildren(Card)
 
+	// state
 	readonly open = signal(true)
-	protected readonly allCardsOpen = signal(!this.responsiveUi.isSmallViewport())
-	protected readonly allCardsClosed = signal(this.responsiveUi.isSmallViewport())
+	protected readonly showExpandAllCardsButton = signal(!this.responsiveUi.isSmallViewport())
+	protected readonly showCollapseAllCardsButton = signal(this.responsiveUi.isSmallViewport())
 	protected readonly instanceNumber = signal<number|undefined>(undefined)
 	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	readonly isSmallViewport$ = toObservable(this.responsiveUi.isSmallViewport).pipe(takeUntilDestroyed())
@@ -51,19 +55,30 @@ export class CardGroup {
 
 	constructor() {
 		this.instanceNumber.set(CardGroup.instanceCount++)
+		this.openGroupWhenCardHighlighted()
+		this.syncExpandCollapseButtonsWithCardStates()
+		this.syncGroupOpenStateWithViewportSize()
+	}
+
+	/** When a card in this group is being highlighted, expand the card group. */
+	private openGroupWhenCardHighlighted(): void {
 		effect(() => {
 			if (this.isCardInGroupHighlighted()) this.open.set(true)
 		})
+	}
 
-		// track cards collapsed/expanded states when cards added/removed or when card collapsed/expanded
+	/** Track cards' collapsed/expanded states when cards added/removed or when card collapsed/expanded */
+	private syncExpandCollapseButtonsWithCardStates(): void {
 		effect(() => {
 			this.cards().forEach(card => {
 				card.open() // causes effect to rerun when any card's open state changes
 				this.setCardsCollapsedState()
 			})
 		})
+	}
 
-		// start group closed on small viewports and open on large viewports
+	/** Expand group on large viewports and collapse group on small viewports. */
+	private syncGroupOpenStateWithViewportSize(): void {
 		// observable used instead of effect to prevent other signal updates from interfering
 		this.isSmallViewport$.subscribe(isSmallViewport => {
 			this.open.set(!isSmallViewport)
@@ -72,6 +87,7 @@ export class CardGroup {
 		})
 	}
 
+	/** Toggles the collapse/expand state of the group and scrolls the group into view on small viewports when expanded. */
 	protected toggleGroupCollapseExpand(): void {
 		this.open.set(!this.open())
 		this.headerClick.emit()
@@ -82,14 +98,16 @@ export class CardGroup {
 		}, 500) // wait for the CSS transition to complete
 	}
 
+	/** Expands or collapses all cards in the group. */
 	protected expandOrCollapseAllCards(cardsOpen: boolean): void {
 		this.cards().forEach(card => card.open.set(cardsOpen))
 		this.setCardsCollapsedState()
 	}
 
+	/** Updates the state of the "Expand All" and "Collapse All" buttons based on the current state of the cards in the group. */
 	private setCardsCollapsedState(): void {
-		this.allCardsOpen.set(this.cards().every(card => card.open()))
-		this.allCardsClosed.set(this.cards().every(card => !card.open()))
+		this.showExpandAllCardsButton.set(!this.cards().every(card => card.open()))
+		this.showCollapseAllCardsButton.set(!this.cards().every(card => !card.open()))
 	}
 
 }

@@ -17,7 +17,7 @@ import { Scroll } from '../../services/scroll'
 	host: {
 		'[class.hidden]': 'hideHeaderBar() && !isDialog()',
 		'[class.dialog]': 'isDialog()',
-		'[class.two-rows]': 'showSecondRow() && isSmallViewport()',
+		'[class.two-rows]': 'showSupplementalRow() && isSmallViewport()',
 		'[attr.role]': 'isDialog() ? null : "banner"',
 		'[aria-label]': 'isDialog() ? null : "Page title, navigation, and actions"',
 	}
@@ -28,40 +28,42 @@ export class PageHeaderBar {
 
 	readonly title = input('', { alias: 'page-title' })
 	readonly isDialog = input(false, { alias: 'dialog', transform: booleanAttribute })
-	readonly showSecondRow = input(false, { alias: 'show-second-row', transform: booleanAttribute })
+	readonly showSupplementalRow = input(false, { alias: 'show-supplemental-row', transform: booleanAttribute })
 	readonly justifyContent = input('normal', { alias: 'justify-content' })
-	readonly secondRowTemplate = input<TemplateRef<void>|null>(null, { alias: 'second-row-template' })
+	readonly supplementalContentTemplate = input<TemplateRef<void>|null>(null, { alias: 'supplemental-content-template' })
 	readonly alwaysShow = input(false, { alias: 'always-show', transform: booleanAttribute })
 
-	private readonly firstRowViewContainerRef = contentChild('firstRow', { read: ViewContainerRef})
-	private readonly secondRowViewContainerRef = viewChild('secondRow', { read: ViewContainerRef})
-	private firstRowSearchViewRef: EmbeddedViewRef<void>|null = null
-	private secondRowSearchViewRef: EmbeddedViewRef<void>|null = null
+	private readonly firstRowSupplementalContentContainerRef = contentChild('supplementalContentInFirstRow', { read: ViewContainerRef })
+	private readonly secondRowSupplementalContentContainerRef = viewChild('supplementalContentInSecondRow', { read: ViewContainerRef })
+	private firstRowSupplementalContentViewRef: EmbeddedViewRef<void>|null = null
+	private secondRowSupplementalContentViewRef: EmbeddedViewRef<void>|null = null
 
 	readonly hideHeaderBar = computed(() => !this.alwaysShow() && this.isSmallViewport() && this.scrollingDown())
 	readonly scrollingDown = toSignal(this.scroll.scrollDirection$.pipe(map(scrollDir => scrollDir === 'down')))
 	readonly isSmallViewport = this.responsiveUi.isSmallViewport
 
 	constructor() {
-		effect(() => this.setSearchView())
+		this.syncSupplementalContentPlacementWithViewportSize()
 	}
 
-	/** Sets the search view in the appropriate row based on the viewport size. */
-	private setSearchView(): void {
-		if (
-			!this.firstRowViewContainerRef() ||
-			!this.secondRowViewContainerRef() ||
-			!this.secondRowTemplate() ||
-			this.isSmallViewport() === undefined
-		) return
+	/** Keep supplemental content placed in the appropriate row for the current viewport size. */
+	private syncSupplementalContentPlacementWithViewportSize(): void {
+		effect(() => {
+			if (
+				!this.firstRowSupplementalContentContainerRef() ||
+				!this.secondRowSupplementalContentContainerRef() ||
+				!this.supplementalContentTemplate() ||
+				this.isSmallViewport() === undefined
+			) return
 
-		this.firstRowSearchViewRef?.destroy()
-		this.secondRowSearchViewRef?.destroy()
+			this.firstRowSupplementalContentViewRef?.destroy()
+			this.secondRowSupplementalContentViewRef?.destroy()
 
-		if (this.isSmallViewport()) {
-			this.secondRowSearchViewRef = this.secondRowViewContainerRef()?.createEmbeddedView(this.secondRowTemplate()!)!
-		} else {
-			this.firstRowSearchViewRef = this.firstRowViewContainerRef()?.createEmbeddedView(this.secondRowTemplate()!)!
-		}
+			if (this.isSmallViewport()) {
+				this.secondRowSupplementalContentViewRef = this.secondRowSupplementalContentContainerRef()?.createEmbeddedView(this.supplementalContentTemplate()!)!
+			} else {
+				this.firstRowSupplementalContentViewRef = this.firstRowSupplementalContentContainerRef()?.createEmbeddedView(this.supplementalContentTemplate()!)!
+			}
+		})
 	}
 }

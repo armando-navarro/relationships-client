@@ -1,6 +1,6 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core'
+import { Component, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
-import { Subject, takeUntil, throttleTime } from 'rxjs'
+import { throttleTime } from 'rxjs'
 
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
@@ -27,7 +27,7 @@ export interface TopicDialogData {
 	templateUrl: './topic-dialog.html',
 	styleUrl: './topic-dialog.scss'
 })
-export class TopicDialog implements OnInit, OnDestroy {
+export class TopicDialog implements OnInit {
 	readonly data = inject<TopicDialogData>(MAT_DIALOG_DATA)
 	private readonly dialogRef = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapper)
@@ -38,7 +38,6 @@ export class TopicDialog implements OnInit, OnDestroy {
 	protected form = this.interactionMapper.mapTopicModelToForm()
 	protected readonly pageHeading = signal('')
 	protected readonly wasTopicModified = signal(false)
-	private readonly destroy$ = new Subject<void>()
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
 
@@ -53,12 +52,11 @@ export class TopicDialog implements OnInit, OnDestroy {
 		}
 
 		// keep track of unsaved edits so the correct buttons are displayed
-		this.trackFormSavedState()
+		this.markTopicModifiedWhenFormChanges()
 	}
 
-	private trackFormSavedState(): void {
+	private markTopicModifiedWhenFormChanges(): void {
 		this.form.valueChanges.pipe(
-			takeUntil(this.destroy$),
 			throttleTime(500),
 		).subscribe(() => this.wasTopicModified.set(true))
 	}
@@ -77,10 +75,6 @@ export class TopicDialog implements OnInit, OnDestroy {
 		else this.data.interactionForm.controls.topics.push(this.form)
 		this.form = this.interactionMapper.mapTopicModelToForm()
 		this.dialogRef.close()
-	}
-
-	ngOnDestroy(): void {
-		this.destroy$.next()
 	}
 
 }

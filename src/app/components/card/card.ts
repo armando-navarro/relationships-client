@@ -59,14 +59,22 @@ export class Card implements OnInit {
 	})
 
 	constructor() {
-		// highlight card
+		this.scrollToAndClearHighlightWhenHighlighted()
+		this.syncOpenStateWithCollapsibleInput()
+	}
+
+	/** When highlighted, scroll to this card and clear the highlight after the animation completes. */
+	private scrollToAndClearHighlightWhenHighlighted(): void {
 		effect(() => {
 			if (this.scrollToAndHighlight()) {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
 				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
 			}
 		})
-		// close card if collapsible, open if not
+	}
+
+	/** Keep the card's open state in sync with the collapsible input. */
+	private syncOpenStateWithCollapsibleInput(): void {
 		effect(() => { this.open.set(!this.collapsible()) })
 	}
 

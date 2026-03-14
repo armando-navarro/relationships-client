@@ -1,5 +1,5 @@
 <ng-content />
-@if (isOverflowing()) {
+@if (showScrollArrow()) {
 	<svg #arrow [class.slide-down]="animateArrow()" [style]="animationCompleted() ? {display: 'none'} : {}" width="50" height="50" viewBox="0 0 100 100" role="img">
 		<defs>
 			<linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">

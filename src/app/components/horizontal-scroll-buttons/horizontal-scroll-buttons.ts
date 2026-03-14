@@ -1,4 +1,4 @@
-import { AfterViewInit, booleanAttribute, Component, inject, input, model, OnDestroy, Renderer2, signal, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
+import { AfterViewInit, booleanAttribute, Component, computed, inject, input, model, OnDestroy, Renderer2, signal, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
 import { Subject, takeUntil } from 'rxjs'
 
 import { MatIconModule } from '@angular/material/icon'
@@ -38,20 +38,12 @@ export class HorizontalScrollButtons implements AfterViewInit, OnDestroy {
 		// default to parent element if no scrollable or button container element provided
 		if (!this.scrollableElement()) this.scrollableElement.set(hostElement.parentElement!)
 
-		// unwrap template from host element by moving its content to the parent element and removing the host element
-		this.insertButtonsIntoContainer()
-		hostElement.remove()
-
-		// setup the properties that control scroll button visibility
-		this.scroll.getHorizontalScrollability(this.scrollableElement()!).pipe(
-			takeUntil(this.destroy$),
-		).subscribe(({ canScrollLeft, canScrollRight }) => {
-			this.canScrollLeft.set(canScrollLeft && !this.hideButtons())
-			this.canScrollRight.set(canScrollRight && !this.hideButtons())
-		})
+		this.insertButtonsIntoContainer(hostElement)
+		this.syncScrollButtonVisibilityWithHorizontalScrollState()
 	}
 
-	private insertButtonsIntoContainer(): void {
+	/** Unwraps button templates from host element by moving their content to the parent element and removing the host element. */
+	private insertButtonsIntoContainer(hostElement: HTMLElement): void {
 		const container = this.scrollableElement()!
 		const leftButtonView = this.viewContainerRef.createEmbeddedView(this.leftButtonTemplate())
 		const rightButtonView = this.viewContainerRef.createEmbeddedView(this.rightButtonTemplate())
@@ -59,6 +51,19 @@ export class HorizontalScrollButtons implements AfterViewInit, OnDestroy {
 		// insert left button as first child and right button as last child
 		leftButtonView.rootNodes.forEach(node => this.renderer.insertBefore(container, node, container.firstChild))
 		rightButtonView.rootNodes.forEach(node => this.renderer.appendChild(container, node))
+
+		// remove the host element now that its content has been moved to the other container
+		hostElement.remove()
+	}
+
+	/** Keep scroll button visibility in sync with the scrollable element's horizontal scroll state. */
+	private syncScrollButtonVisibilityWithHorizontalScrollState(): void {
+		this.scroll.getHorizontalScrollability(this.scrollableElement()!).pipe(
+			takeUntil(this.destroy$),
+		).subscribe(({ canScrollLeft, canScrollRight }) => {
+			this.canScrollLeft.set(canScrollLeft && !this.hideButtons())
+			this.canScrollRight.set(canScrollRight && !this.hideButtons())
+		})
 	}
 
 	/** Scrolls the scrollable element left or right by the amount specified in `this.scrollAmountPx`. */
