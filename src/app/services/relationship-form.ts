@@ -34,6 +34,7 @@ export class RelationshipForm implements OnDestroy {
 	}
 	private formChangesSub?: Subscription
 
+	/** Initialize and begin tracking a relationship form for the add or edit flow. */
 	initForm(relationship?: Relationship): RelationshipFormGroup {
 		this.isExistingRelationship = !!relationship
 		this.relationshipForm = this.relationshipMapper.mapModelToForm(relationship)
@@ -156,6 +157,7 @@ export class RelationshipForm implements OnDestroy {
 		)
 	}
 
+	/** Return the latest in-memory relationship model reflected by the form and interaction flows. */
 	getRelationship(): Relationship {
 		return this.modifiedRelationship
 	}

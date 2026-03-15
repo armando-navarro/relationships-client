@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser'
 export class NewlinesToBrPipe implements PipeTransform {
 	private readonly sanitizer = inject(DomSanitizer)
 
+	/** Convert newline characters in sanitized text into `<br />` tags for HTML display. */
 	transform(value: string|null|undefined, ...args: unknown[]): string {
 		value = value ?? ''
 		const sanitzedNotes = this.sanitizer.sanitize(SecurityContext.HTML, value) ?? ''

@@ -82,11 +82,13 @@ export class Card implements OnInit {
 		this.open.set(!this.collapsible())
 	}
 
+	/** Populate collapsed card text for a relationship card. */
 	private initRelationshipCard(relationship: Relationship): void {
 		this.collapsedLeftText.set(relationship.fullName)
 		this.collapsedRightText.set(`${(this.simpleDate.transform(relationship.lastInteractionDate))}`)
 	}
 
+	/** Populate collapsed card text and icon for an interaction card. */
 	private initInteractionCard(interaction: Interaction): void {
 		const date = new Date(interaction.date!).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 		if (this.alwaysShowInteractionOwner()) {
@@ -100,28 +102,33 @@ export class Card implements OnInit {
 		this.collapsedRightIcon.set(interaction.typeIcon || '')
 	}
 
+	/** Populate collapsed card text for a topic card. */
 	private initTopicCard(topic: Topic): void {
 		this.collapsedLeftText.set(topic.name)
 		this.collapsedRightText.set(this.newlinesToBr.transform(topic.notes))
 	}
 
+	/** Emit the relationship-focused action for the model rendered by this card. */
 	protected editRelationship() {
 		if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 		else this.relationshipNameClick.emit(this.interaction()!)
 	}
 
+	/** Emit the edit action for the model rendered by this card. */
 	protected edit(): void {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
 		else if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 		else this.editTopic.emit()
 	}
 
+	/** Emit the delete action for the model rendered by this card. */
 	protected delete(): void {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
 		else this.deleteTopic.emit()
 	}
 
+	/** Toggle the card open state and scroll it back into view after the animation. */
 	protected toggleCollapseExpand(): void {
 		this.open.set(!this.open())
 		setTimeout(() => {

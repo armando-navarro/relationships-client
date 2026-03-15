@@ -22,6 +22,7 @@ export class RelationshipMapper {
 	private readonly interactionMapper = inject(InteractionMapper)
 	private readonly relationshipUtils = inject(RelationshipUtilities)
 
+	/** Map one or more relationship API responses into `Relationship` models. */
 	mapResponseToModel(response: RelationshipResponse): Relationship
 	mapResponseToModel(responses: RelationshipResponse[]): Relationship[]
 	mapResponseToModel(responseOrArray: RelationshipResponse|RelationshipResponse[]): Relationship|Relationship[] {
@@ -31,6 +32,7 @@ export class RelationshipMapper {
 		return this.mapSingleResponseToModel(responseOrArray)
 	}
 
+	/** Map a single relationship API response into a `Relationship` model. */
 	private mapSingleResponseToModel(response: RelationshipResponse): Relationship {
 		const partialRelationship = this.mapPartialResponseToModel(response)
 		return {
@@ -46,6 +48,7 @@ export class RelationshipMapper {
 		}
 	}
 
+	/** Map derived relationship properties returned by the API into partial `Relationship` model values. */
 	mapPartialResponseToModel(response: RelationshipDerivedPropertiesResponse): RelationshipDerivedProperties {
 		let lastInteractionDate: Date|null = null
 
@@ -61,7 +64,7 @@ export class RelationshipMapper {
 		}
 	}
 
-	/** Maps a relationships grouping API response to a RelationshipGroup array ordered by attention needed status. */
+	/** Maps a relationships grouping API response to a `RelationshipGroup` array ordered by attention needed status. */
 	mapGroupedByStatusResponseToModel(response: RelationshipsGroupedByStatusResponse): RelationshipGroup[] {
 		const statusToGroupMap = new Map<AttentionNeededStatus, RelationshipGroup>()
 
@@ -76,8 +79,8 @@ export class RelationshipMapper {
 		return this.relationshipUtils.orderRelationshipGroups(statusToGroupMap)
 	}
 
-	/** Takes a Relationship model and maps it to a RelationshipFormGroup,
-	 * or creates an empty RelationshipFormGroup if no relationship is provided. */
+	/** Takes a `Relationship` model and maps it to a `RelationshipFormGroup`,
+	 * or creates an empty `RelationshipFormGroup` if no relationship is provided. */
 	mapModelToForm(relationship?: Relationship) {
 		const form = this.fb.group({
 			_id: [relationship?._id ?? null],
@@ -97,6 +100,7 @@ export class RelationshipMapper {
 		return form
 	}
 
+	/** Map a relationship form group into a full `Relationship` model. */
 	mapFormToModel(form: RelationshipFormGroup): Relationship {
 		const fullName = `${form.value.firstName!} ${form.value.lastName ?? ''}`
 		return {
@@ -112,6 +116,7 @@ export class RelationshipMapper {
 		}
 	}
 
+	/** Map a relationship form group into the payload expected by the API. */
 	mapFormToPayload(form: RelationshipFormGroup): RelationshipPayload {
 		return {
 			_id: form.value._id ?? null,

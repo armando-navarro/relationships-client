@@ -10,6 +10,7 @@ import { InteractionTopicFormGroup, Topic } from '../interfaces/interaction-inte
 export class TopicFormToModelPipe implements PipeTransform {
 	private readonly interactionMapper = inject(InteractionMapper)
 
+	/** Map an interaction topic form group into a topic model. */
 	transform(value: InteractionTopicFormGroup, ...args: unknown[]): Topic {
 		return this.interactionMapper.mapTopicFormToModel(value)
 	}

@@ -81,6 +81,7 @@ export class InteractionsList implements OnInit {
 		this.loadInteractions()
 	}
 
+	/** Fetch interactions from the API and update the loading state. */
 	private loadInteractions(): void {
 		this.isLoadingInteractions.set(true)
 		this.api.getInteractions().subscribe({
@@ -92,10 +93,12 @@ export class InteractionsList implements OnInit {
 		})
 	}
 
+	/** Expand or collapse every interaction group. */
 	protected collapseOrExpandAllGroups(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
 	}
 
+	/** Open the add-interaction flow and highlight the newly saved interaction. */
 	protected async addInteraction(): Promise<void> {
 		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.addInteraction(this.interactions())
 		if (wasCancelled) return
@@ -104,6 +107,7 @@ export class InteractionsList implements OnInit {
 		this.interactions.set(updatedInteractions)
 	}
 
+	/** Open the edit-interaction flow and highlight the saved interaction. */
 	protected async editInteraction(editTarget: Interaction): Promise<void> {
 		const { wasCancelled, interaction, updatedInteractions } = await this.interactionsService.editInteraction(editTarget, this.interactions())
 		if (wasCancelled) return
@@ -112,6 +116,7 @@ export class InteractionsList implements OnInit {
 		this.interactions.set(updatedInteractions)
 	}
 
+	/** Delete an interaction from the current list after confirmation. */
 	protected deleteInteraction(deleteTarget: Interaction): void {
 		this.interactionsService.deleteInteraction(deleteTarget).subscribe(targetDeleted => {
 			if (!targetDeleted) return
@@ -124,6 +129,7 @@ export class InteractionsList implements OnInit {
 		})
 	}
 
+	/** Open the relationship editor for an interaction owner and refresh affected interaction data as needed. */
 	protected editRelationship(interaction: Interaction): void {
 		this.relationshipsService.editRelationship(interaction.idOfRelationship!)
 			.subscribe(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {

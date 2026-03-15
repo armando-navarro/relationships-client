@@ -54,15 +54,18 @@ export class Row {
 		})
 	}
 
+	/** Emit the relationship-name action for the interaction shown in this row. */
 	protected editRelationship() {
 		this.relationshipNameClick.emit(this.interaction()!)
 	}
 
+	/** Emit the edit action for the model rendered by this row. */
 	protected edit() {
 		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
 		else if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
 	}
 
+	/** Emit the delete action for the model rendered by this row. */
 	protected delete() {
 		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
 		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)

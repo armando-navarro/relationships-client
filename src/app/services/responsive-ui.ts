@@ -30,10 +30,12 @@ export class ResponsiveUi {
 		return mediaQuerySignal
 	}
 
+	/** Read the small-viewport page header height from the current CSS custom properties. */
 	private get smallHeaderBarHeight(): number {
 		return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-small-header-bar-height'), 10)
 	}
 
+	/** Read the large-viewport page header height from the current CSS custom properties. */
 	private get largeHeaderBarHeight(): number {
 		return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--page-large-header-bar-height'), 10)
 	}

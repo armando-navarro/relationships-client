@@ -95,11 +95,13 @@ export class RelationshipsList implements OnInit {
 		})
 	}
 
+	/** Toggle the search bar and clear the current query when it is hidden. */
 	protected showHideSearchBar(showSearch = !this.showSearchBar()): void {
 		this.showSearchBar.set(showSearch)
 		if (!showSearch) this.searchValue.set('')
 	}
 
+	/** Filter relationship groups and autocomplete suggestions by the current search value. */
 	private applySearchFilter(searchValue: string): void {
 		const lowerSearchValue = searchValue.toLowerCase().trim()
 		let filteredNames = this.relationshipNames()
@@ -120,10 +122,12 @@ export class RelationshipsList implements OnInit {
 		this.filteredGroupedRelationships.set(filteredGroups)
 	}
 
+	/** Expand or collapse every relationship group. */
 	protected collapseOrExpandAllGroups(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
 	}
 
+	/** Open the add-relationship flow and highlight the newly inserted relationship. */
 	protected addRelationship(): void {
 		this.relationshipsService.addRelationship(this.groupedRelationships())
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
@@ -133,6 +137,7 @@ export class RelationshipsList implements OnInit {
 			})
 	}
 
+	/** Open the edit-relationship flow and update the filtered view with the saved result. */
 	protected editRelationship(editTarget: Relationship): void {
 		this.relationshipsService.editRelationship(editTarget, this.groupedRelationships())
 			.subscribe(({ wasCancelled, groups, targetGroupStatus, targetRelationshipIndex }) => {
@@ -143,6 +148,7 @@ export class RelationshipsList implements OnInit {
 			})
 	}
 
+	/** Delete a relationship after confirmation. */
 	protected deleteRelationship(deleteTarget: Relationship): void {
 		this.relationshipsService.deleteRelationship(deleteTarget).subscribe(targetDeleted => {
 			if (targetDeleted) {

@@ -35,6 +35,7 @@ export class InteractionMapper {
 		[InteractionType.Other, 'help']
 	])
 
+	/** Map one or more interaction API responses into `Interaction` models. */
 	mapResponseToModel(response: InteractionResponse): Interaction
 	mapResponseToModel(responses: InteractionResponse[]): Interaction[]
 	mapResponseToModel(responseOrArray: InteractionResponse|InteractionResponse[]): Interaction|Interaction[] {
@@ -44,6 +45,7 @@ export class InteractionMapper {
 		return this.mapSingleResponseToModel(responseOrArray)
 	}
 
+	/** Map a single interaction API response into an `Interaction` model. */
 	private mapSingleResponseToModel(response: InteractionResponse): Interaction {
 		return {
 			...response,
@@ -53,6 +55,7 @@ export class InteractionMapper {
 		}
 	}
 
+	/** Build an interaction form from an `Interaction` model or sensible defaults for a new interaction. */
 	mapModelToForm(interaction?: Interaction, relationshipId?: string, personName?: string) {
 		const form = this.fb.group({
 			_id: [interaction?._id ?? null],
@@ -77,6 +80,7 @@ export class InteractionMapper {
 		return form
 	}
 
+	/** Build a topic form group from an existing `Topic` model or empty defaults. */
 	mapTopicModelToForm(topic?: Topic) {
 		return this.fb.group({
 			name: [topic?.name ?? null, AppValidators.topicName],
@@ -84,6 +88,7 @@ export class InteractionMapper {
 		})
 	}
 
+	/** Map a topic form group into a trimmed `Topic` model. */
 	mapTopicFormToModel(topicForm: InteractionTopicFormGroup): Topic {
 		return {
 			name: (topicForm.value.name ?? '').trim(),
@@ -91,6 +96,7 @@ export class InteractionMapper {
 		}
 	}
 
+	/** Map one or more interaction form values into `Interaction` models. */
 	mapFormValueToModel(formValue: InteractionFormGroupValue): Interaction
 	mapFormValueToModel(formValues: InteractionFormGroupValue[]): Interaction[]
 	mapFormValueToModel(formValueOrArray: InteractionFormGroupValue|InteractionFormGroupValue[]): Interaction|Interaction[] {
@@ -100,6 +106,7 @@ export class InteractionMapper {
 		return this.mapSingleFormValueToModel(formValueOrArray)
 	}
 
+	/** Map a single interaction form value into an `Interaction` model. */
 	private mapSingleFormValueToModel(formValue: InteractionFormGroupValue): Interaction {
 		const interaction: Interaction = {
 			_id: formValue._id ?? null,
@@ -116,6 +123,7 @@ export class InteractionMapper {
 		return interaction
 	}
 
+	/** Map an interaction form group into an `Interaction` model, filling relationship metadata when needed. */
 	mapFormToModel(form: InteractionFormGroup, relationshipId?: string, personName?: string): Interaction {
 		const interaction: Interaction = {
 			_id: form.value._id ?? null,
@@ -136,6 +144,7 @@ export class InteractionMapper {
 		return interaction
 	}
 
+	/** Map an interaction form into the payload expected by the API. */
 	mapFormToPayload(form: InteractionFormGroup): InteractionPayload {
 		return {
 			_id: form.value._id ?? null,
@@ -148,6 +157,7 @@ export class InteractionMapper {
 		}
 	}
 
+	/** Maps an interaction form to an API payload and the relationship ID used in the endpoint path. */
 	mapFormToPayloadWithRelationshipId(form: InteractionFormGroup): InteractionPayloadWithRelationshipId {
 		const payload = this.mapFormToPayload(form)
 		return { payload, relationshipId: form.value.idOfRelationship ?? null }

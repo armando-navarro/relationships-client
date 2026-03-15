@@ -7,6 +7,7 @@ import { DateTime } from 'luxon'
 })
 export class SimpleDatePipe implements PipeTransform {
 
+	/** Format dates with relative text for recent values and absolute text for older ones. */
 	transform(value: Date|null|undefined, ...args: unknown[]): string {
 		if (!value) return 'N/A'
 

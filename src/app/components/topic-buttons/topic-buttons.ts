@@ -32,6 +32,7 @@ export class TopicButtons {
 	protected readonly selectedTopic = signal<Topic|null>(null)
 	private bottomSheetRef?: MatBottomSheetRef<HTMLElement>
 
+	/** Show the selected topic notes in a dialog or bottom sheet for large or small viewport sizes, respectively. */
 	protected openTopicNotes(topic: Topic): void {
 		this.selectedTopic.set(topic)
 		if (this.responsiveUi.isSmallViewport()) {
@@ -41,6 +42,7 @@ export class TopicButtons {
 		}
 	}
 
+	/** Close the topic notes bottom sheet if one is open. */
 	protected closeTopicNotes(): void {
 		this.bottomSheetRef?.dismiss()
 	}

@@ -81,6 +81,7 @@ export class InteractionDialog implements OnInit {
 		this.markInteractionModifiedWhenFormChanges()
 	}
 
+	/** Build the form for either a new interaction or the interaction being edited. */
 	private initForm(): void {
 		if (this.data.isAddingInteraction) {
 			this.form = this.interactionMapper.mapModelToForm(undefined, this.data.relationshipId ?? undefined, this.data.relationshipName ?? undefined)
@@ -97,6 +98,7 @@ export class InteractionDialog implements OnInit {
 		)
 	}
 
+	/** Load relationships for the relationship picker and sort them alphabetically. */
 	private loadRelationships(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
@@ -125,18 +127,21 @@ export class InteractionDialog implements OnInit {
 		})
 	}
 
+	/** Open the add-topic flow for the current interaction form. */
 	protected addTopic(): void {
 		const data: TopicDialogData = { interactionForm: this.form }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		this.dialog.open(TopicDialog, config)
 	}
 
+	/** Open the edit-topic flow for the selected topic index. */
 	protected editTopic(index: number): void {
 		const data: TopicDialogData = { interactionForm: this.form, editTopicIndex: index }
 		const config = this.materialConfig.getResponsiveDialogConfig(data)
 		this.dialog.open(TopicDialog, config)
 	}
 
+	/** Confirm topic deletion and allow the user to undo it from the snackbar. */
 	protected deleteTopic(topicName: string, index: number): void {
 		const data: ConfirmationDialogData = {
 			dialogText: `Are you sure you want to delete the topic: ${topicName}?`
@@ -152,6 +157,7 @@ export class InteractionDialog implements OnInit {
 		})
 	}
 
+	/** Validate the form, persist the interaction, and close the add/edit flow with the saved result. */
 	protected saveInteraction(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
@@ -171,6 +177,7 @@ export class InteractionDialog implements OnInit {
 		})
 	}
 
+	/** Persist a new interaction and return the saved form, model, and derived relationship properties. */
 	private saveNewInteraction(payload: InteractionPayload, relationshipId: string): Observable<InteractionDialogSaveResult> {
 		return this.api.addInteraction(payload, relationshipId!).pipe(
 			map(({ insertedId, updatedRelationshipProperties }) => {
@@ -184,6 +191,7 @@ export class InteractionDialog implements OnInit {
 		)
 	}
 
+	/** Persist edits to an existing interaction and return the form, model, and derived relationship properties. */
 	private saveEditedInteraction(payload: InteractionPayload, relationshipId: string): Observable<InteractionDialogSaveResult> {
 		return this.api.updateInteraction(payload, relationshipId!).pipe(
 			map(updatedRelationshipProperties => ({

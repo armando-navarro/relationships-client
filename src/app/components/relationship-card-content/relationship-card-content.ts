@@ -17,6 +17,7 @@ export class RelationshipCardContent implements AfterViewInit {
 	private readonly viewContainerRef = inject(ViewContainerRef)
 
 	ngAfterViewInit(): void {
+		// render the content template into the parent container and remove this wrapper element
 		this.viewContainerRef.createEmbeddedView(this.template()!)
 		this.viewContainerRef.element.nativeElement.remove()
 	}

@@ -19,6 +19,7 @@ export class Welcome {
 
 	protected isTableOfContentsOpen = signal(false)
 
+	/** Close the table of contents when a section link is clicked. */
 	protected closeTableOfContents({ target }: Event): void {
 		if (target instanceof HTMLUListElement || target instanceof HTMLLIElement) return
 		this.isTableOfContentsOpen.set(false)

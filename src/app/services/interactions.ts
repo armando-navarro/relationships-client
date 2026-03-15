@@ -91,6 +91,7 @@ export class Interactions {
 		return { wasCancelled, interaction: updatedInteraction, updatedInteractions }
 	}
 
+	/** Open the interaction dialog after persisting any unsaved relationship changes required by the flow. */
 	private async openInteractionDialog(customDialogConfig: Partial<InteractionDialogData>, formService?: RelationshipForm): Promise<InteractionDialogResult> {
 		// save relationship changes before opening the interaction dialog
 		if (formService?.wasRelationshipModified) await lastValueFrom(formService.saveRelationship())
@@ -200,12 +201,14 @@ export class Interactions {
 		return relativeCalendarText.replace(/\b\w/g, char => char.toUpperCase())
 	}
 
+	/** Compare interactions so newer dates sort before older ones. */
 	sortInteractionsDesc(a: Interaction, b: Interaction): number {
 		if (a.date!.valueOf() > b.date!.valueOf()) return -1
 		if (a.date!.valueOf() < b.date!.valueOf()) return 1
 		else return 0
 	}
 
+	/** Compare interactions so older dates sort before newer ones. */
 	sortInteractionsAsc(a: Interaction, b: Interaction): number {
 		if (a.date!.valueOf() > b.date!.valueOf()) return 1
 		if (a.date!.valueOf() < b.date!.valueOf()) return -1

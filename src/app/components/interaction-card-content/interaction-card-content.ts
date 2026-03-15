@@ -19,6 +19,7 @@ export class InteractionCardContent implements AfterViewInit {
 	private readonly contentTemplate = viewChild<TemplateRef<HTMLElement>>('content')
 
 	ngAfterViewInit(): void {
+		// render the content template into the parent container and remove this wrapper element
 		this.viewContainerRef.createEmbeddedView(this.contentTemplate()!)
 		this.viewContainerRef.element.nativeElement.remove()
 	}

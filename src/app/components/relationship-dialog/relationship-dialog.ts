@@ -70,6 +70,7 @@ export class RelationshipDialog implements OnInit {
 		this.syncInteractionModelsWithFormValues()
 	}
 
+	/** Build the form for either a new relationship or the relationship being edited. */
 	private initForm(): void {
 		if (this.data.isAddingRelationship) {
 			this.form = this.formService.initForm()
@@ -106,6 +107,7 @@ export class RelationshipDialog implements OnInit {
 		})
 	}
 
+	/** Open the add-interaction flow and merge the saved result back into the relationship form. */
 	protected async addInteraction(): Promise<void> {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
@@ -118,6 +120,7 @@ export class RelationshipDialog implements OnInit {
 		this.formService.processAddInteractionDialogResult({ form, interaction, updatedRelationshipProperties })
 	}
 
+	/** Open the edit-interaction flow and merge the saved result back into the relationship form. */
 	protected async editInteraction(editTarget: Interaction): Promise<void> {
 		const { wasCancelled, form, interaction, updatedRelationshipProperties } = await this.interactionsService.editInteraction(editTarget, this.formService)
 		if (wasCancelled) return
@@ -126,10 +129,12 @@ export class RelationshipDialog implements OnInit {
 		this.formService.processEditInteractionResult({ form, interaction, updatedRelationshipProperties })
 	}
 
+	/** Delete an interaction and let the form service reconcile the relationship state. */
 	protected deleteInteraction(deleteTarget: Interaction): void {
 		this.interactionsService.deleteInteraction(deleteTarget, this.formService).subscribe()
 	}
 
+	/** Validate and persist the relationship, then close the add/edit flow with the saved result. */
 	protected saveRelationship(): void {
 		if (this.form.invalid) {
 			this.snackBar.open(this.REQUIRED_ERROR, undefined)
@@ -141,6 +146,7 @@ export class RelationshipDialog implements OnInit {
 		})
 	}
 
+	/** Close the dialog with the latest relationship model and modification flags. */
 	protected closeDialog(
 		wasNameModified = this.formService.wasNameModified,
 		wereInteractionsModified = this.formService.wereInteractionsModified

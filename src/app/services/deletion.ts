@@ -16,6 +16,7 @@ export class Deletion {
 	private readonly materialConfig = inject(MaterialConfig)
 	private readonly snackBar = inject(MatSnackBar)
 
+	/** Confirm a delete action, run it if approved, and normalize cancellation and error handling. */
 	deleteWithConfirmation(delete$: Observable<DerivedProps>, deleteTarget: string): Observable<DeletionResult> {
 		const dialogText = `Are you sure you want to delete ${deleteTarget}?<br />This action cannot be undone.`
 		const config = this.materialConfig.getResponsiveDialogConfig({ dialogText })

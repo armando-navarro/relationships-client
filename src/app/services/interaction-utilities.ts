@@ -31,6 +31,7 @@ export class InteractionUtilities {
 		]
 	}
 
+	/** Insert an interaction form into a form array sorted in descending date order. */
 	private insertInteractionFormInOrder(sortedInteractions: FormArray, newInteraction: InteractionFormGroup): void {
 		let low = 0
 		let high = sortedInteractions.length
