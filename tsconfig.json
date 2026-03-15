@@ -17,7 +17,6 @@
 	},
 	"angularCompilerOptions": {
 		"enableI18nLegacyMessageIdFormat": false,
-		"typeCheckHostBindings": true,
 		"strictInjectionParameters": true,
 		"strictInputAccessModifiers": true,
 		"strictStandalone": true,
