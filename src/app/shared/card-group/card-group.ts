@@ -15,7 +15,7 @@ import { Scroll } from '../scroll'
 	templateUrl: './card-group.html',
 	styleUrl: './card-group.scss',
 	host: {
-		'[attr.aria-labelledby]': '"card-group-title-" + instanceNumber()',
+		'[aria-labelledby]': '"card-group-title-" + instanceNumber()',
 		role: 'region'
 	}
 })
