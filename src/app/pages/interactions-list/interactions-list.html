@@ -67,7 +67,7 @@
 			[is-card-in-group-highlighted]="group.timeAgoText === highlightedCard().groupKey"
 		>
 			@for (interaction of group.interactions; track interaction._id; let index = $index) {
-				@if (isSmallViewport()) {
+				@if (responsiveUi.isSmallViewport()) {
 					<app-card
 						[interaction]="interaction"
 						[collapsible]="isSmallViewport()"

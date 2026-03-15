@@ -43,7 +43,7 @@ export class RelationshipsList implements OnInit {
 	private readonly api = inject(Api)
 	private readonly relationshipsService = inject(Relationships)
 	private readonly relationshipUtils = inject(RelationshipUtilities)
-	private readonly responsiveUi = inject(ResponsiveUi)
+	protected readonly responsiveUi = inject(ResponsiveUi)
 	private readonly snackBar = inject(MatSnackBar)
 
 	private readonly cardGroups = viewChildren(CardGroup)
@@ -71,7 +71,6 @@ export class RelationshipsList implements OnInit {
 	protected readonly showExpandAllGroupsButton = signal(false)
 	protected readonly showCollapseAllGroupsButton = signal(false)
 	protected readonly isLoadingRelationships = signal(true)
-	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	protected readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
 
 	constructor() {

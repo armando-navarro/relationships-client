@@ -56,7 +56,7 @@
 				[is-card-in-group-highlighted]="group.status === highlightedCard().groupStatus"
 			>
 				@for (relationship of group.relationships; track relationship._id; let index = $index) {
-					@if (isSmallViewport()) {
+					@if (responsiveUi.isSmallViewport()) {
 						<app-card
 							[relationship]="relationship"
 							(edit-relationship)="editRelationship($event)"

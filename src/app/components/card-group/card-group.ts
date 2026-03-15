@@ -1,5 +1,5 @@
 import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, signal } from '@angular/core'
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -22,7 +22,7 @@ import { Scroll } from '../../services/scroll'
 export class CardGroup {
 	// services/dependencies
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
-	private readonly responsiveUi = inject(ResponsiveUi)
+	protected readonly responsiveUi = inject(ResponsiveUi)
 	private readonly scroll = inject(Scroll)
 
 	// inputs/outputs
@@ -40,11 +40,9 @@ export class CardGroup {
 	protected readonly showExpandAllCardsButton = signal(!this.responsiveUi.isSmallViewport())
 	protected readonly showCollapseAllCardsButton = signal(this.responsiveUi.isSmallViewport())
 	protected readonly instanceNumber = signal<number|undefined>(undefined)
-	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
-	readonly isSmallViewport$ = toObservable(this.responsiveUi.isSmallViewport).pipe(takeUntilDestroyed())
 	protected readonly maxGroupHeight = computed(() => {
 		// take max card/row height into account so group expands tall enough
-		if (this.open()) return this.isSmallViewport() ? this.cardCount() * 285 : this.cardCount() * 92 + 59
+		if (this.open()) return this.responsiveUi.isSmallViewport() ? this.cardCount() * 285 : this.cardCount() * 92 + 59
 		else return 0
 	})
 	protected readonly scrollingUp = toSignal(this.scroll.scrollDirection$.pipe(map(scrollDir => scrollDir === 'up')))
@@ -76,7 +74,7 @@ export class CardGroup {
 
 	/** Expand group on large viewports and collapse group on small viewports. */
 	private syncGroupOpenStateWithViewportSize(): void {
-		effect(() => this.open.set(!this.isSmallViewport()))
+		effect(() => this.open.set(!this.responsiveUi.isSmallViewport()))
 	}
 
 	/** Toggles the collapse/expand state of the group and scrolls the group into view on small viewports when expanded. */

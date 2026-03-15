@@ -15,9 +15,8 @@ import { ResponsiveUi } from '../../services/responsive-ui'
 	styleUrl: './welcome.scss'
 })
 export class Welcome {
-	private readonly responsiveUi = inject(ResponsiveUi)
+	protected readonly responsiveUi = inject(ResponsiveUi)
 
-	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	protected isTableOfContentsOpen = signal(false)
 
 	protected closeTableOfContents({ target }: Event): void {

@@ -1,4 +1,4 @@
-<app-page-header-bar [page-title]="isSmallViewport() ? 'Relationships' : 'Relationships App'" always-show>
+<app-page-header-bar [page-title]="responsiveUi.isSmallViewport() ? 'Relationships' : 'Relationships App'" always-show>
 	<a class="go-to-app" routerLink="/relationships" mat-button>Go to App</a>
 	 <button class="toc" (click)="isTableOfContentsOpen.set(!isTableOfContentsOpen())" mat-button>
 		Table of Contents

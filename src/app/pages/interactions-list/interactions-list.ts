@@ -36,7 +36,7 @@ export class InteractionsList implements OnInit {
 	private readonly api = inject(Api)
 	private readonly interactionsService = inject(Interactions)
 	private readonly relationshipsService = inject(Relationships)
-	private readonly responsiveUi = inject(ResponsiveUi)
+	protected readonly responsiveUi = inject(ResponsiveUi)
 	private readonly snackBar = inject(MatSnackBar)
 
 	private readonly cardGroups = viewChildren(CardGroup)
@@ -51,7 +51,6 @@ export class InteractionsList implements OnInit {
 	protected readonly showExpandAllGroupsButton = signal(false)
 	protected readonly showCollapseAllGroupsButton = signal(false)
 	protected readonly isLoadingInteractions = signal(true)
-	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	protected readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
 	private highlightInteraction = {} as Interaction
 	protected readonly TOPIC_HINT_VERBIAGE = TOPIC_HINT_VERBIAGE

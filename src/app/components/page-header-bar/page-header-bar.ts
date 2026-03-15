@@ -17,13 +17,13 @@ import { Scroll } from '../../services/scroll'
 	host: {
 		'[class.hidden]': 'hideHeaderBar() && !isDialog()',
 		'[class.dialog]': 'isDialog()',
-		'[class.two-rows]': 'showSupplementalRow() && isSmallViewport()',
+		'[class.two-rows]': 'showSupplementalRow() && responsiveUi.isSmallViewport()',
 		'[attr.role]': 'isDialog() ? null : "banner"',
 		'[aria-label]': 'isDialog() ? null : "Page title, navigation, and actions"',
 	}
 })
 export class PageHeaderBar {
-	private readonly responsiveUi = inject(ResponsiveUi)
+	protected readonly responsiveUi = inject(ResponsiveUi)
 	private readonly scroll = inject(Scroll)
 
 	readonly title = input('', { alias: 'page-title' })
@@ -38,9 +38,8 @@ export class PageHeaderBar {
 	private firstRowSupplementalContentViewRef: EmbeddedViewRef<void>|null = null
 	private secondRowSupplementalContentViewRef: EmbeddedViewRef<void>|null = null
 
-	readonly hideHeaderBar = computed(() => !this.alwaysShow() && this.isSmallViewport() && this.scrollingDown())
+	readonly hideHeaderBar = computed(() => !this.alwaysShow() && this.responsiveUi.isSmallViewport() && this.scrollingDown())
 	readonly scrollingDown = toSignal(this.scroll.scrollDirection$.pipe(map(scrollDir => scrollDir === 'down')))
-	readonly isSmallViewport = this.responsiveUi.isSmallViewport
 
 	constructor() {
 		this.syncSupplementalContentPlacementWithViewportSize()
@@ -53,13 +52,13 @@ export class PageHeaderBar {
 				!this.firstRowSupplementalContentContainerRef() ||
 				!this.secondRowSupplementalContentContainerRef() ||
 				!this.supplementalContentTemplate() ||
-				this.isSmallViewport() === undefined
+				this.responsiveUi.isSmallViewport() === undefined
 			) return
 
 			this.firstRowSupplementalContentViewRef?.destroy()
 			this.secondRowSupplementalContentViewRef?.destroy()
 
-			if (this.isSmallViewport()) {
+			if (this.responsiveUi.isSmallViewport()) {
 				this.secondRowSupplementalContentViewRef = this.secondRowSupplementalContentContainerRef()?.createEmbeddedView(this.supplementalContentTemplate()!)!
 			} else {
 				this.firstRowSupplementalContentViewRef = this.firstRowSupplementalContentContainerRef()?.createEmbeddedView(this.supplementalContentTemplate()!)!
