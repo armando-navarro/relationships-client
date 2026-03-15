@@ -34,13 +34,13 @@
 				<span>Group by Year</span>
 			</button>
 		}
-		@if (!allGroupsExpanded()) {
+		@if (showExpandAllGroupsButton()) {
 			<button (click)="collapseOrExpandAllGroups(true)" mat-menu-item>
 				<mat-icon>unfold_more</mat-icon>
 				<span>Expand All Groups</span>
 			</button>
 		}
-		@if (!allGroupsCollapsed()) {
+		@if (showCollapseAllGroupsButton()) {
 			<button (click)="collapseOrExpandAllGroups(false)" mat-menu-item>
 				<mat-icon>unfold_less</mat-icon>
 				<span>Collapse All Groups</span>
@@ -60,7 +60,6 @@
 @else {
 	@for (group of groupedInteractions(); track group.timeUnitsAgo) {
 		<app-card-group
-			(header-click)="setGroupsCollapsedState()"
 			group-of="interactions"
 			[header]="group.timeAgoText"
 			[card-count]="group.interactions.length"

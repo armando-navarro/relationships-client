@@ -1,7 +1,5 @@
-import { AfterViewInit, Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
-import { filter } from 'rxjs'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
@@ -33,7 +31,7 @@ import { TOPIC_HINT_VERBIAGE } from '../../constants/misc-constants'
 	templateUrl: './interactions-list.html',
 	styleUrl: './interactions-list.scss'
 })
-export class InteractionsList implements OnInit, AfterViewInit {
+export class InteractionsList implements OnInit {
 	// services
 	private readonly api = inject(Api)
 	private readonly interactionsService = inject(Interactions)
@@ -44,24 +42,14 @@ export class InteractionsList implements OnInit, AfterViewInit {
 	private readonly cardGroups = viewChildren(CardGroup)
 
 	private readonly interactions = signal<Interaction[]>([])
-	private readonly interactionsSet$ = toObservable(this.cardGroups).pipe(
-		takeUntilDestroyed(),
-		filter(value => value.length > 0)
-	)
 
 	// interaction grouping state
 	protected readonly groupBy = signal<TimeUnit>('month')
 	protected readonly groupedInteractions = signal([] as InteractionGroup[])
-	private readonly groupByChange$ = toObservable(this.groupBy).pipe(
-		takeUntilDestroyed(),
-	).subscribe(() => {
-		if (this.responsiveUi.isSmallViewport()) this.collapseOrExpandAllGroups(false)
-		else this.collapseOrExpandAllGroups(true)
-	})
 
 	// misc state
-	protected readonly allGroupsCollapsed = signal(false)
-	protected readonly allGroupsExpanded = signal(false)
+	protected readonly showExpandAllGroupsButton = signal(false)
+	protected readonly showCollapseAllGroupsButton = signal(false)
 	protected readonly isLoadingInteractions = signal(true)
 	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	protected readonly highlightedCard = signal({ groupKey: null, indexInGroup: null } as { groupKey: string|null, indexInGroup: number|null })
@@ -70,6 +58,7 @@ export class InteractionsList implements OnInit, AfterViewInit {
 
 	constructor() {
 		this.keepInteractionsGrouped()
+		this.syncExpandCollapseAllButtonsWithGroupStates()
 	}
 
 	/** Keep interaction groups and highlighted card metadata in sync with the current interactions and grouping mode. */
@@ -78,6 +67,14 @@ export class InteractionsList implements OnInit, AfterViewInit {
 			const { groups, groupKey, indexInGroup } = this.interactionsService.groupBy(this.interactions(), this.groupBy(), this.highlightInteraction)
 			this.groupedInteractions.set(groups)
 			this.highlightedCard.set({ groupKey, indexInGroup })
+		})
+	}
+
+	/** Update visibility of "expand/collapse all groups" buttons when groups are added/removed or when a group is collapsed/expanded */
+	private syncExpandCollapseAllButtonsWithGroupStates(): void {
+		effect(() => {
+			this.showExpandAllGroupsButton.set(!this.cardGroups().every(group => group.open()))
+			this.showCollapseAllGroupsButton.set(!this.cardGroups().every(group => !group.open()))
 		})
 	}
 
@@ -96,20 +93,8 @@ export class InteractionsList implements OnInit, AfterViewInit {
 		})
 	}
 
-	ngAfterViewInit(): void {
-		this.interactionsSet$.subscribe(() => {
-			this.setGroupsCollapsedState()
-		})
-	}
-
 	protected collapseOrExpandAllGroups(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
-		this.setGroupsCollapsedState()
-	}
-
-	protected setGroupsCollapsedState(): void {
-		this.allGroupsCollapsed.set(!this.cardGroups().some(group => group.open()))
-		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
 	protected async addInteraction(): Promise<void> {

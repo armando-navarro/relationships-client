@@ -1,4 +1,4 @@
-import { Component, computed, inject, linkedSignal, OnInit, signal, viewChildren } from '@angular/core'
+import { Component, computed, effect, inject, linkedSignal, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
@@ -68,19 +68,29 @@ export class RelationshipsList implements OnInit {
 	protected readonly showSearchBar = signal(false)
 
 	// misc
-	protected readonly allGroupsCollapsed = signal(false)
-	protected readonly allGroupsExpanded = signal(false)
+	protected readonly showExpandAllGroupsButton = signal(false)
+	protected readonly showCollapseAllGroupsButton = signal(false)
 	protected readonly isLoadingRelationships = signal(true)
 	protected readonly isSmallViewport = this.responsiveUi.isSmallViewport
 	protected readonly highlightedCard = signal({ groupStatus: null, indexInGroup: null } as { groupStatus: AttentionNeededStatus|null, indexInGroup: number|null })
+
+	constructor() {
+		this.syncExpandCollapseAllButtonsWithGroupStates()
+	}
+
+	/** Update visibility of "expand/collapse all groups" buttons when groups are added/removed or when a group is collapsed/expanded */
+	private syncExpandCollapseAllButtonsWithGroupStates(): void {
+		effect(() => {
+			this.showExpandAllGroupsButton.set(!this.cardGroups().every(group => group.open()))
+			this.showCollapseAllGroupsButton.set(!this.cardGroups().every(group => !group.open()))
+		})
+	}
 
 	ngOnInit(): void {
 		this.api.getRelationshipsGroupedByStatus().subscribe({
 			next: groupedRelationships => {
 				this.groupedRelationships.set(groupedRelationships)
 				this.isLoadingRelationships.set(false)
-				// wait a tick for the groups to collapse themselves on small viewports
-				setTimeout(() => this.setGroupsCollapsedState())
 			},
 			error: error => this.snackBar.open('Failed to load relationships.', undefined)
 		})
@@ -113,12 +123,6 @@ export class RelationshipsList implements OnInit {
 
 	protected collapseOrExpandAllGroups(open: boolean): void {
 		this.cardGroups().forEach(group => group.open.set(open))
-		this.setGroupsCollapsedState()
-	}
-
-	protected setGroupsCollapsedState(): void {
-		this.allGroupsCollapsed.set(!this.cardGroups().some(group => group.open()))
-		this.allGroupsExpanded.set(!this.cardGroups().some(group => !group.open()))
 	}
 
 	protected addRelationship(): void {

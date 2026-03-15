@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, output, signal } from '@angular/core'
+import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, signal } from '@angular/core'
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
@@ -31,7 +31,6 @@ export class CardGroup {
 	readonly cardCount = input<number>(0, { alias: 'card-count' })
 	readonly isCardInGroupHighlighted = input(false, { alias: 'is-card-in-group-highlighted', transform: booleanAttribute })
 	readonly groupOf = input<'relationships'|'interactions'>('interactions', { alias: 'group-of' })
-	readonly headerClick = output<void>({ alias: 'header-click' })
 
 	// queries
 	readonly cards = contentChildren(Card)
@@ -56,7 +55,7 @@ export class CardGroup {
 	constructor() {
 		this.instanceNumber.set(CardGroup.instanceCount++)
 		this.openGroupWhenCardHighlighted()
-		this.syncExpandCollapseButtonsWithCardStates()
+		this.syncExpandCollapseAllButtonsWithCardStates()
 		this.syncGroupOpenStateWithViewportSize()
 	}
 
@@ -67,30 +66,22 @@ export class CardGroup {
 		})
 	}
 
-	/** Track cards' collapsed/expanded states when cards added/removed or when card collapsed/expanded */
-	private syncExpandCollapseButtonsWithCardStates(): void {
+	/** Update visibility of "expand/collapse all cards" buttons when cards are added/removed or when a card is collapsed/expanded */
+	private syncExpandCollapseAllButtonsWithCardStates(): void {
 		effect(() => {
-			this.cards().forEach(card => {
-				card.open() // causes effect to rerun when any card's open state changes
-				this.setCardsCollapsedState()
-			})
+			this.showExpandAllCardsButton.set(!this.cards().every(card => card.open()))
+			this.showCollapseAllCardsButton.set(!this.cards().every(card => !card.open()))
 		})
 	}
 
 	/** Expand group on large viewports and collapse group on small viewports. */
 	private syncGroupOpenStateWithViewportSize(): void {
-		// observable used instead of effect to prevent other signal updates from interfering
-		this.isSmallViewport$.subscribe(isSmallViewport => {
-			this.open.set(!isSmallViewport)
-			this.setCardsCollapsedState()
-			this.headerClick.emit()
-		})
+		effect(() => this.open.set(!this.isSmallViewport()))
 	}
 
 	/** Toggles the collapse/expand state of the group and scrolls the group into view on small viewports when expanded. */
 	protected toggleGroupCollapseExpand(): void {
 		this.open.set(!this.open())
-		this.headerClick.emit()
 		setTimeout(() => {
 			if (this.responsiveUi.isSmallViewport() && this.open()) {
 				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
@@ -101,13 +92,6 @@ export class CardGroup {
 	/** Expands or collapses all cards in the group. */
 	protected expandOrCollapseAllCards(cardsOpen: boolean): void {
 		this.cards().forEach(card => card.open.set(cardsOpen))
-		this.setCardsCollapsedState()
-	}
-
-	/** Updates the state of the "Expand All" and "Collapse All" buttons based on the current state of the cards in the group. */
-	private setCardsCollapsedState(): void {
-		this.showExpandAllCardsButton.set(!this.cards().every(card => card.open()))
-		this.showCollapseAllCardsButton.set(!this.cards().every(card => !card.open()))
 	}
 
 }

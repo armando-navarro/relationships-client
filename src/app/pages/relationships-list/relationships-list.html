@@ -15,13 +15,13 @@
 			<mat-icon>add</mat-icon>
 			<span>Add Relationship</span>
 		</button>
-		@if (!allGroupsExpanded()) {
+		@if (showExpandAllGroupsButton()) {
 			<button (click)="collapseOrExpandAllGroups(true)" mat-menu-item>
 				<mat-icon>unfold_more</mat-icon>
 				<span>Expand All Groups</span>
 			</button>
 		}
-		@if (!allGroupsCollapsed()) {
+		@if (showCollapseAllGroupsButton()) {
 			<button (click)="collapseOrExpandAllGroups(false)" mat-menu-item>
 				<mat-icon>unfold_less</mat-icon>
 				<span>Collapse All Groups</span>
@@ -49,7 +49,6 @@
 	@for (group of filteredGroupedRelationships(); track group.status) {
 		@if (group.relationships.length) {
 			<app-card-group
-				(header-click)="setGroupsCollapsedState()"
 				group-of="relationships"
 				[header]="group.status"
 				[card-count]="group.relationships.length"
