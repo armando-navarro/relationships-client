@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router'
 
-import { InteractionsList } from './pages/interactions-list/interactions-list'
-import { PageNotFound } from './pages/page-not-found/page-not-found'
-import { RelationshipsList } from './pages/relationships-list/relationships-list'
-import { Welcome } from './pages/welcome/welcome'
+import { InteractionsList } from './interactions/interactions-list/interactions-list'
+import { PageNotFound } from './page-not-found/page-not-found'
+import { RelationshipsList } from './relationships/relationships-list/relationships-list'
+import { Welcome } from './welcome/welcome'
 
 export const routes: Routes = [
 	{ path: '', redirectTo: '/welcome', pathMatch: 'full' },

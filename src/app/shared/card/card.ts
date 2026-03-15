@@ -1,0 +1,139 @@
+import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
+
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatTooltipModule } from '@angular/material/tooltip'
+
+import { DynamicScrollable } from '../dynamic-scrollable/dynamic-scrollable'
+import { Interaction, Topic } from '../../interactions/interaction-interface'
+import { NewlinesToBrPipe } from '../newlines-to-br-pipe'
+import { Relationship } from '../../relationships/relationship-interface'
+import { SimpleDatePipe } from '../simple-date-pipe'
+
+@Component({
+	selector: 'app-card',
+	imports: [DynamicScrollable, MatButtonModule, MatIconModule, MatTooltipModule],
+	providers: [NewlinesToBrPipe, SimpleDatePipe],
+	templateUrl: './card.html',
+	styleUrl: './card.scss',
+	host: {
+		'[class.hidden]': '!open()',
+		'[class.highlight]': 'scrollToAndHighlight()',
+	}
+})
+export class Card implements OnInit {
+	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)
+	private readonly newlinesToBr = inject(NewlinesToBrPipe)
+	private readonly simpleDate = inject(SimpleDatePipe)
+
+	readonly relationship = input<Relationship>()
+	readonly interaction = input<Interaction>()
+	readonly topic = input<Topic>()
+	readonly hideFooter = input(false, { alias: 'hide-footer', transform: booleanAttribute })
+	readonly collapsible = input(false, { transform: booleanAttribute })
+	readonly scrollableBody = input(false, { alias: 'scrollable-body', transform: booleanAttribute })
+	readonly alwaysShowLeftText = input(false, { alias: 'always-show-left-text', transform: booleanAttribute })
+	readonly alwaysShowInteractionOwner = input(false, { alias: 'always-show-interaction-owner', transform: booleanAttribute })
+	readonly scrollToAndHighlight = model(false, { alias: 'scroll-to-and-highlight' })
+
+	readonly editRelationshipEmitter = output<Relationship>({ alias: 'edit-relationship'})
+	readonly editInteraction = output<Interaction>({ alias: 'edit-interaction'})
+	readonly editTopic = output({ alias: 'edit-topic'})
+	readonly deleteRelationship = output<Relationship>({ alias: 'delete-relationship'})
+	readonly deleteInteraction = output<Interaction>({ alias: 'delete-interaction'})
+	readonly deleteTopic = output({ alias: 'delete-topic'})
+	readonly relationshipNameClick = output<Interaction>({ alias: 'relationship-name-click' })
+
+	readonly open = model(true)
+
+	protected readonly collapsedLeftText = signal('')
+	protected readonly collapsedRightText = signal('')
+	protected readonly collapsedRightIcon = signal('')
+
+	readonly relationshipId = computed(() => this.relationship()?._id || this.interaction()?.idOfRelationship)
+	protected readonly relationshipName = computed(() => this.relationship()?.fullName || this.interaction()?.nameOfPerson)
+	protected readonly modelName = computed(() => {
+		if (this.relationship()) return 'relationship'
+		else if (this.interaction()) return 'interaction'
+		else return 'topic'
+	})
+
+	constructor() {
+		this.scrollToAndClearHighlightWhenHighlighted()
+	}
+
+	/** When highlighted, scroll to this card and clear the highlight after the animation completes. */
+	private scrollToAndClearHighlightWhenHighlighted(): void {
+		effect(() => {
+			if (this.scrollToAndHighlight()) {
+				this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+				setTimeout(() => this.scrollToAndHighlight.set(false), 2250)
+			}
+		})
+	}
+
+	ngOnInit(): void {
+		// init card based on the model it represents
+		if (this.relationship()) this.initRelationshipCard(this.relationship()!)
+		else if (this.interaction()) this.initInteractionCard(this.interaction()!)
+		else if (this.topic()) this.initTopicCard(this.topic()!)
+
+		// start the card closed if it's collapsible.
+		this.open.set(!this.collapsible())
+	}
+
+	/** Populate collapsed card text for a relationship card. */
+	private initRelationshipCard(relationship: Relationship): void {
+		this.collapsedLeftText.set(relationship.fullName)
+		this.collapsedRightText.set(`${(this.simpleDate.transform(relationship.lastInteractionDate))}`)
+	}
+
+	/** Populate collapsed card text and icon for an interaction card. */
+	private initInteractionCard(interaction: Interaction): void {
+		const date = new Date(interaction.date!).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+		if (this.alwaysShowInteractionOwner()) {
+			this.collapsedLeftText.set(interaction.nameOfPerson!)
+			this.collapsedRightText.set(date)
+		}
+		else {
+			this.collapsedLeftText.set(date)
+			this.collapsedRightText.set(this.newlinesToBr.transform(interaction.topics[0]?.notes) || 'No notes')
+		}
+		this.collapsedRightIcon.set(interaction.typeIcon || '')
+	}
+
+	/** Populate collapsed card text for a topic card. */
+	private initTopicCard(topic: Topic): void {
+		this.collapsedLeftText.set(topic.name)
+		this.collapsedRightText.set(this.newlinesToBr.transform(topic.notes))
+	}
+
+	/** Emit the relationship-focused action for the model rendered by this card. */
+	protected editRelationship() {
+		if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
+		else this.relationshipNameClick.emit(this.interaction()!)
+	}
+
+	/** Emit the edit action for the model rendered by this card. */
+	protected edit(): void {
+		if (this.interaction()) this.editInteraction.emit(this.interaction()!)
+		else if (this.relationship()) this.editRelationshipEmitter.emit(this.relationship()!)
+		else this.editTopic.emit()
+	}
+
+	/** Emit the delete action for the model rendered by this card. */
+	protected delete(): void {
+		if (this.relationship()) this.deleteRelationship.emit(this.relationship()!)
+		else if (this.interaction()) this.deleteInteraction.emit(this.interaction()!)
+		else this.deleteTopic.emit()
+	}
+
+	/** Toggle the card open state and scroll it back into view after the animation. */
+	protected toggleCollapseExpand(): void {
+		this.open.set(!this.open())
+		setTimeout(() => {
+			this.hostRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+		}, 500) // wait for the CSS transition to complete
+	}
+
+}

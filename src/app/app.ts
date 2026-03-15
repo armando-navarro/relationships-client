@@ -2,7 +2,7 @@ import { ViewportScroller } from '@angular/common'
 import { Component, effect, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 
-import { ResponsiveUi } from './services/responsive-ui'
+import { ResponsiveUi } from './shared/responsive-ui'
 
 @Component({
 	selector: 'app-root',
