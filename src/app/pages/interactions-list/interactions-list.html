@@ -70,7 +70,7 @@
 				@if (responsiveUi.isSmallViewport()) {
 					<app-card
 						[interaction]="interaction"
-						[collapsible]="isSmallViewport()"
+						collapsible
 						always-show-interaction-owner
 						always-show-left-text
 						(edit-interaction)="editInteraction($event)"

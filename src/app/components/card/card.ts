@@ -60,7 +60,6 @@ export class Card implements OnInit {
 
 	constructor() {
 		this.scrollToAndClearHighlightWhenHighlighted()
-		this.syncOpenStateWithCollapsibleInput()
 	}
 
 	/** When highlighted, scroll to this card and clear the highlight after the animation completes. */
@@ -73,15 +72,14 @@ export class Card implements OnInit {
 		})
 	}
 
-	/** Keep the card's open state in sync with the collapsible input. */
-	private syncOpenStateWithCollapsibleInput(): void {
-		effect(() => { this.open.set(!this.collapsible()) })
-	}
-
 	ngOnInit(): void {
+		// init card based on the model it represents
 		if (this.relationship()) this.initRelationshipCard(this.relationship()!)
 		else if (this.interaction()) this.initInteractionCard(this.interaction()!)
 		else if (this.topic()) this.initTopicCard(this.topic()!)
+
+		// start the card closed if it's collapsible.
+		this.open.set(!this.collapsible())
 	}
 
 	private initRelationshipCard(relationship: Relationship): void {
