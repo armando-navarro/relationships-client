@@ -41,8 +41,13 @@ export class TopicDialog implements OnInit {
 
 	private readonly REQUIRED_ERROR = REQUIRED_ERROR
 
-	/** Initialize the dialog heading and form state for adding or editing a topic. */
 	ngOnInit(): void {
+		this.initForm()
+		this.markTopicModifiedWhenFormChanges()
+	}
+
+	/** Initialize the dialog heading and form state for adding or editing a topic. */
+	private initForm(): void {
 		if (this.data.editTopicIndex !== undefined) {
 			this.pageHeading.set('Edit Topic')
 			const targetTopicForm = this.data.interactionForm.controls.topics.controls.at(this.data.editTopicIndex)
@@ -51,12 +56,9 @@ export class TopicDialog implements OnInit {
 		} else {
 			this.pageHeading.set('Add Topic')
 		}
-
-		// keep track of unsaved edits so the correct buttons are displayed
-		this.markTopicModifiedWhenFormChanges()
 	}
 
-	/** Track whether the topic form has unsaved edits. */
+	/** Track whether the topic form has unsaved edits so the correct buttons are displayed. */
 	private markTopicModifiedWhenFormChanges(): void {
 		this.form.valueChanges.pipe(
 			throttleTime(500),
