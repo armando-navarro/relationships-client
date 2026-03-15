@@ -19,7 +19,6 @@ export const appConfig: ApplicationConfig = {
 			withComponentInputBinding(),
 			withInMemoryScrolling({ anchorScrolling: 'enabled' }),
 		),
-		provideHttpClient(),
 		importProvidersFrom(MatNativeDateModule),
 
 		{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: dialogConfigDefaults },
