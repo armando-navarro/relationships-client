@@ -1,4 +1,7 @@
 # Angular style guide updates
+#		refactor: remove attr. prefix on ARIA bindings
+		01cf6d97159143d6352dbd770579c1b78a9f35b9
+
 #		refactor: mark properties private where missed & remove standalone:true
 		fc47182ac69d72aec29e4bf8cb62d2d0098c9d10
 
