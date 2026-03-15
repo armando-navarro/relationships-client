@@ -50,15 +50,15 @@ export class RelationshipsList implements OnInit {
 
 	// relationship data processing
 	protected readonly groupedRelationships = signal<RelationshipGroup[]>([])
-	readonly ungroupedRelationships = computed(() => this.groupedRelationships().flatMap(({ relationships }) => relationships))
-	readonly relationshipNames = computed(() =>
+	private readonly ungroupedRelationships = computed(() => this.groupedRelationships().flatMap(({ relationships }) => relationships))
+	private readonly relationshipNames = computed(() =>
 		this.relationshipUtils.sortByFirstName(this.ungroupedRelationships()).map(({ fullName }) => fullName!) || []
 	)
 	protected readonly hasRelationships = computed(() => this.groupedRelationships().some(group => group.relationships.length))
 
 	// search filter processing
 	protected readonly searchValue = signal('')
-	readonly searchValueSub = toObservable(this.searchValue).pipe(
+	private readonly searchValueSub = toObservable(this.searchValue).pipe(
 		takeUntilDestroyed(),
 		debounceTime(300),
 		distinctUntilChanged(),

@@ -5,7 +5,6 @@ import { InteractionTopicFormGroup, Topic } from '../interactions/interaction-in
 
 @Pipe({
 	name: 'topicFormToModel',
-	standalone: true
 })
 export class TopicFormToModelPipe implements PipeTransform {
 	private readonly interactionMapper = inject(InteractionMapper)

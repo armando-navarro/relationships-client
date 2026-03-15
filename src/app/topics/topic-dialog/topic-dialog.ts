@@ -28,7 +28,7 @@ export interface TopicDialogData {
 	styleUrl: './topic-dialog.scss'
 })
 export class TopicDialog implements OnInit {
-	readonly data = inject<TopicDialogData>(MAT_DIALOG_DATA)
+	private readonly data = inject<TopicDialogData>(MAT_DIALOG_DATA)
 	private readonly dialogRef = inject(MatDialogRef)
 	private readonly interactionMapper = inject(InteractionMapper)
 	private readonly snackBar = inject(MatSnackBar)
