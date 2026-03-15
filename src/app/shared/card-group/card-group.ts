@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, contentChildren, effect, ElementRef, inject, input, signal } from '@angular/core'
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChildren, effect, ElementRef, inject, input, signal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { map } from 'rxjs'
 
@@ -17,7 +17,8 @@ import { Scroll } from '../scroll'
 	host: {
 		'[aria-labelledby]': '"card-group-title-" + instanceNumber()',
 		role: 'region'
-	}
+	},
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardGroup {
 	// services/dependencies

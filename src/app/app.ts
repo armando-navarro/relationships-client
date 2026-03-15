@@ -1,5 +1,5 @@
 import { ViewportScroller } from '@angular/common'
-import { Component, effect, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 
 import { ResponsiveUi } from './shared/responsive-ui'
@@ -8,7 +8,8 @@ import { ResponsiveUi } from './shared/responsive-ui'
 	selector: 'app-root',
 	imports: [RouterOutlet],
 	templateUrl: './app.html',
-	styleUrl: './app.scss'
+	styleUrl: './app.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
 	private readonly responsiveUi = inject(ResponsiveUi)

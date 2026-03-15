@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -29,7 +29,8 @@ import { TOPIC_HINT_VERBIAGE } from '../../shared/misc-constants'
 		/* app */ Card, CardGroup, InteractionCardContent, PageHeaderBar, Row,
 	],
 	templateUrl: './interactions-list.html',
-	styleUrl: './interactions-list.scss'
+	styleUrl: './interactions-list.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InteractionsList implements OnInit {
 	// services

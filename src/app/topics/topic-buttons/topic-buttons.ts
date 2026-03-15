@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, TemplateRef, viewChild } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, input, signal, TemplateRef, viewChild } from '@angular/core'
 
 import { MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/bottom-sheet'
 import { MatButtonModule } from '@angular/material/button'
@@ -17,7 +17,8 @@ import { Topic } from '../../interactions/interaction-interface'
     HorizontalScrollButtons, NewlinesToBrPipe,
 ],
 	templateUrl: './topic-buttons.html',
-	styleUrl: './topic-buttons.scss'
+	styleUrl: './topic-buttons.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicButtons {
 	private readonly bottomSheet = inject(MatBottomSheet)

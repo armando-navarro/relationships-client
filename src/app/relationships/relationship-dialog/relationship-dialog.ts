@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { pairwise, startWith } from 'rxjs'
 
@@ -42,7 +42,8 @@ export type RelationshipDialogResult = Cancelable<{
 	],
 	providers: [RelationshipForm],
 	templateUrl: './relationship-dialog.html',
-	styleUrl: './relationship-dialog.scss'
+	styleUrl: './relationship-dialog.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RelationshipDialog implements OnInit {
 	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)

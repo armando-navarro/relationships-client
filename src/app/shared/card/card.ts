@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, effect, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, model, OnInit, output, signal } from '@angular/core'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
@@ -19,7 +19,8 @@ import { SimpleDatePipe } from '../simple-date-pipe'
 	host: {
 		'[class.hidden]': '!open()',
 		'[class.highlight]': 'scrollToAndHighlight()',
-	}
+	},
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Card implements OnInit {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)

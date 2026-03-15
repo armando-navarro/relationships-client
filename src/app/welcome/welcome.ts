@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core'
 import { RouterLink } from '@angular/router'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -12,7 +12,8 @@ import { ResponsiveUi } from '../shared/responsive-ui'
 	selector: 'app-welcome',
 	imports: [MatButtonModule, MatIconModule, MatTooltipModule, PageHeaderBar, RouterLink],
 	templateUrl: './welcome.html',
-	styleUrl: './welcome.scss'
+	styleUrl: './welcome.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Welcome {
 	protected readonly responsiveUi = inject(ResponsiveUi)
