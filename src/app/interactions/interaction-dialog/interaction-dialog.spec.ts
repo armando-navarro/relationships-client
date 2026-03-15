@@ -14,7 +14,7 @@ describe('InteractionDialog', () => {
 
 		fixture = TestBed.createComponent(InteractionDialog)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

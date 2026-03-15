@@ -14,7 +14,7 @@ describe('TopicButtons', () => {
 
 		fixture = TestBed.createComponent(TopicButtons)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

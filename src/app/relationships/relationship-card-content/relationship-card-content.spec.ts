@@ -14,7 +14,7 @@ describe('RelationshipCardContent', () => {
 
 		fixture = TestBed.createComponent(RelationshipCardContent)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

@@ -14,7 +14,7 @@ describe('Row', () => {
 
 		fixture = TestBed.createComponent(Row)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {
