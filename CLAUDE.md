@@ -13,7 +13,7 @@ npm test           # Karma/Jasmine unit tests
 
 To run a single test file, pass `--include` to the karma config:
 ```bash
-npx ng test --include='src/app/services/api.service.spec.ts'
+npx ng test --include='src/app/shared/api.spec.ts'
 ```
 
 There is no lint script configured.
@@ -38,10 +38,10 @@ No `AppModule`. Uses `ApplicationConfig` in `src/app/app.config.ts` with:
 
 Eagerly loaded routes in `src/app/app.routes.ts`:
 - `/` → redirects to `/welcome`
-- `/welcome` → `WelcomeComponent`
-- `/relationships` → `RelationshipsListComponent`
-- `/interactions` → `InteractionsListComponent`
-- `**` → `PageNotFoundComponent`
+- `/welcome` → `Welcome`
+- `/relationships` → `RelationshipsList`
+- `/interactions` → `InteractionsList`
+- `**` → `PageNotFound`
 
 ### State Management
 
@@ -54,32 +54,36 @@ No NgRx or external store. State is managed with Angular Signals directly inside
 
 ### Services
 
-Most services use `providedIn: 'root'`. Exception: `RelationshipFormService` uses `@Injectable()` (no `providedIn`) and is scoped to the dialog component that provides it.
+Most services use `providedIn: 'root'`. Exception: `RelationshipForm` uses `@Injectable()` (no `providedIn`) and is scoped to the dialog component that provides it.
 
 | Service | Role |
 |---|---|
-| `ApiService` | All HTTP calls; maps responses via mapper services |
-| `RelationshipsService` | Business logic for relationship CRUD + dialog orchestration |
-| `InteractionsService` | Business logic for interaction CRUD + dialog orchestration |
-| `RelationshipFormService` | Manages the reactive form state inside the relationship dialog; scoped (not root) |
-| `DeletionService` | Generic delete-with-confirmation dialog flow |
-| `mappers/RelationshipMapperService` | Maps API response ↔ internal model + reactive form group |
-| `mappers/InteractionMapperService` | Maps API response ↔ internal model + reactive form group |
-| `RelationshipUtilitiesService` | Sorts/orders relationship groups by `AttentionNeededStatus` |
-| `InteractionUtilitiesService` | Shared interaction manipulation logic (e.g. inserting in order) |
-| `MaterialConfigService` | Builds responsive `MatDialogConfig` objects |
-| `ResponsiveUiService` | Exposes `isSmallViewport` signal via `matchMedia`/`ResizeObserver` |
-| `ScrollService` | Manages scroll behavior across pages |
+| `Api` | All HTTP calls; maps responses via mapper services |
+| `Relationships` | Business logic for relationship CRUD + dialog orchestration |
+| `Interactions` | Business logic for interaction CRUD + dialog orchestration |
+| `RelationshipForm` | Manages the reactive form state inside the relationship dialog; scoped (not root) |
+| `Deletion` | Generic delete-with-confirmation dialog flow |
+| `RelationshipMapper` | Maps API response ↔ internal model + reactive form group |
+| `InteractionMapper` | Maps API response ↔ internal model + reactive form group |
+| `RelationshipUtilities` | Sorts/orders relationship groups by `AttentionNeededStatus` |
+| `InteractionUtilities` | Shared interaction manipulation logic (e.g. inserting in order) |
+| `MaterialConfig` | Builds responsive `MatDialogConfig` objects |
+| `ResponsiveUi` | Exposes `isSmallViewport` signal via `matchMedia`/`ResizeObserver` |
+| `Scroll` | Manages scroll behavior across pages |
 
 ### Component Organization
 
 ```
 src/app/
-  pages/          # Route-level components (RelationshipsListComponent, InteractionsListComponent, ...)
-  components/     # Shared components (Card, CardGroupComponent, dialogs, ...)
+  interactions/   # Interaction feature: service, mapper, utilities, dialogs, list page
+  relationships/  # Relationship feature: service, mapper, utilities, form, dialogs, list page
+  shared/         # Cross-feature components and services (Card, CardGroup, Row, PageHeaderBar, dialogs, pipes, ...)
+  topics/         # Topic feature: buttons component, dialog
+  welcome/        # Welcome page
+  page-not-found/ # 404 page
 ```
 
-The `Card` component (`src/app/components/card/`) is polymorphic — it renders a relationship, interaction, or topic based on which input is provided (`relationship`, `interaction`, or `topic`).
+The `Card` component (`src/app/shared/card/`) is polymorphic — it renders a relationship, interaction, or topic based on which input is provided (`relationship`, `interaction`, or `topic`).
 
 ### Pipes
 
@@ -93,7 +97,12 @@ Import pipes explicitly in the `imports` array of components that use them in te
 
 ### Data Model
 
-Key interfaces live in `src/app/interfaces/`:
+Interfaces are co-located with their feature area rather than in a central `interfaces/` folder:
+- `relationships/relationship-interface.ts` — `Relationship`, `RelationshipResponse`, `RelationshipGroup`, `AttentionNeededStatus` enum, `InteractionRate` enum
+- `interactions/interaction-interface.ts` — `Interaction`, `InteractionResponse`, `InteractionGroup`, `InteractionType` enum, `Topic`
+- `shared/misc-interface.ts` — `Cancelable`, `InsertedId`
+
+Key types:
 - `Relationship` / `RelationshipResponse` — internal model vs. API shape; dates are `Date` internally, `string` from API
 - `AttentionNeededStatus` enum — `Overdue | Due Today | Due Soon | No Attention Needed | Due Date N/A`
 - `InteractionRate` enum — the goal frequency for a relationship (e.g. `every week`, `every month`)
