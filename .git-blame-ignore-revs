@@ -1,0 +1,27 @@
+# Angular style guide updates
+#		refactor: mark properties private where missed & remove standalone:true
+		fc47182ac69d72aec29e4bf8cb62d2d0098c9d10
+
+#		refactor: reference responsiveUi.isSmallViewport() in component templates
+		f21fc14bab622d60beaca622594d5f7f83da6dde
+
+#		style(components): name event handlers for what they do, not trigger event
+		5dbbd4d8840029effa733224ac4b3fa869d48477
+
+#		mark template-only component members as protected
+		1efec4878523fe0447208979e96406d693f55572
+
+#		style: rename files & component/service classes to match new style guide
+		74500fa3329659d0144b4f8ead93034f669bc75a
+
+#		style: add EoF newline & fix indentation to (use tabs)
+		d75f5c75945e641974c08e5446efed5eecc0fddf
+
+#		bind to style instead of ngStyle in templates
+		c8d2e4dde9b1f169e5456d7899bb44f76b690236
+
+#		update old comment & adjust indent
+		bac35fd8e291d154381312ac8f9e1e92b3af6156
+
+#		use template strings & self-closing tags in templates
+		eefa7e248f2a8e6c9c2851bdefe23860da14bf8a

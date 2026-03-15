@@ -1,0 +1,37 @@
+<h2 [id]="`card-group-title-${instanceNumber()}`" [style.color]="headerColor()" [class.offset-top]="scrollingUp() || !responsiveUi.isSmallViewport()">
+	<button (click)="toggleGroupCollapseExpand()" [attr.aria-label]="`${open() ? 'Collapse' : 'Expand'} group`">
+		<span>{{header()}}</span>
+		<span>({{cardCount()}})</span>
+		<mat-icon [class.open]="open()">chevron_right</mat-icon>
+	</button>
+
+	@if (responsiveUi.isSmallViewport()) {
+		<div class="group-actions" [class.show]="open()">
+			@if (showExpandAllCardsButton()) {
+				<button (click)="expandOrCollapseAllCards(true)" mat-button>Expand All</button>
+			}
+			@if (showCollapseAllCardsButton()) {
+				<button (click)="expandOrCollapseAllCards(false)" mat-button>Collapse All</button>
+			}
+		</div>
+	} @else if (groupOf() === 'relationships') {
+		<div class="relationships table-header" [class.show]="open()">
+			<span class="name">Name</span>
+			<span class="notes">Notes</span>
+			<span class="interaction-goal">Interaction Goal</span>
+			<span class="last-contact">Last Contact</span>
+			<span class="interaction-count">Interactions</span>
+		</div>
+	} @else if (groupOf() === 'interactions') {
+		<div class="interactions table-header" [class.show]="open()">
+			<span class="name">Name</span>
+			<span class="type">Type</span>
+			<span class="date">Date</span>
+			<span class="topics">Topics</span>
+		</div>
+	}
+</h2>
+
+<div class="entries custom-scrollbar" #entries [class.hidden]="!open()" [style.max-height.px]="maxGroupHeight() ">
+	<ng-content />
+</div>

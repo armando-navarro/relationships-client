@@ -9,7 +9,7 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar'
 import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip'
 
 import { routes } from './app.routes'
-import { dialogConfigDefaults, snackbarConfigDefaults, tooltipDefaults } from './constants/material-default-configs'
+import { dialogConfigDefaults, snackbarConfigDefaults, tooltipDefaults } from './shared/material-default-configs'
 
 export const appConfig: ApplicationConfig = {
 	providers: [

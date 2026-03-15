@@ -1,0 +1,95 @@
+<app-page-header-bar page-title="Interactions">
+	<a routerLink="/relationships" mat-button>Relationships</a>
+
+	<button [matMenuTriggerFor]="menu" matTooltip="More actions" mat-icon-button aria-label="More actions menu">
+		<mat-icon>more_vert</mat-icon>
+	</button>
+
+	<mat-menu #menu="matMenu" class="custom-mat-panel">
+		<button (click)="addInteraction()" mat-menu-item>
+			<mat-icon>add</mat-icon>
+			<span>Add Interaction</span>
+		</button>
+		@if (groupBy() !== 'day') {
+			<button (click)="groupBy.set('day')" mat-menu-item>
+				<mat-icon>today</mat-icon>
+				<span>Group by Day</span>
+			</button>
+		}
+		@if (groupBy() !== 'week') {
+			<button (click)="groupBy.set('week')" mat-menu-item>
+				<mat-icon>date_range</mat-icon>
+				<span>Group by Week</span>
+			</button>
+		}
+		@if (groupBy() !== 'month') {
+			<button (click)="groupBy.set('month')" mat-menu-item>
+				<mat-icon>calendar_month</mat-icon>
+				<span>Group by Month</span>
+			</button>
+		}
+		@if (groupBy() !== 'year') {
+			<button (click)="groupBy.set('year')" mat-menu-item>
+				<mat-icon>calendar_clock</mat-icon>
+				<span>Group by Year</span>
+			</button>
+		}
+		@if (showExpandAllGroupsButton()) {
+			<button (click)="collapseOrExpandAllGroups(true)" mat-menu-item>
+				<mat-icon>unfold_more</mat-icon>
+				<span>Expand All Groups</span>
+			</button>
+		}
+		@if (showCollapseAllGroupsButton()) {
+			<button (click)="collapseOrExpandAllGroups(false)" mat-menu-item>
+				<mat-icon>unfold_less</mat-icon>
+				<span>Collapse All Groups</span>
+			</button>
+		}
+	</mat-menu>
+</app-page-header-bar>
+
+<p>
+	Add interactions through the menu botton in the top right.<br />
+	{{TOPIC_HINT_VERBIAGE}}
+</p>
+
+@if (isLoadingInteractions()) {
+	<mat-spinner diameter="75" />
+}
+@else {
+	@for (group of groupedInteractions(); track group.timeUnitsAgo) {
+		<app-card-group
+			group-of="interactions"
+			[header]="group.timeAgoText"
+			[card-count]="group.interactions.length"
+			header-color="var(--primary-button-color)"
+			[is-card-in-group-highlighted]="group.timeAgoText === highlightedCard().groupKey"
+		>
+			@for (interaction of group.interactions; track interaction._id; let index = $index) {
+				@if (responsiveUi.isSmallViewport()) {
+					<app-card
+						[interaction]="interaction"
+						collapsible
+						always-show-interaction-owner
+						always-show-left-text
+						(edit-interaction)="editInteraction($event)"
+						(delete-interaction)="deleteInteraction($event)"
+						(relationship-name-click)="editRelationship($event)"
+						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
+					>
+						<app-interaction-card-content [interaction]="interaction" />
+					</app-card>
+				} @else {
+					<app-row
+						[interaction]="interaction"
+						[scroll-to-and-highlight]="group.timeAgoText === highlightedCard().groupKey && index === highlightedCard().indexInGroup"
+						(edit-interaction)="editInteraction($event)"
+						(delete-interaction)="deleteInteraction($event)"
+						(relationship-name-click)="editRelationship($event)"
+					 />
+				}
+			}
+		</app-card-group>
+	}
+}

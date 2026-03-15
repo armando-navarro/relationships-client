@@ -1,0 +1,50 @@
+<app-page-header-bar dialog justify-content="center">
+	{{pageHeading()}}
+</app-page-header-bar>
+
+<mat-dialog-content>
+	<form [formGroup]="form" (ngSubmit)="saveTopic()">
+
+		@let name = form.controls.name;
+		<mat-form-field class="topic-name" hintLabel="What topic did you discuss?" appearance="outline" floatLabel="auto">
+			<mat-label>Topic</mat-label>
+			<input #topicNameInput matInput formControlName="name" required>
+			@if (name.hasError('required')) {
+				<mat-error>Topic is required</mat-error>
+			} @else if (name.hasError('maxlength')) {
+				<mat-error>
+					Over {{name.getError('maxlength').requiredLength}}
+					character limit
+					({{name.getError('maxlength').actualLength - name.getError('maxlength').requiredLength}})
+				</mat-error>
+			}
+		</mat-form-field>
+
+		@if (form.value.name || form.value.notes) {
+			<button (click)="clearTopicName()" class="clear-form" mat-button aria-label="Clear topic form" type="button">
+				Clear
+			</button>
+		}
+
+		@let notes = form.controls.notes;
+		<mat-form-field class="notes" hintLabel="What do you want to remember about this topic?" appearance="outline" floatLabel="auto">
+			<mat-label>Notes</mat-label>
+			<textarea matInput formControlName="notes" rows="5"></textarea>
+			@if (notes.hasError('maxlength')) {
+				<mat-error>
+					Over {{notes.getError('maxlength').requiredLength}}
+					character limit (by
+					{{notes.getError('maxlength').actualLength - notes.getError('maxlength').requiredLength}})
+				</mat-error>
+			}
+		</mat-form-field>
+
+	</form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button [mat-dialog-close]="false" mat-button>Cancel</button>
+	@if (wasTopicModified()) {
+		<button (click)="saveTopic()" mat-button>Save</button>
+	}
+</mat-dialog-actions>

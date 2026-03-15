@@ -1,0 +1,27 @@
+<ng-template #leftButton>
+	<button
+		(click)="scrollHorizontally('left')"
+		class="scroll left"
+		[class.hidden]="!canScrollLeft()"
+		[class.no-opacity]="noOpacity()"
+		matTooltip="Scroll left"
+		matTooltipPosition="right"
+		aria-label="Scroll group left"
+	>
+		<mat-icon>chevron_left</mat-icon>
+	</button>
+</ng-template>
+
+<ng-template #rightButton>
+	<button
+		(click)="scrollHorizontally('right')"
+		class="scroll right"
+		[class.hidden]="!canScrollRight()"
+		[class.no-opacity]="noOpacity()"
+		matTooltip="Scroll right"
+		matTooltipPosition="left"
+		aria-label="Scroll group right"
+	>
+		<mat-icon>chevron_right</mat-icon>
+	</button>
+</ng-template>
