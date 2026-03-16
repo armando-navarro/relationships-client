@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core'
+import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core'
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router'
 
 import { MatNativeDateModule } from '@angular/material/core'
