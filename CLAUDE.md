@@ -22,7 +22,7 @@ There is no lint script configured.
 
 **Purpose:** A personal relationship-tracking SPA. Users track "Relationships" (contacts with interaction rate goals) and "Interactions" (logged calls/visits/etc.). The app computes attention-needed status per relationship (Overdue / Due Today / Due Soon / No Attention Needed) and groups cards accordingly.
 
-**Stack:** Angular 20 (standalone components, signals) · Angular Material 20 · RxJS 7 · Luxon 3 · Karma/Jasmine · SCSS
+**Stack:** Angular 21 (standalone components, signals) · Angular Material 21 · RxJS 7 · Luxon 3 · Karma/Jasmine · SCSS
 
 **Backend:** A separate Node/Express/MongoDB repo at `../relationships-server`. In production, the build output is served directly by Express. In development, API calls proxy to `http://localhost:3000/api` via the dev environment file.
 
@@ -110,7 +110,7 @@ Key types:
 
 ## Coding Rules
 
-- **Do NOT set `standalone: true`** in `@Component`/`@Directive` decorators — it is the default in Angular v20+.
+- **Do NOT set `standalone: true`** in `@Component`/`@Directive` decorators — it is the default in Angular v21+.
 - Use `input()` / `output()` functions, not `@Input()`/`@Output()` decorators.
 - All components must have `changeDetection: ChangeDetectionStrategy.OnPush`.
 - Use the `host` object for host bindings — do NOT use `@HostBinding`/`@HostListener`.
