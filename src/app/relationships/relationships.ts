@@ -5,7 +5,9 @@ import { MatDialog } from '@angular/material/dialog'
 
 import { Api } from '../shared/api'
 import { Cancelable } from '../shared/misc-interface'
-import { DeletionResult, Deletion } from '../shared/deletion'
+import { Deletion } from '../shared/deletion'
+import { Interaction } from '../interactions/interaction-interface'
+import { InteractionUtilities } from '../interactions/interaction-utilities'
 import { MaterialConfig } from '../shared/material-config'
 import { AttentionNeededStatus, Relationship, RelationshipGroup } from './relationship-interface'
 import { RelationshipDialog, RelationshipDialogData, RelationshipDialogResult } from './relationship-dialog/relationship-dialog'
@@ -17,8 +19,8 @@ type RelationshipGroupingResult = Cancelable<{
 	targetRelationshipIndex: number
 }>
 
-type RelationshipEditResult = Cancelable<{
-	relationship: Relationship
+type InteractionListUpdateResult = Cancelable<{
+	refreshedInteractionsList: Interaction[]
 	wasNameModified: boolean
 	wereInteractionsModified: boolean
 }>
@@ -28,6 +30,7 @@ export class Relationships {
 	private readonly api = inject(Api)
 	private readonly deletionService = inject(Deletion)
 	private readonly dialog = inject(MatDialog)
+	private readonly interactionUtils = inject(InteractionUtilities)
 	private readonly materialConfig = inject(MaterialConfig)
 	private readonly relationshipUtils = inject(RelationshipUtilities)
 
@@ -83,24 +86,30 @@ export class Relationships {
 		return { relationships: updatedrelationships, insertIndex: low}
 	}
 
-	/** Prompts the user to edit a relationship.
-	 * @param relationship The relationship to edit, or the ID of the relationship.
-	 * @param currentGroups Optional. If provided, returns updated relationship groups and the relationship's new location.
-	 * @returns The updated relationship groups and the relationship's new location (given by the group's status and the relationship's index
-	 * in the group) if `currentGroups` is provided, or just the updated relationship if not. Returns `{wasCancelled: true}` if the user clicks Cancel. */
-	editRelationship(relationship: string|Relationship, currentGroups: RelationshipGroup[]): Observable<RelationshipGroupingResult>
-	editRelationship(relationship: string|Relationship, currentGroups?: undefined): Observable<RelationshipEditResult>
-	editRelationship(relationship: string|Relationship, currentGroups?: RelationshipGroup[]): Observable<RelationshipGroupingResult|RelationshipEditResult> {
+	/** Prompts the user to edit a relationship and returns updated relationship groups with the edited relationship's new location.
+	 * @param relationship The relationship to edit, or its ID if it needs to be fetched first.
+	 * @param destinationCollection The current relationship groups to update after the edit is saved.
+	 * @returns `{ wasCancelled: true }` if the user clicks Cancel, or updated relationship groups plus the edited relationship's location via its new group status and index. */
+	editRelationship(relationship: string|Relationship, destinationCollection: RelationshipGroup[]): Observable<RelationshipGroupingResult>
+	/** Prompts the user to edit a relationship and returns a refreshed interactions list, updating related interaction names and applying any interaction edits.
+	 * @param relationship The relationship to edit, or its ID if it needs to be fetched first.
+	 * @param destinationCollection The current interactions list to update after the edit is saved.
+	 * @returns `{ wasCancelled: true }` if the user clicks Cancel, or a refreshed interactions list plus flags indicating whether the relationship name or interactions changed. */
+	editRelationship(relationship: string|Relationship, destinationCollection: Interaction[]): Observable<InteractionListUpdateResult>
+	editRelationship(relationship: string|Relationship, destinationCollection: RelationshipGroup[]|Interaction[]): Observable<RelationshipGroupingResult|InteractionListUpdateResult> {
 		const relationship$ = typeof relationship === 'string'
 			? this.api.getRelationship(relationship)
 			: of(relationship)
 
 		return relationship$.pipe(
 			switchMap(relationship => this.openEditDialog(relationship)),
-			map(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
+			map(({ wasCancelled, relationship, modifiedInteractions, deletedInteractions, wasNameModified, wereInteractionsModified }) => {
 				if (wasCancelled) return { wasCancelled }
-				if (currentGroups) return this.updateRelationshipGroups(relationship, currentGroups)
-				return { wasCancelled, relationship, wasNameModified, wereInteractionsModified }
+				if (this.relationshipUtils.isRelationshipGroup(destinationCollection)) return this.updateRelationshipGroups(relationship, destinationCollection)
+				// destinationCollection is an array of interactions at this point
+
+				const refreshedInteractionsList = this.interactionUtils.updateInteractionsList(modifiedInteractions, deletedInteractions, destinationCollection, wasNameModified, relationship)
+				return { wasCancelled, refreshedInteractionsList, wasNameModified, wereInteractionsModified }
 			})
 		)
 	}

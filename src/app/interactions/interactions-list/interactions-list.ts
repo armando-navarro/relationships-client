@@ -130,14 +130,12 @@ export class InteractionsList implements OnInit {
 		})
 	}
 
-	/** Open the relationship editor for an interaction owner and refresh affected interaction data as needed. */
+	/** Open the relationship editor for an interaction owner and refresh the page's interaction data as needed. */
 	protected editRelationship(interaction: Interaction): void {
-		this.relationshipsService.editRelationship(interaction.idOfRelationship!)
-			.subscribe(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
+		this.relationshipsService.editRelationship(interaction.idOfRelationship!, this.interactions())
+			.subscribe(({ wasCancelled, refreshedInteractionsList, wasNameModified, wereInteractionsModified }) => {
 				if (wasCancelled) return
-				if (wasNameModified) interaction.nameOfPerson = relationship.fullName
-				// TODO: optimize by just updating the relevant interactions in the list based on what was changed in the relationship edit flow
-				if (wereInteractionsModified) this.loadInteractions()
+				if (wasNameModified || wereInteractionsModified) this.interactions.set(refreshedInteractionsList)
 			})
 	}
 
