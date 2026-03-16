@@ -1,4 +1,4 @@
-import { AfterViewInit, booleanAttribute, Component, computed, inject, input, model, OnDestroy, Renderer2, signal, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
+import { AfterViewInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, model, OnDestroy, Renderer2, signal, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
 import { Subject, takeUntil } from 'rxjs'
 
 import { MatIconModule } from '@angular/material/icon'
@@ -10,7 +10,8 @@ import { Scroll } from '../scroll'
 	selector: 'app-horizontal-scroll-buttons',
 	imports: [MatIconModule, MatTooltipModule],
 	templateUrl: './horizontal-scroll-buttons.html',
-	styleUrl: './horizontal-scroll-buttons.scss'
+	styleUrl: './horizontal-scroll-buttons.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorizontalScrollButtons implements AfterViewInit, OnDestroy {
 	// injections

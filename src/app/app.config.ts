@@ -1,6 +1,5 @@
-import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core'
+import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core'
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router'
-import { provideHttpClient } from '@angular/common/http'
 
 import { MatNativeDateModule } from '@angular/material/core'
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog'
@@ -14,13 +13,11 @@ import { dialogConfigDefaults, snackbarConfigDefaults, tooltipDefaults } from '.
 export const appConfig: ApplicationConfig = {
 	providers: [
 		provideBrowserGlobalErrorListeners(),
-		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(
 			routes,
 			withComponentInputBinding(),
 			withInMemoryScrolling({ anchorScrolling: 'enabled' }),
 		),
-		provideHttpClient(),
 		importProvidersFrom(MatNativeDateModule),
 
 		{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: dialogConfigDefaults },

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
 
 import { NewlinesToBrPipe } from '../../shared/newlines-to-br-pipe'
 import { Relationship } from '../relationship-interface'
@@ -8,7 +8,8 @@ import { SimpleDatePipe } from '../../shared/simple-date-pipe'
 	selector: 'app-relationship-card-content',
 	imports: [NewlinesToBrPipe, SimpleDatePipe],
 	templateUrl: './relationship-card-content.html',
-	styleUrl: './relationship-card-content.scss'
+	styleUrl: './relationship-card-content.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RelationshipCardContent implements AfterViewInit {
 	readonly relationship = input.required<Relationship>()

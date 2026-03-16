@@ -14,7 +14,7 @@ describe('HorizontalScrollButtons', () => {
 
 		fixture = TestBed.createComponent(HorizontalScrollButtons)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

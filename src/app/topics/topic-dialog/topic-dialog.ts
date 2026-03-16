@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { throttleTime } from 'rxjs'
 
@@ -25,7 +25,8 @@ export interface TopicDialogData {
 		MatInputModule, PageHeaderBar, ReactiveFormsModule,
 	],
 	templateUrl: './topic-dialog.html',
-	styleUrl: './topic-dialog.scss'
+	styleUrl: './topic-dialog.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicDialog implements OnInit {
 	private readonly data = inject<TopicDialogData>(MAT_DIALOG_DATA)

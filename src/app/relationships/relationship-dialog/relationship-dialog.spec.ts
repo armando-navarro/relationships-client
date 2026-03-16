@@ -14,7 +14,7 @@ describe('RelationshipDialog', () => {
 
 		fixture = TestBed.createComponent(RelationshipDialog)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

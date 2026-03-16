@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { AfterViewInit, Component, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
 
 import { MatIconModule } from '@angular/material/icon'
 
@@ -10,7 +10,8 @@ import { TopicButtons } from '../../topics/topic-buttons/topic-buttons'
 	selector: 'app-interaction-card-content',
 	imports: [DatePipe, MatIconModule, TopicButtons],
 	templateUrl: './interaction-card-content.html',
-	styleUrl: './interaction-card-content.scss'
+	styleUrl: './interaction-card-content.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InteractionCardContent implements AfterViewInit {
 	private readonly viewContainerRef = inject(ViewContainerRef)

@@ -14,7 +14,7 @@ describe('CardGroup', () => {
 
 		fixture = TestBed.createComponent(CardGroup)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

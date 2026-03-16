@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, viewChildren } from '@angular/core'
 import { RouterLink } from '@angular/router'
 
 import { MatButtonModule } from '@angular/material/button'
@@ -29,7 +29,8 @@ import { TOPIC_HINT_VERBIAGE } from '../../shared/misc-constants'
 		/* app */ Card, CardGroup, InteractionCardContent, PageHeaderBar, Row,
 	],
 	templateUrl: './interactions-list.html',
-	styleUrl: './interactions-list.scss'
+	styleUrl: './interactions-list.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InteractionsList implements OnInit {
 	// services
@@ -129,14 +130,12 @@ export class InteractionsList implements OnInit {
 		})
 	}
 
-	/** Open the relationship editor for an interaction owner and refresh affected interaction data as needed. */
+	/** Open the relationship editor for an interaction owner and refresh the page's interaction data as needed. */
 	protected editRelationship(interaction: Interaction): void {
-		this.relationshipsService.editRelationship(interaction.idOfRelationship!)
-			.subscribe(({ wasCancelled, relationship, wasNameModified, wereInteractionsModified }) => {
+		this.relationshipsService.editRelationship(interaction.idOfRelationship!, this.interactions())
+			.subscribe(({ wasCancelled, refreshedInteractionsList, wasNameModified, wereInteractionsModified }) => {
 				if (wasCancelled) return
-				if (wasNameModified) interaction.nameOfPerson = relationship.fullName
-				// TODO: optimize by just updating the relevant interactions in the list based on what was changed in the relationship edit flow
-				if (wereInteractionsModified) this.loadInteractions()
+				if (wasNameModified || wereInteractionsModified) this.interactions.set(refreshedInteractionsList)
 			})
 	}
 

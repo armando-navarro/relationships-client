@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, input, model, output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, model, output } from '@angular/core'
 
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
@@ -19,7 +19,8 @@ import { TopicButtons } from '../../topics/topic-buttons/topic-buttons'
 		'[class.relationship]': 'relationship()',
 		'[class.interaction]': 'interaction()',
 		'[class.highlight]': 'scrollToAndHighlight()',
-	}
+	},
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Row {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)

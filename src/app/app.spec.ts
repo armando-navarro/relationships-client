@@ -14,15 +14,9 @@ describe('App', () => {
 		expect(app).toBeTruthy()
 	})
 
-	it(`should have the 'relationships-client' title`, () => {
+	it('should render title', async () => {
 		const fixture = TestBed.createComponent(App)
-		const app = fixture.componentInstance
-		expect(app.title).toEqual('relationships-client')
-	})
-
-	it('should render title', () => {
-		const fixture = TestBed.createComponent(App)
-		fixture.detectChanges()
+		await fixture.whenStable()
 		const compiled = fixture.nativeElement as HTMLElement
 		expect(compiled.querySelector('h1')?.textContent).toContain('Hello, relationships-client')
 	})

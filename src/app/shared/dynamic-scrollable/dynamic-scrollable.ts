@@ -1,11 +1,12 @@
-import { AfterContentInit, booleanAttribute, Component, computed, effect, ElementRef, inject, input, signal, viewChild } from '@angular/core'
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, signal, viewChild } from '@angular/core'
 import { fromEvent, take } from 'rxjs'
 
 @Component({
 	selector: 'app-dynamic-scrollable',
 	imports: [],
 	templateUrl: './dynamic-scrollable.html',
-	styleUrl: './dynamic-scrollable.scss'
+	styleUrl: './dynamic-scrollable.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DynamicScrollable implements AfterContentInit {
 	private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef)

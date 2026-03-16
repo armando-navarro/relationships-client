@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { map, Observable, pairwise, startWith } from 'rxjs'
 
@@ -51,7 +51,8 @@ export type InteractionDialogResult = Cancelable<InteractionDialogSaveResult>
 		TopicFormToModelPipe
 	],
 	templateUrl: './interaction-dialog.html',
-	styleUrl: './interaction-dialog.scss'
+	styleUrl: './interaction-dialog.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InteractionDialog implements OnInit {
 	private readonly api = inject(Api)

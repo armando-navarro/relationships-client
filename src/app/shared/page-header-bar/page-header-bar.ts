@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, contentChild, effect, EmbeddedViewRef, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, contentChild, effect, EmbeddedViewRef, inject, input, TemplateRef, viewChild, ViewContainerRef } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs'
@@ -20,7 +20,8 @@ import { Scroll } from '../scroll'
 		'[class.two-rows]': 'showSupplementalRow() && responsiveUi.isSmallViewport()',
 		'[attr.role]': 'isDialog() ? null : "banner"',
 		'[aria-label]': 'isDialog() ? null : "Page title, navigation, and actions"',
-	}
+	},
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageHeaderBar {
 	protected readonly responsiveUi = inject(ResponsiveUi)

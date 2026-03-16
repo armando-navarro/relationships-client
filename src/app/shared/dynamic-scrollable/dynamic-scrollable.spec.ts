@@ -14,7 +14,7 @@ describe('DynamicScrollable', () => {
 
 		fixture = TestBed.createComponent(DynamicScrollable)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

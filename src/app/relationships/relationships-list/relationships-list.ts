@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, linkedSignal, OnInit, signal, viewChildren } from '@angular/core'
+import { ChangeDetectionStrategy, Component, computed, effect, inject, linkedSignal, OnInit, signal, viewChildren } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
@@ -36,7 +36,8 @@ import { Row } from '../../shared/row/row'
 	styleUrl: './relationships-list.scss',
 	host: {
 		'[class.two-header-rows]': 'showSearchBar()'
-	}
+	},
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RelationshipsList implements OnInit {
 	// services

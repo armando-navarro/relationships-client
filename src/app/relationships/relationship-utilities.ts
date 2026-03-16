@@ -42,4 +42,9 @@ export class RelationshipUtilities {
 		})
 	}
 
+	/** Type guard to check if an array is an array of RelationshipGroup objects. */
+	isRelationshipGroup(obj: object[]): obj is RelationshipGroup[] {
+		return obj.every(item => 'status' in item && 'statusColor' in item && 'relationships' in item)
+	}
+
 }

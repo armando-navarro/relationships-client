@@ -14,7 +14,7 @@ describe('InteractionsList', () => {
 
 		fixture = TestBed.createComponent(InteractionsList)
 		component = fixture.componentInstance
-		fixture.detectChanges()
+		await fixture.whenStable()
 	})
 
 	it('should create', () => {

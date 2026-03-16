@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { pairwise, startWith } from 'rxjs'
 
@@ -29,6 +29,8 @@ export interface RelationshipDialogData {
 
 export type RelationshipDialogResult = Cancelable<{
 	relationship: Relationship
+	modifiedInteractions: Interaction[]
+	deletedInteractions: Interaction[]
 	wasNameModified: boolean
 	wereInteractionsModified: boolean
 }>
@@ -42,7 +44,8 @@ export type RelationshipDialogResult = Cancelable<{
 	],
 	providers: [RelationshipForm],
 	templateUrl: './relationship-dialog.html',
-	styleUrl: './relationship-dialog.scss'
+	styleUrl: './relationship-dialog.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RelationshipDialog implements OnInit {
 	private readonly data = inject<RelationshipDialogData>(MAT_DIALOG_DATA)
@@ -141,21 +144,20 @@ export class RelationshipDialog implements OnInit {
 			return
 		}
 		this.formService.saveRelationship().subscribe({
-			next: ({ wasNameModified, wereInteractionsModified }) => this.closeDialog(wasNameModified, wereInteractionsModified),
+			next: () => this.closeDialog(),
 			error: error => this.snackBar.open(this.SAVE_RELATIONSHIP_ERROR, undefined)
 		})
 	}
 
 	/** Close the dialog with the latest relationship model and modification flags. */
-	protected closeDialog(
-		wasNameModified = this.formService.wasNameModified,
-		wereInteractionsModified = this.formService.wereInteractionsModified
-	): void {
+	protected closeDialog(): void {
 		this.dialogRef.close({
 			wasCancelled: false,
-			relationship: this.formService.getRelationship(),
-			wasNameModified,
-			wereInteractionsModified,
+			relationship: this.formService.modifiedRelationship(),
+			wasNameModified: this.formService.wasNameModified(),
+			modifiedInteractions: this.formService.modifiedInteractions(),
+			deletedInteractions: this.formService.deletedInteractions(),
+			wereInteractionsModified: this.formService.wereInteractionsModified(),
 		})
 	}
 
