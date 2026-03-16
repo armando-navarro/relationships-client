@@ -56,7 +56,7 @@ export class InteractionUtilities {
 		if (wasNameModified) {
 			const unmodifiedInteractions = existingInteractions.filter(({ idOfRelationship }) => idOfRelationship === relationship._id)
 			const targetInteractions = [ ...modifiedInteractions, ...unmodifiedInteractions ]
-			targetInteractions.forEach(interaction => interaction.nameOfPerson = relationship.fullName)
+			targetInteractions.map(interaction => ({ ...interaction, nameOfPerson: relationship.fullName }))
 		}
 
 		// remove the old versions of the updated interactions
