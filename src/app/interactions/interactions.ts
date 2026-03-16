@@ -94,10 +94,10 @@ export class Interactions {
 	/** Open the interaction dialog after persisting any unsaved relationship changes required by the flow. */
 	private async openInteractionDialog(customDialogConfig: Partial<InteractionDialogData>, formService?: RelationshipForm): Promise<InteractionDialogResult> {
 		// save relationship changes before opening the interaction dialog
-		if (formService?.wasRelationshipModified) await lastValueFrom(formService.saveRelationship())
+		if (formService?.wasRelationshipModified()) await lastValueFrom(formService.saveRelationship())
 
 		// prepare data for the interaction dialog
-		const relationship = formService?.getRelationship()
+		const relationship = formService?.modifiedRelationship()
 		const data: Partial<InteractionDialogData> = {
 			relationshipId: relationship?._id ?? null,
 			relationshipName: relationship?.fullName ?? null,
