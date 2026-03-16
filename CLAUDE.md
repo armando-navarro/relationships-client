@@ -8,12 +8,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm start          # Dev server (proxies API to localhost:3000)
 npm run build      # Production build → outputs to ../relationships-server/client/
 npm run watch      # Dev build with file watching
-npm test           # Karma/Jasmine unit tests
+npm test           # Vitest unit tests (Node/jsdom)
 ```
 
-To run a single test file, pass `--include` to the karma config:
+To run a single test file, pass `--include`:
 ```bash
 npx ng test --include='src/app/shared/api.spec.ts'
+```
+
+To filter by test name (regex):
+```bash
+npx ng test --filter='should be created'
 ```
 
 There is no lint script configured.
@@ -22,7 +27,7 @@ There is no lint script configured.
 
 **Purpose:** A personal relationship-tracking SPA. Users track "Relationships" (contacts with interaction rate goals) and "Interactions" (logged calls/visits/etc.). The app computes attention-needed status per relationship (Overdue / Due Today / Due Soon / No Attention Needed) and groups cards accordingly.
 
-**Stack:** Angular 21 (standalone components, signals) · Angular Material 21 · RxJS 7 · Luxon 3 · Karma/Jasmine · SCSS
+**Stack:** Angular 21 (standalone components, signals) · Angular Material 21 · RxJS 7 · Luxon 3 · Vitest + jsdom · SCSS
 
 **Backend:** A separate Node/Express/MongoDB repo at `../relationships-server`. In production, the build output is served directly by Express. In development, API calls proxy to `http://localhost:3000/api` via the dev environment file.
 
